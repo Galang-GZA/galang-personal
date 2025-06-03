@@ -4,6 +4,7 @@ JNT = "jnt"  # Joint
 NUM = "001"  # Numbers
 IK = "ik"  # Inverse Kinematics
 FK = "fk"  # Forward Kinematics
+NK = "nk"  # None Kinematics
 RESULT = "result"  # Result of IK & FK
 BIND = "Bind"  # Bind Joint
 CTRL = "ctrl"  # Controller

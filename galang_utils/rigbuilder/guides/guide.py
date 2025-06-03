@@ -14,10 +14,10 @@ class GuideInfo:
         self.module_id = 0
         self.module_start = False
         self.module = None
-        self.side_id = None
+        self.side_id = 0
         self.side = None
-        self.parent: str = None
-        self.parent_raw: str = None
+        self.parent = None
+        self.parent_raw = None
         self.position = None
         self.orientation = None
         self.scale = None
@@ -72,7 +72,7 @@ class GuideList:
             self.get_guides(guide)
 
     def get_guides(self, guide_joint):
-        guides_all = []
+        guides_all: List = []
 
         def recursive_get_guide(guide_joint, guides_all: List):
             guide_joint = GuideInfo(guide_joint)

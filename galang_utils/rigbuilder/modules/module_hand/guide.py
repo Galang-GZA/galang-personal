@@ -1,9 +1,11 @@
 from maya import cmds
 from typing import List, Dict
-from galang_utils.rigbuilder.constant import *
+from galang_utils.rigbuilder.constants.constant_general import *
+from galang_utils.rigbuilder.constants.constant_project import *
+from galang_utils.rigbuilder.modules.module_hand.constant import *
 
 
-class GuideInfo:
+class Hand_GuideInfo:
     def __init__(self, joint_name):
         self.name = joint_name
         self.name_raw = None
@@ -14,10 +16,10 @@ class GuideInfo:
         self.module_id = 0
         self.module_start = False
         self.module = None
-        self.side_id = None
+        self.side_id = 0
         self.side = None
-        self.parent: str = None
-        self.parent_raw: str = None
+        self.parent = None
+        self.parent_raw = None
         self.position = None
         self.orientation = None
         self.scale = None
@@ -35,9 +37,12 @@ class GuideInfo:
             self.is_guide_misc = True
 
         self.module_id = cmds.getAttr(f"{self.name}.type")
-        for module_name, data in MODULE_MAP.items():
-            if self.module_id in data["ids"]:
-                self.module = module_name
+        if self.module_id == 18:
+            self.module = cmds.getAttr(f"{self.name}.otherType")
+        else:
+            for module_name, data in MODULE_MAP.items():
+                if self.module_id in data["ids"]:
+                    self.module = module_name
         self.aim_axis = MODULE_AIM_AXIS.get(self.module)
         if not self.aim_axis:
             self.aim_axis = "X"
@@ -64,24 +69,20 @@ class GuideInfo:
         self.size = cmds.getAttr(f"{self.name}.radius")
 
 
-class GuideList:
+class Hand_GuideList:
     def __init__(self, guide=None):
-        self.guide = GuideInfo(guide)
-        self.guides: List[GuideInfo] = []
+        self.guide = Hand_GuideInfo(guide)
+        self.guides: List[Hand_GuideInfo] = []
         if guide:
             self.get_guides(guide)
 
     def get_guides(self, guide_joint):
-        guides_all = []
+        guides_all: List = []
 
         def recursive_get_guide(guide_joint, guides_all: List):
-            guide_joint = GuideInfo(guide_joint)
+            guide_joint = Hand_GuideInfo(guide_joint)
             if not guide_joint.is_guide:
                 return
-            if not self.guide.module == ROOT:
-                module_contents: Dict = MODULE_MAP.get(self.guide.module, {}).get("contents", [])
-                if guide_joint.module not in module_contents:
-                    return
 
             guides_all.append(guide_joint)
             children = cmds.listRelatives(guide_joint.name, c=True, typ="joint")
@@ -90,7 +91,7 @@ class GuideList:
             for child in children:
                 recursive_get_guide(child, guides_all)
 
-        first_guide = GuideInfo(guide_joint)
+        first_guide = Hand_GuideInfo(guide_joint)
         if not first_guide.is_guide:
             return
 

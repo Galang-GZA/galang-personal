@@ -3,7 +3,7 @@ from typing import List, Dict
 from galang_utils.rigbuilder.constant import *
 
 
-class GuideInfo:
+class Finger_GuideInfo:
     def __init__(self, joint_name):
         self.name = joint_name
         self.name_raw = None
@@ -14,10 +14,10 @@ class GuideInfo:
         self.module_id = 0
         self.module_start = False
         self.module = None
-        self.side_id = None
+        self.side_id = 0
         self.side = None
-        self.parent: str = None
-        self.parent_raw: str = None
+        self.parent = None
+        self.parent_raw = None
         self.position = None
         self.orientation = None
         self.scale = None
@@ -64,18 +64,18 @@ class GuideInfo:
         self.size = cmds.getAttr(f"{self.name}.radius")
 
 
-class GuideList:
+class Finger_GuideList:
     def __init__(self, guide=None):
-        self.guide = GuideInfo(guide)
-        self.guides: List[GuideInfo] = []
+        self.guide = Finger_GuideInfo(guide)
+        self.guides: List[Finger_GuideInfo] = []
         if guide:
             self.get_guides(guide)
 
     def get_guides(self, guide_joint):
-        guides_all = []
+        guides_all: List = []
 
         def recursive_get_guide(guide_joint, guides_all: List):
-            guide_joint = GuideInfo(guide_joint)
+            guide_joint = Finger_GuideInfo(guide_joint)
             if not guide_joint.is_guide:
                 return
             if not self.guide.module == ROOT:
@@ -90,7 +90,7 @@ class GuideList:
             for child in children:
                 recursive_get_guide(child, guides_all)
 
-        first_guide = GuideInfo(guide_joint)
+        first_guide = Finger_GuideInfo(guide_joint)
         if not first_guide.is_guide:
             return
 
