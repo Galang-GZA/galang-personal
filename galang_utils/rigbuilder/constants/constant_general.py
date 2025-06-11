@@ -9,6 +9,8 @@ HAND = "hand"
 FOOT = "foot"
 TOES = "toes"
 CARPAL = "MetaCarpal"
+END_GUIDE = "EndGuide"
+END = "End"
 
 MODULE_MAP = {
     ROOT: {"ids": [1], "contents": []},
@@ -20,6 +22,12 @@ MODULE_MAP = {
     FINGER: {"ids": [13, 14, 19, 20, 21, 22], "contents": [FINGER]},
     TOES: {"ids": [5], "contents": []},
 }
+
+# Module Misc
+TYPE = "typ"
+CONTENTS = "contents"
+AXIS = "aim_axis"
+
 
 # Module Aim Axis
 MODULE_AIM_AXIS = {SPINE: "Y", LIMB: "X", FINGER: "X", HAND: "X", ROOT: "Y"}

@@ -74,6 +74,7 @@ class Hand_ControlCreator:
         # Building controls level hieararchy based on NODE_LEVELS
         top_node = self.ctrl
         for level in self.node_level:
+            # print(f"creating {level} node for guide.name")
             if self.node_flags[level]:
                 node = cmds.group(
                     em=True,

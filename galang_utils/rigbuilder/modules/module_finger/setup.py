@@ -17,15 +17,15 @@ class Finger_ModuleBuilder:
         self.result_joint = Finger_JointChainSetup(guide, RESULT)
         self.fk = Finger_FKSetup(guide)
         self.ik = Finger_IKSetup(guide)
-        self.limb_module_group = None
-        self.limb_module_blend_map = {}
+        self.module_group = None
+        self.module_map = {}
 
     def build(self):
         # Step 0: Create Module Group
-        group_name = finger_level_format(self.guide.module, self.guide.side, self.guide.name_raw, GROUP)
+        group_name = finger_level_format(PJ, self.guide.module, self.guide.side, self.guide.name_raw, GROUP)
         if not cmds.objExists(group_name):
-            self.limb_module_group = cmds.group(em=True, name=group_name)
-            cmds.xform(self.limb_module_group, t=self.guide.position, ro=self.guide.orientation)
+            self.module_group = cmds.group(em=True, name=group_name)
+            cmds.xform(self.module_group, t=self.guide.position, ro=self.guide.orientation)
         else:
             cmds.warning(f"you've already made {group_name}. Skipppppz")
 
@@ -33,4 +33,4 @@ class Finger_ModuleBuilder:
         self.fk.build()
 
         # Step 2: Parent Items under Module Group
-        cmds.parent(self.fk.fk_module_group, self.limb_module_group)
+        cmds.parent(self.fk.fk_module_group, self.module_group)

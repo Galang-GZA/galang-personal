@@ -17,7 +17,7 @@ class Finger_ControlCreator:
         self.nodes = {}
 
         # Node level flags to be passed on later if needed
-        self.node_flags = {level: NODE_DEFAULT_FLAGS.get(level, False) for level in NODE_LEVELS}
+        self.node_flags = {level: NODE_DEFAULT_FLAGS.get(level, False) for level in NODE_MAIN_LEVELS}
 
     def get_node(self, level):
         # Returns the transform node for the given node level (e.g., 'offset', 'sdk')
@@ -98,7 +98,7 @@ class Finger_ControlCreator:
                 self.nodes[level] = node
                 top_node = node
 
-            cmds.xform(top_node, ws=True, t=self.guide.position, ro=self.guide.orientation)
-            self.top = top_node  # Topmost node for parenting
+        cmds.xform(top_node, ws=True, t=self.guide.position, ro=self.guide.orientation)
+        self.top = top_node  # Topmost node for parenting
 
         # print(f"Created control: {self.ctrl}, Top group: {self.top}, shape {self.guide.module}")

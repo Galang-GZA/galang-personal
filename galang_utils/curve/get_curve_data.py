@@ -20,6 +20,10 @@ def printCurveData():
     Knots = cmds.getAttr(f"{Shape}.knots") if cmds.attributeQuery("knots", node=Shape, exists=True) else []
 
     # Storing the data
-    Curves_Data[CustomControl] = {"Degree": Degree, "Control_Points": Control_Points, "Knots": Knots}
+    Curves_Data[CustomControl] = {
+        "degree": Degree,
+        "control_Points": Control_Points,
+        "knots": Knots,
+    }
 
     print(Curves_Data)

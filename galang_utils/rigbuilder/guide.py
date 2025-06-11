@@ -1,10 +1,10 @@
 from maya import cmds
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from galang_utils.rigbuilder.constant import *
 
 
 class GuideInfo:
-    def __init__(self, joint_name):
+    def __init__(self, joint_name: str):
         self.name = joint_name
         self.name_raw = None
         self.is_guide = False
@@ -65,25 +65,25 @@ class GuideInfo:
 
 
 class GuideList:
-    def __init__(self, guide=None):
-        self.guide = GuideInfo(guide)
+    def __init__(self, guide):
         self.guides: List[GuideInfo] = []
-        if guide:
-            self.get_guides(guide)
+        self.pv_guide: List[GuideInfo] = []
+        self.typ = None
+        self.get_guides(guide)
 
-    def get_guides(self, guide_joint):
+    def get_guides(self, guide):
         guides_all = []
 
-        def recursive_get_guide(guide_joint, guides_all: List):
-            guide_joint = GuideInfo(guide_joint)
-            if not guide_joint.is_guide:
+        def recursive_get_guide(guide, guides_all: List):
+            guide = GuideInfo(guide)
+            if not guide.is_guide:
                 return
-            if not self.guide.module == ROOT:
-                module_contents: Dict = MODULE_MAP.get(self.guide.module, {}).get("contents", [])
-                if guide_joint.module not in module_contents:
+            if not guide.module == ROOT:
+                module_contents: Dict = MODULE_MAP.get(guide.module, {}).get("contents", [])
+                if guide.module not in module_contents:
                     return
 
-            guides_all.append(guide_joint)
+            guides_all.append(guide)
             children = cmds.listRelatives(guide_joint.name, c=True, typ="joint")
             if not children:
                 return
@@ -96,3 +96,9 @@ class GuideList:
 
         recursive_get_guide(guide_joint, guides_all)
         self.guides = guides_all
+
+
+list_test: List[GuideList] = []
+for guidelist in list_test:
+    if guidelist.typ == LIMB:
+        self

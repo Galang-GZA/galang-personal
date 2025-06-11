@@ -13,6 +13,7 @@ RESULT = "result"  # Result of IK & FK
 BIND = "Bind"  # Bind Joint
 CTRL = "ctrl"  # Controller
 MISC = "misc"  # Miscellaneous
+PV = "pv"  # Pole Vector
 
 # Node Levels
 GROUP = "grp"

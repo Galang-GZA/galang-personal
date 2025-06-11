@@ -20,6 +20,7 @@ class Hand_GuideInfo:
         self.side = None
         self.parent = None
         self.parent_raw = None
+        self.children = None
         self.position = None
         self.orientation = None
         self.scale = None
@@ -50,6 +51,7 @@ class Hand_GuideInfo:
         parent = cmds.listRelatives(self.name, p=True, typ="joint")
         if parent:
             self.parent = parent[0]
+        self.children = cmds.listRelatives(self.name, c=True, typ="joint")
 
         self.side_id = cmds.getAttr(f"{self.name}.side")
         self.side = SIDE_MAP.get(self.side_id)
@@ -83,6 +85,11 @@ class Hand_GuideList:
             guide_joint = Hand_GuideInfo(guide_joint)
             if not guide_joint.is_guide:
                 return
+
+            if not self.guide.module == ROOT:
+                module_contents: Dict = MODULE_MAP.get(self.guide.module, {}).get("contents", [])
+                if guide_joint.module not in module_contents:
+                    return
 
             guides_all.append(guide_joint)
             children = cmds.listRelatives(guide_joint.name, c=True, typ="joint")

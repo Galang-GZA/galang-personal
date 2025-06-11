@@ -13,28 +13,28 @@ class Finger_FKSetup:
     def __init__(self, guide):
         self.guide = Finger_GuideInfo(guide)
         self.input = Finger_GuideList(guide)
-        self.fk_joint_chain = Finger_JointChainSetup(guide, FK)
+        self.fk_joint_chain = Finger_JointChainSetup(guide, NK)
         self.fk_module_group = None
         self.fk_module_map = {}
 
     def build(self):
-        # Step 0: Create FK Module Group
-        group_name = finger_level_format(PJ, FK, self.guide.side, self.guide.name_raw, GROUP)
+        # Step 0: Create NK Module Group
+        group_name = finger_level_format(PJ, NK, self.guide.side, self.guide.name_raw, GROUP)
         if not cmds.objExists(group_name):
             self.fk_module_group = cmds.group(em=True, name=group_name)
             cmds.xform(self.fk_module_group, t=self.guide.position, ro=self.guide.orientation)
         else:
             cmds.warning(f"you've already made {group_name}. Skipppppz")
 
-        # Step 1: Create FK Joint Chain
+        # Step 1: Create NK Joint Chain
         self.fk_joint_chain.build()
         cmds.parent(self.fk_joint_chain.group, self.fk_module_group)
 
-        # Step 2: Create FK Controls
+        # Step 2: Create NK Controls
         for g in self.input.guides:
             if g.is_guide_end or g.is_guide_misc:
                 continue
-            fk_control = Finger_ControlCreator(g.name, FK)
+            fk_control = Finger_ControlCreator(g.name, NK)
             fk_control.create()
             fk_joint = self.fk_joint_chain.joints_created.get(g.name)
             self.fk_module_map[g.name] = {CTRL: fk_control, JNT: fk_joint}
