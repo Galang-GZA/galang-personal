@@ -27,6 +27,9 @@ MODULE_MAP = {
 TYPE = "typ"
 CONTENTS = "contents"
 AXIS = "aim_axis"
+PARENT = "parent_module"
+DATA = "data"
+PROPERTIES = "properties"
 
 
 # Module Aim Axis

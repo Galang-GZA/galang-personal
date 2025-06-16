@@ -2,24 +2,25 @@ from maya import cmds
 from galang_utils.curve.shapes_library import *
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.modules.module_limb.constant import *
-from galang_utils.rigbuilder.modules.module_limb.guide import Limb_GuideInfo
+from galang_utils.rigbuilder.modules.module_limb.constant.constant_module import *
+from galang_utils.rigbuilder.guides.guide import GuideInfo, ModuleInfo
 
 
-class Limb_ControlCreator:
-    def __init__(self, guide, kinematics):
-        self.guide = Limb_GuideInfo(guide)
+class LimbControlCreator:
+    def __init__(self, guide, kinematics, module):
+        self.guide = GuideInfo(guide)
+        self.module = ModuleInfo(module)
         self.kinematics = kinematics
         self.ctrl = None
-        self.ctrl_parent = None
         self.top = None
         self.color_id = None
         self.nodes = {}
 
         # Node level flags to be passed on later if needed
-        self.node_flags = {level: NODE_DEFAULT_FLAGS.get(level, False) for level in NODE_LEVELS}
+        self.node_flags = {level: NODE_DEFAULT_FLAGS.get(level, False) for level in NODE_MAIN_LEVELS}
 
     def get_node(self, level):
+
         # Returns the transform node for the given node level (e.g., 'offset', 'sdk')
         return self.nodes.get(level)
 
@@ -27,12 +28,12 @@ class Limb_ControlCreator:
         if self.guide.is_guide_end:
             return
         # Creates a cpmtrp; curve with the appropriate level hierarchy and mirror transform if needed.
-        if self.guide.side_id is None or self.guide.position is None or self.guide.orientation is None:
+        if self.guide.side_id == None or self.guide.position is None or self.guide.orientation is None:
             cmds.warning(f"Cannot creat control for this guide:{self.guide.name_raw} lha~")
             return
 
         # Create control based on the shapes library or basic shapes
-        shape_data = SHAPES_LIBRARY.get(self.kinematics, {}).get(self.guide.module)
+        shape_data = SHAPES_LIBRARY.get(self.kinematics, {}).get(self.module)
 
         if shape_data:
             self.ctrl = cmds.curve(
@@ -54,7 +55,7 @@ class Limb_ControlCreator:
                     self.guide.name_raw,
                     CTRL,
                 ),
-                normal=circle_normal.get(self.guide.aim_axis),
+                normal=circle_normal.get(self.module.axis),
                 ch=False,
                 radius=self.guide.size,
             )[0]
