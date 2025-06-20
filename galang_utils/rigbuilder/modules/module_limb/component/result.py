@@ -1,6 +1,5 @@
 from maya import cmds
 from typing import Dict
-from galang_utils.curve.shapes_library import *
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
 from galang_utils.rigbuilder.guides.guide import GuideInfo, ModuleInfo
@@ -25,8 +24,9 @@ class LimbResultComponent:
             cmds.warning(f"you've already made {group_name}. Skipppppz")
 
         # Step 1 : Create result joint chain
-        ik_joint_chain = LimbJointChainSetup(self.guide.name, RESULT)
-        cmds.parent(ik_joint_chain.group, self.group)
+        result_joint_chain = LimbJointChainSetup(self.guide.name, RESULT)
+        result_joint_chain.build()
+        cmds.parent(result_joint_chain.group, self.group)
 
         # Step 2 : Map result joints
-        self.map = ik_joint_chain.output
+        self.map = result_joint_chain.output

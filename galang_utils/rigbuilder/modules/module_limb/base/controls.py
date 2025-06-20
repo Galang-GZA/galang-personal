@@ -7,9 +7,9 @@ from galang_utils.rigbuilder.guides.guide import GuideInfo, ModuleInfo
 
 
 class LimbControlCreator:
-    def __init__(self, guide, kinematics, module):
-        self.guide = GuideInfo(guide)
-        self.module = ModuleInfo(module)
+    def __init__(self, guide: GuideInfo, kinematics, module: ModuleInfo):
+        self.guide = guide
+        self.module = module
         self.kinematics = kinematics
         self.ctrl = None
         self.top = None
@@ -25,15 +25,17 @@ class LimbControlCreator:
         return self.nodes.get(level)
 
     def create(self, color_set=MAIN_COLOR, node_level=NODE_MAIN_LEVELS, local=None):
-        if self.guide.is_guide_end:
-            return
         # Creates a cpmtrp; curve with the appropriate level hierarchy and mirror transform if needed.
         if self.guide.side_id == None or self.guide.position is None or self.guide.orientation is None:
             cmds.warning(f"Cannot creat control for this guide:{self.guide.name_raw} lha~")
             return
 
         # Create control based on the shapes library or basic shapes
-        shape_data = SHAPES_LIBRARY.get(self.kinematics, {}).get(self.module)
+        if PV in self.guide.name:
+            shape_type = HINGES
+        else:
+            shape_type = self.module.type
+        shape_data = SHAPES_LIBRARY.get(self.kinematics, {}).get(shape_type)
 
         if shape_data:
             self.ctrl = cmds.curve(
@@ -73,6 +75,7 @@ class LimbControlCreator:
         # Building controls level hieararchy based on NODE_LEVELS
         top_node = self.ctrl
         for level in node_level:
+            cmds.select(clear=True)
             if self.node_flags[level]:
                 node = cmds.group(
                     em=True,
@@ -99,7 +102,7 @@ class LimbControlCreator:
                 self.nodes[level] = node
                 top_node = node
 
-            cmds.xform(top_node, ws=True, t=self.guide.position, ro=self.guide.orientation)
-            self.top = top_node  # Topmost node for parenting
+        cmds.xform(top_node, ws=True, t=self.guide.position, ro=self.guide.orientation)
+        self.top = top_node  # Topmost node for parenting
 
         # print(f"Created control: {self.ctrl}, Top group: {self.top}, shape {self.guide.module}")

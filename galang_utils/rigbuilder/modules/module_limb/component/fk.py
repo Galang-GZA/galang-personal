@@ -1,6 +1,5 @@
 from maya import cmds
-from typing import List, Dict, Union
-from galang_utils.curve.shapes_library import *
+from typing import Dict, Union
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
 from galang_utils.rigbuilder.guides.guide import GuideInfo, ModuleInfo
@@ -31,10 +30,10 @@ class LimbFKComponent:
         cmds.parent(fk_joint_chain.group, self.group)
 
         # Step 2: Create FK controls
-        limb_guides: List[GuideInfo] = self.module.guides + self.module.guides_end
         parent_entry = None
-        for guide_jnt in limb_guides:
-            fk_control = LimbControlCreator(guide_jnt.name, FK, self.module.type)
+        for guide_jnt in self.module.guides + self.module.guides_end:
+            cmds.select(clear=True)
+            fk_control = LimbControlCreator(guide_jnt, FK, self.module)
             fk_control.create()
 
             if not parent_entry:
@@ -45,4 +44,4 @@ class LimbFKComponent:
 
             # Step 3 : Map FK controls and joints
             fk_joint = fk_joint_chain.output.get(guide_jnt.name)
-            self.map[guide_jnt] = {CTRL: fk_control, JNT: fk_joint}
+            self.map[guide_jnt.name] = {CTRL: fk_control, JNT: fk_joint}

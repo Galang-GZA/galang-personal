@@ -30,6 +30,7 @@ AXIS = "aim_axis"
 PARENT = "parent_module"
 DATA = "data"
 PROPERTIES = "properties"
+SETTINGS = "setings"
 
 
 # Module Aim Axis

@@ -11,7 +11,6 @@ class GuideInfo:
         self.is_guide: bool = False
         self.is_guide_end: bool = False
         self.is_module: bool = False
-        self.aim_axis: str = None
         self.side_id: int = None
         self.side: str = None
         self.parent: str = None

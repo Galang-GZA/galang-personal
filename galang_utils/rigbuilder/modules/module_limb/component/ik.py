@@ -1,6 +1,5 @@
 from maya import cmds
-from typing import List, Dict, Union
-from galang_utils.curve.shapes_library import *
+from typing import Dict, Union
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
 from galang_utils.rigbuilder.guides.guide import GuideInfo, ModuleInfo
@@ -28,30 +27,32 @@ class LimbIKComponent:
 
         # Step 1 : Create IK joint chain
         ik_joint_chain = LimbJointChainSetup(self.guide.name, IK)
+        ik_joint_chain.build()
         cmds.parent(ik_joint_chain.group, self.group)
 
         # Step 2 : Create IK controls
-        limb_guides: List[GuideInfo] = self.module.guides + self.module.guides_end
-        for index, guide_jnt in enumerate(limb_guides):
+        for index, guide_jnt in enumerate(self.module.guides + self.module.guides_end):
             if index == 1:
-                guide_name = self.module.guides_pv[0].name
+                guide_obj = self.module.guides_pv[0]
             else:
-                guide_name = guide_jnt.name
-            ik_control = LimbControlCreator(guide_name, IK, self.module.type)
+                guide_obj = guide_jnt
+            ik_control = LimbControlCreator(guide_obj, IK, self.module)
             ik_control.create()
+            cmds.parent(ik_control.top, self.group)
 
             # Step 3 : Map IK controls and joints
             ik_joint = ik_joint_chain.output.get(guide_jnt.name)
-            self.map[guide_jnt] = {CTRL: ik_control, JNT: ik_joint}
+            self.map[guide_jnt.name] = {CTRL: ik_control, JNT: ik_joint}
 
         # Step 4 : Create IK handle
         ik_handle_name = limb_level_format(PJ, IK, self.guide.side, self.guide.name_raw, level=None)
         ik_solver_name = limb_level_format(PJ, IK, self.guide.side, self.guide.name_raw, level=None, item="RPsolver")
         self.handle = cmds.ikHandle(
             n=ik_handle_name,
-            sj=self.map[self.module.guides[0][JNT]],
-            ee=self.map[self.module.guides[2][JNT]],
+            sj=self.map[self.module.guides[0].name][JNT],
+            ee=self.map[self.module.guides_end[0].name][JNT],
             sol="ikRPsolver",
         )[0]
         cmds.rename("effector1", ik_solver_name)
-        cmds.parent(self.handle, self.map[self.module.guides[2]][CTRL].ctrl)
+        cmds.parent(self.handle, self.map[self.module.guides_end[0].name][CTRL].ctrl)
+        cmds.poleVectorConstraint(self.map[self.module.guides[1].name][CTRL].ctrl, self.handle)

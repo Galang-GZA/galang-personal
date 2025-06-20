@@ -8,18 +8,20 @@ from galang_utils.rigbuilder.guides.guide import GuideInfo, ModuleInfo
 
 
 class LimbJointChainSetup:
-    def __init__(self, guide, kinematics=None):
+    def __init__(self, guide, kinematics=None, create_group=True):
         self.guide = GuideInfo(guide)
         self.module = ModuleInfo(guide)
         self.output = {}
         self.kinematics = kinematics
+        self.create_group = create_group
         self.group = None
 
     def build(self):
         group_name = limb_level_format(PJ, self.kinematics, self.guide.side, self.guide.name_raw, GROUP, JNT)
         if not cmds.objExists(group_name):
-            self.group = cmds.group(empty=True, name=group_name)
-            cmds.xform(self.group, t=self.guide.position, ro=self.guide.orientation)
+            if self.create_group:
+                self.group = cmds.group(empty=True, name=group_name)
+                cmds.xform(self.group, t=self.guide.position, ro=self.guide.orientation)
         else:
             cmds.warning(f"you've already made {group_name}. Skipppppz")
         cmds.hide(self.group)
@@ -39,7 +41,8 @@ class LimbJointChainSetup:
             cmds.setAttr(f"{jnt}.side", g.side_id)
             self.output[g.name] = jnt
             if not jnt_parent:
-                cmds.parent(jnt, self.group)
+                if self.group:
+                    cmds.parent(jnt, self.group)
             else:
                 cmds.parent(jnt, jnt_parent)
             jnt_parent = jnt

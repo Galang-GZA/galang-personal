@@ -1,49 +1,23 @@
 from maya import cmds
-from typing import List, Dict, Union
-from galang_utils.curve.shapes_library import *
+from typing import Dict
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.guides.guide import GuideInfo, ModuleInfo
 from galang_utils.rigbuilder.modules.module_limb.constant.constant_module import *
-from galang_utils.rigbuilder.modules.module_limb.base.controls import LimbControlCreator
-from galang_utils.rigbuilder.modules.module_limb.base.jointchain import LimbJointChainSetup
+from galang_utils.rigbuilder.modules.module_limb.component.zcomponent import *
 
 
-class LimbFKComponent:
-    def __init__(self, guide):
-        self.guide = GuideInfo(guide)
-        self.module = ModuleInfo(guide)
-        self.fk_limb_map: Dict[GuideInfo, Dict[str, Union[LimbControlCreator, str]]] = {}
-        self.fk_limb_group: str = None
+class LimbFKOperator:
+    def __init__(self, component: LimbComponent):
+        self.component = component
+        self.module = component.fk.module
+        self.map: Dict = {}
 
-    def create(self):
-        # Step 0: Create FK module goup
-        group_name = limb_level_format(PJ, FK, self.guide.side, self.guide.name_raw, GROUP)
-        if not cmds.objExists(group_name):
-            self.fk_limb_group = cmds.group(em=True, name=group_name)
-            cmds.xform(self.fk_limb_group, t=self.guide.position, ro=self.guide.orientation)
-        else:
-            cmds.warning(f"you've already made {group_name}. Skipppppz")
+    def run(self):
+        fk_map = self.component.fk.map
+        for guide in self.module.guides + self.module.guides_end:
+            fk_control = fk_map[guide.name][CTRL].ctrl
+            fk_joint = fk_map[guide.name][JNT]
 
-        # step 1: Create FK joint chain
-        fk_joint_chain = LimbJointChainSetup(self.guide.name, FK)
-        fk_joint_chain.build()
-        cmds.parent(fk_joint_chain.group, self.fk_limb_group)
-
-        # Step 2: Create FK controls
-        limb_guides: List[GuideInfo] = self.module.guides + self.module.guides_end
-        parent_entry = None
-        for guide_jnt in limb_guides:
-            cmds.select(clear=True)
-            fk_control = LimbControlCreator(guide_jnt.name, FK, self.guide.name)
-            fk_control.create()
-
-            if not parent_entry:
-                cmds.parent(fk_control.top, self.fk_limb_group)
-            else:
-                cmds.parent(fk_control.top, parent_entry)
-            parent_entry = fk_control.ctrl
-
-            # Step 3 : Map FK controls and joints
-            fk_joint = fk_joint_chain.output.get(guide_jnt.name)
-            self.fk_limb_map[guide_jnt] = {CTRL: fk_control, JNT: fk_joint}
+            if fk_control and fk_joint:
+                cmds.parentConstraint(fk_control, fk_joint)
+                cmds.scaleConstraint(fk_control, fk_joint)
