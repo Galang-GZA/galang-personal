@@ -3,11 +3,11 @@
 from maya import cmds
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.modules.module_limb.constant.constant_module import *
+from galang_utils.rigbuilder.modules.module_base.rule.constant_module import *
 from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
 
 
-class LimbJointChainSetup:
+class BaseJointChainSetup:
     def __init__(self, guide, kinematics=None, create_group=True):
         self.guide = GuideInfo(guide)
         self.module = ModuleInfo(guide)
@@ -17,7 +17,7 @@ class LimbJointChainSetup:
         self.group = None
 
     def build(self):
-        group_name = limb_level_format(PJ, self.kinematics, self.guide.side, self.guide.name_raw, GROUP, JNT)
+        group_name = base_level_format(PJ, self.kinematics, self.guide.side, self.guide.name_raw, GROUP, JNT)
         if not cmds.objExists(group_name):
             if self.create_group:
                 self.group = cmds.group(empty=True, name=group_name)
@@ -31,7 +31,7 @@ class LimbJointChainSetup:
             if g.is_guide_end:
                 continue
 
-            joint_name = limb_joint_format(PJ, self.kinematics, g.side, g.name_raw, JNT)
+            joint_name = base_joint_format(PJ, self.kinematics, g.side, g.name_raw, JNT)
             if cmds.objExists(joint_name):
                 cmds.warning(f"{joint_name} is already created. Skipppz")
                 continue

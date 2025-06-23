@@ -1,10 +1,10 @@
 from typing import Dict
-from galang_utils.rigbuilder.guides.guide import ModuleInfo
-from galang_utils.rigbuilder.modules.module_limb.constant.constant_module import *
-from galang_utils.rigbuilder.modules.module_limb.base.jointchain import LimbJointChainSetup
+from galang_utils.rigbuilder.core.guide import ModuleInfo
+from galang_utils.rigbuilder.modules.module_base.rule.constant_module import *
+from galang_utils.rigbuilder.modules.module_base.program.jointchain import LimbJointChainSetup
 
 
-class LimbBindComponent:
+class BaseBindComponent:
     def __init__(self, module: ModuleInfo):
         self.module = module
         self.guide = module.guide

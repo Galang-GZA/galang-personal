@@ -2,12 +2,12 @@ from maya import cmds
 from typing import Dict
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.modules.module_limb.constant.constant_module import *
-from galang_utils.rigbuilder.modules.module_limb.component.zcomponent import *
+from galang_utils.rigbuilder.modules.module_base.rule.constant_module import *
+from galang_utils.rigbuilder.modules.module_base.component.zcomponent import *
 
 
-class LimbFKOperator:
-    def __init__(self, component: LimbComponent):
+class BaseRigOperator:
+    def __init__(self, component: BaseComponent):
         self.component = component
         self.module = component.fk.module
         self.map: Dict = {}
