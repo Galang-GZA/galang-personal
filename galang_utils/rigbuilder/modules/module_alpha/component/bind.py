@@ -1,7 +1,7 @@
 from typing import Dict
-from galang_utils.rigbuilder.core.guide import ModuleInfo
-from galang_utils.rigbuilder.modules.module_limb.rule.constant_module import *
-from galang_utils.rigbuilder.modules.module_limb.program.jointchain import LimbJointChainSetup
+from galang_utils.rigbuilder.guides.guide import ModuleInfo
+from galang_utils.rigbuilder.modules.module_limb.constant.constant_module import *
+from galang_utils.rigbuilder.modules.module_limb.base.jointchain import LimbJointChainSetup
 
 
 class LimbBindComponent:

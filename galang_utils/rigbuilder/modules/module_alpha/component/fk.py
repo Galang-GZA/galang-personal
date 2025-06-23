@@ -2,10 +2,10 @@ from maya import cmds
 from typing import Dict, Union
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
-from galang_utils.rigbuilder.modules.module_limb.rule.constant_module import *
-from galang_utils.rigbuilder.modules.module_limb.program.controls import LimbControlCreator
-from galang_utils.rigbuilder.modules.module_limb.program.jointchain import LimbJointChainSetup
+from galang_utils.rigbuilder.guides.guide import GuideInfo, ModuleInfo
+from galang_utils.rigbuilder.modules.module_limb.constant.constant_module import *
+from galang_utils.rigbuilder.modules.module_limb.base.controls import LimbControlCreator
+from galang_utils.rigbuilder.modules.module_limb.base.jointchain import LimbJointChainSetup
 
 
 class LimbFKComponent:

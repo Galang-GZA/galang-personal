@@ -1,4 +1,4 @@
-from galang_utils.rigbuilder.core.guide import ModuleInfo
+from galang_utils.rigbuilder.guides.guide import ModuleInfo
 from galang_utils.rigbuilder.modules.module_limb.component.bind import LimbBindComponent
 from galang_utils.rigbuilder.modules.module_limb.component.fk import LimbFKComponent
 from galang_utils.rigbuilder.modules.module_limb.component.ik import LimbIKComponent

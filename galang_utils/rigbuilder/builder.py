@@ -1,28 +1,30 @@
 """Create Hand Rig Based On the Guide Joints"""
 
-from maya import cmds
 from typing import Dict
 from galang_utils.rigbuilder.constants.constant_general import *
-from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.guides.guide import GuideInfo, ModuleInfo
-from galang_utils.rigbuilder.modules.module_limb.component.zcomponent import *
-from galang_utils.rigbuilder.modules.module_limb.operator.zoperator import *
+from galang_utils.rigbuilder.core.guide import ModuleInfo
+from galang_utils.rigbuilder.modules.module_limb.component.zcomponent import LimbComponent
+from galang_utils.rigbuilder.modules.module_limb.operator.zoperator import LimbOperator
 
 
 class ModuleAssembly:
     def __init__(self, guide):
         self.module_map: Dict = {}
-        self.component_map = {LIMB: LimbComponent}
-        self.operator_map = {LIMB: LimbOperator}
         self.get_properties(guide)
 
     def get_properties(self, guide: str) -> None:
 
         def recursive_get_data(guide):
-
             # Map the guide module with contents
             module = ModuleInfo(guide)
-            self.module_map[str(guide)] = {PROPERTIES: module}
+            # if module.type == SPINE:
+            #     self.module_map[str(guide)] = {COMPONENT: SpineComponent(module), OPERATOR: SpineOperator(module)}
+            if module.type == LIMB:
+                self.module_map[str(guide)] = {COMPONENT: LimbComponent(module), OPERATOR: LimbOperator(module)}
+            # if module.type == HAND:
+            #     self.module_map[str(guide)] = {COMPONENT: HandComponent(module), OPERATOR: HandOperator(module)}
+            # if module.type == FINGER:
+            #     self.module_map[str(guide)] = {COMPONENT: FingerComponent(module), OPERATOR: FingerOperator(module)}
 
             # Recursive get modules for the child guides
             if module.child:
@@ -34,44 +36,32 @@ class ModuleAssembly:
     def build_component(self):
 
         for module_name, data in self.module_map.items():
-            module: ModuleInfo = data[PROPERTIES]
-            module_type = module.type
-            print("")
-            print(f"    Building module: {module_name}, type: {module_type}")
+            component: LimbComponent = data[COMPONENT]
 
-            # Check if component exist for the module type
-            ComponentClass = self.component_map.get(module_type)
-
-            if not ComponentClass:
-                print(f"    Skipping module {module_name} - no component or operator defined for type {module_type}")
+            if component:
+                print(f"    Building module: {module_name}")
+            else:
+                print(f"    Skipping module {module_name}")
                 continue
 
             # Build the components
-            component = ComponentClass(module_name)
             component.create_bind()
             component.create_fk()
             component.create_ik()
             component.create_result()
             component.create_setting()
 
-            # Map the components
-            data[COMPONENT] = component
-
     def run_operator(self):
         for module_name, data in self.module_map.items():
-            module: ModuleInfo = data[PROPERTIES]
-            module_type = module.type
-            print(f"")
-            print(f"    Running operators for module: {module_name}, type: {module_type}")
+            component: LimbComponent = data[COMPONENT]
+            operator: LimbOperator = data[OPERATOR]
 
-            OperatorClass = self.operator_map.get(module_type)
-            component = data.get(COMPONENT)
-
-            if not OperatorClass or not component:
-                print(f"    Skipping module {module_name} - missing operator or component for type {module_type}")
+            if operator or component:
+                print(f"    Running operators for module: {module_name}")
+            else:
+                print(f"    Skipping module {module_name}")
                 continue
 
-            operator = OperatorClass(component)
             operator.run_bind()
             operator.run_fk()
             operator.run_ik()

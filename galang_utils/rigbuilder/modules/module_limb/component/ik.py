@@ -2,16 +2,16 @@ from maya import cmds
 from typing import Dict, Union
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.guides.guide import GuideInfo, ModuleInfo
-from galang_utils.rigbuilder.modules.module_limb.constant.constant_module import *
-from galang_utils.rigbuilder.modules.module_limb.base.controls import LimbControlCreator
-from galang_utils.rigbuilder.modules.module_limb.base.jointchain import LimbJointChainSetup
+from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
+from galang_utils.rigbuilder.modules.module_limb.rule.constant_module import *
+from galang_utils.rigbuilder.modules.module_limb.program.controls import LimbControlCreator
+from galang_utils.rigbuilder.modules.module_limb.program.jointchain import LimbJointChainSetup
 
 
 class LimbIKComponent:
-    def __init__(self, guide):
-        self.guide = GuideInfo(guide)
-        self.module = ModuleInfo(guide)
+    def __init__(self, module: ModuleInfo):
+        self.module = module
+        self.guide = module.guide
         self.map: Dict[GuideInfo, Dict[str, Union[LimbControlCreator, str]]] = {}
         self.group: str = None
         self.handle: str = None

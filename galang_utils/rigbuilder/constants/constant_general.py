@@ -44,3 +44,7 @@ REVERSE = "REV"
 
 # Custom Attribute
 IKFKSWITCH = "ikFKSwitch"
+
+# Class
+COMPONENT = "component"
+OPERATOR = "operator"

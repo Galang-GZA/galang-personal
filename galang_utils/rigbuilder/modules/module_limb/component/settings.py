@@ -1,14 +1,14 @@
 from maya import cmds
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.guides.guide import ModuleInfo
-from galang_utils.rigbuilder.modules.module_limb.constant.constant_module import *
-from galang_utils.rigbuilder.modules.module_limb.base.controls import LimbControlCreator
+from galang_utils.rigbuilder.core.guide import ModuleInfo
+from galang_utils.rigbuilder.modules.module_limb.rule.constant_module import *
+from galang_utils.rigbuilder.modules.module_limb.program.controls import LimbControlCreator
 
 
 class LimbSettingComponent:
-    def __init__(self, guide):
-        self.module = ModuleInfo(guide)
+    def __init__(self, module: ModuleInfo):
+        self.module = module
         self.setting = None
 
     def create(self):
