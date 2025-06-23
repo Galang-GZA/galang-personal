@@ -20,7 +20,9 @@ class LimbIKOperator:
 
             if index == 0:
                 cmds.pointConstraint(ik_control, ik_joint)
+                cmds.scaleConstraint(ik_control, ik_joint)
             if index == 1:
                 cmds.poleVectorConstraint(ik_control, self.component.ik.handle)
             if index == 2:
                 cmds.orientConstraint(ik_control, ik_joint)
+                cmds.scaleConstraint(ik_control, ik_joint)

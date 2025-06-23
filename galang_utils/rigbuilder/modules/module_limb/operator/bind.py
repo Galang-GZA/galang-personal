@@ -1,5 +1,7 @@
 from maya import cmds
 from typing import Dict
+from galang_utils.rigbuilder.constants.constant_general import *
+from galang_utils.rigbuilder.constants.constant_project import *
 from galang_utils.rigbuilder.modules.module_limb.constant.constant_module import *
 from galang_utils.rigbuilder.modules.module_limb.component.zcomponent import *
 
@@ -15,7 +17,7 @@ class LimbBindOperator:
         result_map = self.component.result.map
         for guide in self.module.guides + self.module.guides_end:
             bind_jnt = bind_map.get(guide.name)
-            result_jnt = result_map.get(guide.name)
+            result_jnt = result_map[guide.name][JNT]
 
             if bind_jnt and result_jnt:
                 cmds.parentConstraint(result_jnt, bind_jnt)

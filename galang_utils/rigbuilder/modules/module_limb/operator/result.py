@@ -18,26 +18,24 @@ class LimbResultOperator:
         result_map = self.component.result.map
 
         for guide in self.module.guides + self.module.guides_end:
-            print(guide.name)
             ik_joint = ik_map[guide.name][JNT]
             fk_joint = fk_map[guide.name][JNT]
-            result_joint = result_map.get(guide.name)
+            result_joint = result_map[guide.name][JNT]
+            pair_blend = result_map[guide.name][PAIRBLEND]
+            scale_blend = result_map[guide.name][SCALEBLEND]
 
-            pairblend_name = limb_level_format(PJ, RESULT, guide.side, guide.name_raw, level=None, item=PAIRBLEND)
-            blendcolor_name = limb_level_format(PJ, RESULT, guide.side, guide.name_raw, level=None, item=SCALEBLEND)
-            pair_blend = cmds.createNode("pairBlend", name=pairblend_name)
-            scale_blend = cmds.createNode("blendColors", name=blendcolor_name)
-
-            cmds.connectAttr(f"{ik_joint}.translate", f"{pair_blend}.inTranslate1")
-            cmds.connectAttr(f"{ik_joint}.rotate", f"{pair_blend}.inRotate1")
-            cmds.connectAttr(f"{ik_joint}.scale", f"{scale_blend}.color2")
-
-            cmds.connectAttr(f"{fk_joint}.translate", f"{pair_blend}.inTranslate2")
-            cmds.connectAttr(f"{fk_joint}.rotate", f"{pair_blend}.inRotate2")
-            cmds.connectAttr(f"{fk_joint}.scale", f"{scale_blend}.color1")
-
-            cmds.connectAttr(f"{pair_blend}.outTranslate", f"{result_joint}.translate")
-            cmds.connectAttr(f"{pair_blend}.outRotate", f"{result_joint}.rotate")
-            cmds.connectAttr(f"{scale_blend}.output", f"{result_joint}.scale")
+            connections = [
+                (ik_joint, "translate", pair_blend, "inTranslate1"),
+                (ik_joint, "rotate", pair_blend, "inRotate1"),
+                (ik_joint, "scale", scale_blend, "color2"),
+                (fk_joint, "translate", pair_blend, "inTranslate2"),
+                (fk_joint, "rotate", pair_blend, "inRotate2"),
+                (fk_joint, "scale", scale_blend, "color1"),
+                (pair_blend, "outTranslate", result_joint, "translate"),
+                (pair_blend, "outRotate", result_joint, "rotate"),
+                (scale_blend, "output", result_joint, "scale"),
+            ]
+            for scr_node, scr_attr, dst_node, dst_attr in connections:
+                cmds.connectAttr(f"{scr_node}.{scr_attr}", f"{dst_node}.{dst_attr}")
 
             cmds.setAttr(f"{pair_blend}.weight", 0.5)

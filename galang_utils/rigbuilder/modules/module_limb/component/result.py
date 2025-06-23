@@ -28,5 +28,13 @@ class LimbResultComponent:
         result_joint_chain.build()
         cmds.parent(result_joint_chain.group, self.group)
 
-        # Step 2 : Map result joints
-        self.map = result_joint_chain.output
+        # Step 2 : Create connection nodes
+        for guide in self.module.guides + self.module.guides_end:
+            result_joint = result_joint_chain.output.get(guide.name)
+            pairblend_name = limb_level_format(PJ, RESULT, guide.side, guide.name_raw, level=None, item=PAIRBLEND)
+            blendcolor_name = limb_level_format(PJ, RESULT, guide.side, guide.name_raw, level=None, item=SCALEBLEND)
+            pair_blend = cmds.createNode("pairBlend", name=pairblend_name)
+            scale_blend = cmds.createNode("blendColors", name=blendcolor_name)
+
+            # Step 3 : Map result joints and connection nodes
+            self.map[guide.name] = {JNT: result_joint, PAIRBLEND: pair_blend, SCALEBLEND: scale_blend}

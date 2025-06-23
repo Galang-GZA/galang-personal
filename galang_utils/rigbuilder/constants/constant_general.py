@@ -31,7 +31,7 @@ PARENT = "parent_module"
 DATA = "data"
 PROPERTIES = "properties"
 SETTINGS = "setings"
-
+COMPONENT = "component"
 
 # Module Aim Axis
 MODULE_AIM_AXIS = {SPINE: "Y", LIMB: "X", FINGER: "X", HAND: "X", ROOT: "Y"}

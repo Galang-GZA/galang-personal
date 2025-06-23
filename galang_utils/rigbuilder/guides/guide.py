@@ -87,7 +87,7 @@ class ModuleInfo:
         self.guides: List[GuideInfo] = []
         self.guides_end: List[GuideInfo] = []
         self.guides_pv: List[GuideInfo] = []
-        self.next: List = []
+        self.child: List = []
         self.parent: str = None
         self.__init__module(guide)
 
@@ -131,7 +131,7 @@ class ModuleInfo:
                     if child_guide.is_module:
                         if len(children_guide) == 1:
                             self.guides_end.append(child_guide)
-                        self.next.append(child)
+                        self.child.append(child)
                     elif child_guide.is_guide_end:
                         continue
                     else:
@@ -150,42 +150,5 @@ class ModuleInfo:
         lines.append(f"    Guides End    : {[g.name for g in self.guides_end]}")
         lines.append(f"    Guides PV     : {[g.name for g in self.guides_pv]}")
         lines.append(f"    Parent Module : {self.parent}")
-        lines.append(f"    Next Modules  : {self.next}")
-        return "\n".join(lines)
-
-
-class ModuleAssembly:
-    def __init__(self, guide):
-        self.module_map: Dict = {}
-        self.get_data(guide)
-
-    def get_data(self, guide: str) -> None:
-
-        def recursive_get_data(guide):
-
-            # Map the guide module with contents
-            module = ModuleInfo(guide)
-            self.module_map[str(guide)] = {PROPERTIES: module}
-
-            # Recursive get modules for the next guides
-            if module.next:
-                for next_guide in module.next:
-                    recursive_get_data(next_guide)
-
-        recursive_get_data(guide)
-
-    # Debugging procedures
-    def __repr__(self):
-        lines = ["<ModuleAssembly>"]
-        for guide_name, data in self.module_map.items():
-            module: ModuleInfo = data[CONTENTS]
-
-            lines.append(f"    Module         : {guide_name}, (type = {module.type}, axis = {module.axis})")
-            lines.append(f"    Guides         : {[g.name for g in module.guides]}")
-            lines.append(f"    Guides End     : {[g.name for g in module.guides_end]}")
-            lines.append(f"    Guides PV      : {[g.name for g in module.guides_pv]}")
-            lines.append(f"    Parent Modules : {module.parent}")
-            lines.append(f"    Next Modules   : {module.next}")
-            lines.append("")
-
+        lines.append(f"    Child Modules : {self.child}")
         return "\n".join(lines)
