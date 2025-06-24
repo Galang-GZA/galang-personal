@@ -17,14 +17,14 @@ class ModuleAssembly:
         def recursive_get_data(guide):
             # Map the guide module with contents
             module = ModuleInfo(guide)
-            # if module.type == SPINE:
-            #     self.module_map[str(guide)] = {COMPONENT: SpineComponent(module), OPERATOR: SpineOperator(module)}
             if module.type == LIMB:
                 self.module_map[str(guide)] = {COMPONENT: LimbComponent(module), OPERATOR: LimbOperator(module)}
-            # if module.type == HAND:
+            # elif module.type == HAND:
             #     self.module_map[str(guide)] = {COMPONENT: HandComponent(module), OPERATOR: HandOperator(module)}
-            # if module.type == FINGER:
+            # elif module.type == FINGER:
             #     self.module_map[str(guide)] = {COMPONENT: FingerComponent(module), OPERATOR: FingerOperator(module)}
+            # elif module.type == SPINE:
+            #     self.module_map[str(guide)] = {COMPONENT: SpineComponent(module), OPERATOR: SpineOperator(module)}
 
             # Recursive get modules for the child guides
             if module.child:
@@ -46,10 +46,7 @@ class ModuleAssembly:
 
             # Build the components
             component.create_bind()
-            component.create_fk()
-            component.create_ik()
-            component.create_result()
-            component.create_setting()
+            component.create_component
 
     def run_operator(self):
         for module_name, data in self.module_map.items():
@@ -63,16 +60,13 @@ class ModuleAssembly:
                 continue
 
             operator.run_bind()
-            operator.run_fk()
-            operator.run_ik()
-            operator.run_result()
-            operator.run_setting()
+            operator.run_component()
 
     # Debugging procedures
     def __repr__(self):
         lines = ["<ModuleAssembly>"]
         for guide_name, data in self.module_map.items():
-            module: ModuleInfo = data[PROPERTIES]
+            module = ModuleInfo(guide_name)
 
             lines.append(f"    Module         : {guide_name}, (type = {module.type}, axis = {module.axis})")
             lines.append(f"    Guides         : {[g.name for g in module.guides]}")

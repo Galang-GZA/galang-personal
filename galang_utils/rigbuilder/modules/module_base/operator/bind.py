@@ -14,11 +14,9 @@ class BaseBindOperator:
 
     def run(self):
         bind_map = self.component.bind.map
-        result_map = self.component.result.map
+        connection_map = self.component.bind_connection
         for guide in self.module.guides + self.module.guides_end:
             bind_jnt = bind_map.get(guide.name)
-            result_jnt = result_map[guide.name][JNT]
-
-            if bind_jnt and result_jnt:
-                cmds.parentConstraint(result_jnt, bind_jnt)
-                cmds.scaleConstraint(result_jnt, bind_jnt)
+            connection_jnt = connection_map[guide.name][JNT]
+            cmds.parentConstraint(connection_jnt, bind_jnt)
+            cmds.scaleConstraint(connection_jnt, bind_jnt)
