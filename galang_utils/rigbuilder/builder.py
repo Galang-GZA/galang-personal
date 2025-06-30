@@ -17,14 +17,23 @@ class ModuleAssembly:
         def recursive_get_data(guide):
             # Map the guide module with contents
             module = ModuleInfo(guide)
+
             if module.type == LIMB:
-                self.module_map[str(guide)] = {COMPONENT: LimbComponent(module), OPERATOR: LimbOperator(module)}
+                component = LimbComponent(module)
+                operator = LimbOperator(component)
+                self.module_map[str(guide)] = {COMPONENT: component, OPERATOR: operator}
             # elif module.type == HAND:
-            #     self.module_map[str(guide)] = {COMPONENT: HandComponent(module), OPERATOR: HandOperator(module)}
+            #     component = HandComponent(module)
+            #     operator = HandOperator(component)
+            #     self.module_map[str(guide)] = {COMPONENT: component, OPERATOR: operator}
             # elif module.type == FINGER:
-            #     self.module_map[str(guide)] = {COMPONENT: FingerComponent(module), OPERATOR: FingerOperator(module)}
+            #     component = FingerComponent(module)
+            #     operator = FingerOperator(component)
+            #     self.module_map[str(guide)] = {COMPONENT: component, OPERATOR: operator}
             # elif module.type == SPINE:
-            #     self.module_map[str(guide)] = {COMPONENT: SpineComponent(module), OPERATOR: SpineOperator(module)}
+            #     component = SpineComponent(module)
+            #     operator = SpineOperator(component)
+            #     self.module_map[str(guide)] = {COMPONENT: component, OPERATOR: operator}
 
             # Recursive get modules for the child guides
             if module.child:
@@ -46,7 +55,7 @@ class ModuleAssembly:
 
             # Build the components
             component.create_bind()
-            component.create_component
+            component.create_component()
 
     def run_operator(self):
         for module_name, data in self.module_map.items():
@@ -65,7 +74,7 @@ class ModuleAssembly:
     # Debugging procedures
     def __repr__(self):
         lines = ["<ModuleAssembly>"]
-        for guide_name, data in self.module_map.items():
+        for guide_name in self.module_map:
             module = ModuleInfo(guide_name)
 
             lines.append(f"    Module         : {guide_name}, (type = {module.type}, axis = {module.axis})")

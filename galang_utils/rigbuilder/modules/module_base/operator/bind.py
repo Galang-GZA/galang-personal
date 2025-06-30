@@ -17,6 +17,6 @@ class BaseBindOperator:
         connection_map = self.component.bind_connection
         for guide in self.module.guides + self.module.guides_end:
             bind_jnt = bind_map.get(guide.name)
-            connection_jnt = connection_map[guide.name][JNT]
+            connection_jnt = connection_map.get(guide.name)
             cmds.parentConstraint(connection_jnt, bind_jnt)
             cmds.scaleConstraint(connection_jnt, bind_jnt)

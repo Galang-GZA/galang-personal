@@ -5,10 +5,10 @@ from galang_utils.rigbuilder.modules.module_base.operator.rig import BaseRigOper
 class BaseOperator:
     def __init__(self, guide):
         self.bind = BaseBindOperator(guide)
-        self.fk = BaseRigOperator(guide)
+        self.rig = BaseRigOperator(guide)
 
     def run_bind(self):
         self.bind.run()
 
     def run_fk(self):
-        self.fk.run()
+        self.rig.run()

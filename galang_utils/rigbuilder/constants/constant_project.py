@@ -15,6 +15,78 @@ CTRL = "ctrl"  # Controller
 MISC = "misc"  # Miscellaneous
 PV = "pv"  # Pole Vector
 
+# Misc DAG
+LOCATOR = "Loc"
+DISTANCE = "Dis"
+
+# Nodes
+PAIRBLEND = "PB"
+SCALEBLEND = "SB"
+REVERSE = "REV"
+PLUS_MINUS = "PM"
+MULT_DIV = "MD"
+CONDITION = "Cond"
+BLEND = "Blend"
+
+# Node Type
+NORMAL = "Normalizer"
+LEN_ORI = "ChainLenOri"
+SCALER = "Scaler"
+ATTR = "Attr"
+ORI = "Ori"
+BASE = "Base"
+SOFT = "Soft"
+BLEND = "Blend"
+STRETCH = "Stretch"
+PIN = "Pin"
+SLIDE = "Slide"
+LIMITER = "Limiter"
+STATIC = "Static"
+ACTIVE = "Active"
+
+# Node combination
+MD_Normal = f"{MULT_DIV}_{NORMAL}"
+PM_LenStatic = f"{PLUS_MINUS}_{STATIC}"
+PM_LenActive = f"{PLUS_MINUS}_{ACTIVE}"
+
+PM_Soft = f"{PLUS_MINUS}_{SOFT}"
+MD_Soft = f"{MULT_DIV}_{SOFT}"
+MD_Soft_Scaler = f"{MULT_DIV}_{SOFT}_{SCALER}"
+MD_Attr_Scaler = f"{MULT_DIV}_{ATTR}_{SCALER}"
+COND_Soft = f"{CONDITION}_{SOFT}"
+BLEND_Soft_Scaler = f"{BLEND}_{SOFT}_{SCALER}"
+
+PM_Stretch = f"{PLUS_MINUS}_{STRETCH}"
+MD_Stretch = f"{MULT_DIV}_{STRETCH}"
+MD_Stretch_Scaler = f"{MULT_DIV}_{STRETCH}_{SCALER}"
+COND_Stretch = f"{CONDITION}_{STRETCH}"
+BLEND_Stretch_Scaler = f"{BLEND}_{STRETCH}_{SCALER}"
+
+PM_Pin = f"{PLUS_MINUS}_{PIN}"
+MD_Pin = f"{MULT_DIV}_{PIN}"
+MD_Pin_Scaler = f"{MULT_DIV}_{PIN}_{SCALER}"
+COND_Pin = f"{CONDITION}_{PIN}"
+BLEND_Pin_Scaler = f"{BLEND}_{PIN}_{SCALER}"
+
+PM_Slide = f"{PLUS_MINUS}_{SLIDE}"
+MD_Slide = f"{MULT_DIV}_{SLIDE}"
+MD_Slide_Scaler = f"{MULT_DIV}_{SLIDE}_{SCALER}"
+MD_Slide_Limiter = f"{MULT_DIV}_{SLIDE}_{LIMITER}"
+COND_Slide = f"{CONDITION}_{SLIDE}"
+BLEND_Slide_Scaler = f"{BLEND}_{SLIDE}_{SCALER}"
+
+LOCATOR_ORI = f"{LOCATOR}_{ORI}"
+DISTANCE_ORI = f"{DISTANCE}_{ORI}"
+LOCATOR_CTRL = f"{LOCATOR}_{CTRL}"
+DISTANCE_CTRL = f"{DISTANCE}_{CTRL}"
+LOCATOR_BASE = f"{LOCATOR}_{BASE}"
+DISTANCE_BASE = f"{DISTANCE}_{BASE}"
+LOCATOR_SOFT = f"{LOCATOR}_{SOFT}"
+DISTANCE_SOFT = f"{DISTANCE}_{SOFT}"
+LOCATOR_BLEND = f"{LOCATOR}_{BLEND}"
+DISTANCE_BLEND = f"{DISTANCE}_{BLEND}"
+DISTANCE_STRETCH = f"{DISTANCE}_{STRETCH}"
+
 # Node Levels
 GROUP = "grp"
 OFFSET = "offset"

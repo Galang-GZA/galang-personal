@@ -10,7 +10,7 @@ from galang_utils.rigbuilder.modules.module_limb.component.settings import LimbS
 
 class LimbComponent(BaseComponent):
     def __init__(self, module: ModuleInfo):
-        super().__init__()
+        super().__init__(module)
 
         self.fk = LimbFKComponent(module)
         self.ik = LimbIKComponent(module)

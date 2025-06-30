@@ -1,4 +1,6 @@
 from galang_utils.rigbuilder.modules.module_base.operator.zoperator import BaseOperator
+
+from galang_utils.rigbuilder.modules.module_limb.component.zcomponent import LimbComponent
 from galang_utils.rigbuilder.modules.module_limb.operator.fk import LimbFKOperator
 from galang_utils.rigbuilder.modules.module_limb.operator.ik import LimbIKOperator
 from galang_utils.rigbuilder.modules.module_limb.operator.result import LimbResultOperator
@@ -6,13 +8,13 @@ from galang_utils.rigbuilder.modules.module_limb.operator.settings import LimbSe
 
 
 class LimbOperator(BaseOperator):
-    def __init__(self, guide):
-        super().__init__()
+    def __init__(self, component: LimbComponent):
+        super().__init__(component)
 
-        self.fk = LimbFKOperator(guide)
-        self.ik = LimbIKOperator(guide)
-        self.result = LimbResultOperator(guide)
-        self.setting = LimbSettingOperator(guide)
+        self.fk = LimbFKOperator(component)
+        self.ik = LimbIKOperator(component)
+        self.result = LimbResultOperator(component)
+        self.setting = LimbSettingOperator(component)
 
     def run_bind(self):
         self.bind.run()

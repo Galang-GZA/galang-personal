@@ -6,17 +6,21 @@ def limb_join_parts(*parts):
     return "_".join([p for p in parts if p]).strip("_")
 
 
-def limb_level_format(PJ, kinematics, side, name, level, item=None, local=None):
-    return limb_join_parts(PJ, kinematics, side, name, item, level)
+def limb_level_format(PJ, kinematics, side, name, level, item=None, local=None, index=None):
+    return limb_join_parts(PJ, kinematics, side, name, item, level, index=None)
 
 
-def limb_joint_format(PJ, kinematics, side, name, JNT, local=None):
-    return limb_join_parts(PJ, kinematics, side, name, JNT)
+def limb_format(PJ, kinematics, side, name, item=None, local=None, index=None):
+    return limb_join_parts(PJ, kinematics, side, name, item, local, index=None)
 
 
-def limb_control_format(PJ, kinematics, side, name, CTRL, local=None):
-    return limb_join_parts(PJ, kinematics, side, name, CTRL)
+def limb_joint_format(PJ, kinematics, side, name, JNT, local=None, index=None):
+    return limb_join_parts(PJ, kinematics, side, name, JNT, index=None)
 
 
-def limb_misc_format(PJ, kinematics, side, name, MISC, local=None):
-    return limb_join_parts(PJ, kinematics, side, name, MISC)
+def limb_control_format(PJ, kinematics, side, name, CTRL, local=None, index=None):
+    return limb_join_parts(PJ, kinematics, side, name, CTRL, index=None)
+
+
+def limb_node_format(PJ, kinematics, side, name, node, index=None):
+    return limb_join_parts(PJ, kinematics, side, name, node, index=None)

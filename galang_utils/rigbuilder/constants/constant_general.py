@@ -11,6 +11,8 @@ TOES = "toes"
 CARPAL = "MetaCarpal"
 END_GUIDE = "EndGuide"
 END = "End"
+DNT = "DNT"
+MASTER = "Master"
 
 MODULE_MAP = {
     ROOT: {"ids": [1], "contents": []},
@@ -35,12 +37,6 @@ COMPONENT = "component"
 
 # Module Aim Axis
 MODULE_AIM_AXIS = {SPINE: "Y", LIMB: "X", FINGER: "X", HAND: "X", ROOT: "Y"}
-
-
-# Nodes
-PAIRBLEND = "PB"
-SCALEBLEND = "SB"
-REVERSE = "REV"
 
 # Custom Attribute
 IKFKSWITCH = "ikFKSwitch"
