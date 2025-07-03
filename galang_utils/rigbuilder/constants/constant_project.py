@@ -1,7 +1,5 @@
 """THIS CONSTANT IS TO BE CHANGED BASED ON THE PROJECT NEEDS"""
 
-from typing import List, Dict
-
 # Project
 PJ = None  # Project Code
 JNT = "jnt"  # Joint
@@ -43,49 +41,13 @@ SLIDE = "Slide"
 LIMITER = "Limiter"
 STATIC = "Static"
 ACTIVE = "Active"
+STASIS = "Stasis"
+SYSTEM = "System"
+CONSTRAINT = "Constraint"
 
-# Node combination
-MD_Normal = f"{MULT_DIV}_{NORMAL}"
-PM_LenStatic = f"{PLUS_MINUS}_{STATIC}"
-PM_LenActive = f"{PLUS_MINUS}_{ACTIVE}"
-
-PM_Soft = f"{PLUS_MINUS}_{SOFT}"
-MD_Soft = f"{MULT_DIV}_{SOFT}"
-MD_Soft_Scaler = f"{MULT_DIV}_{SOFT}_{SCALER}"
-MD_Attr_Scaler = f"{MULT_DIV}_{ATTR}_{SCALER}"
-COND_Soft = f"{CONDITION}_{SOFT}"
-BLEND_Soft_Scaler = f"{BLEND}_{SOFT}_{SCALER}"
-
-PM_Stretch = f"{PLUS_MINUS}_{STRETCH}"
-MD_Stretch = f"{MULT_DIV}_{STRETCH}"
-MD_Stretch_Scaler = f"{MULT_DIV}_{STRETCH}_{SCALER}"
-COND_Stretch = f"{CONDITION}_{STRETCH}"
-BLEND_Stretch_Scaler = f"{BLEND}_{STRETCH}_{SCALER}"
-
-PM_Pin = f"{PLUS_MINUS}_{PIN}"
-MD_Pin = f"{MULT_DIV}_{PIN}"
-MD_Pin_Scaler = f"{MULT_DIV}_{PIN}_{SCALER}"
-COND_Pin = f"{CONDITION}_{PIN}"
-BLEND_Pin_Scaler = f"{BLEND}_{PIN}_{SCALER}"
-
-PM_Slide = f"{PLUS_MINUS}_{SLIDE}"
-MD_Slide = f"{MULT_DIV}_{SLIDE}"
-MD_Slide_Scaler = f"{MULT_DIV}_{SLIDE}_{SCALER}"
-MD_Slide_Limiter = f"{MULT_DIV}_{SLIDE}_{LIMITER}"
-COND_Slide = f"{CONDITION}_{SLIDE}"
-BLEND_Slide_Scaler = f"{BLEND}_{SLIDE}_{SCALER}"
-
-LOCATOR_ORI = f"{LOCATOR}_{ORI}"
-DISTANCE_ORI = f"{DISTANCE}_{ORI}"
-LOCATOR_CTRL = f"{LOCATOR}_{CTRL}"
-DISTANCE_CTRL = f"{DISTANCE}_{CTRL}"
-LOCATOR_BASE = f"{LOCATOR}_{BASE}"
-DISTANCE_BASE = f"{DISTANCE}_{BASE}"
-LOCATOR_SOFT = f"{LOCATOR}_{SOFT}"
-DISTANCE_SOFT = f"{DISTANCE}_{SOFT}"
-LOCATOR_BLEND = f"{LOCATOR}_{BLEND}"
-DISTANCE_BLEND = f"{DISTANCE}_{BLEND}"
-DISTANCE_STRETCH = f"{DISTANCE}_{STRETCH}"
+# Attribute names
+FEATURES = "Features"
+KINEMATICS = "Kinematic"
 
 # Node Levels
 GROUP = "grp"
@@ -119,6 +81,7 @@ MIRROR_AXIS_DATA = {
     "Z": {"orientation": [0, 0, 180], "scale": [1, 1, -1], "scale_child": [1, 1, -1]},
 }
 
+
 # Joint Mirror
 MIRROR_PLANE = "YZ"
 
@@ -145,3 +108,56 @@ def _join_parts(*parts):
 
 def name_format(kinematics, side, name, level, item=None):
     return _join_parts(PJ, kinematics, side, name, item, level)
+
+
+# Node combination
+MD_Normal = f"{MULT_DIV}_{NORMAL}"
+PM_LenStatic = f"{PLUS_MINUS}_{STATIC}"
+PM_LenActive = f"{PLUS_MINUS}_{ACTIVE}"
+
+PM_Soft = f"{PLUS_MINUS}_{SOFT}"
+MD_Soft = f"{MULT_DIV}_{SOFT}"
+MD_Soft_Scaler = f"{MULT_DIV}_{SOFT}_{SCALER}"
+MD_Attr_Scaler = f"{MULT_DIV}_{ATTR}_{SCALER}"
+COND_Soft = f"{CONDITION}_{SOFT}"
+BLEND_Soft_Scaler = f"{BLEND}_{SOFT}_{SCALER}"
+
+PM_Stretch = f"{PLUS_MINUS}_{STRETCH}"
+MD_Stretch = f"{MULT_DIV}_{STRETCH}"
+MD_Stretch_Scaler = f"{MULT_DIV}_{STRETCH}_{SCALER}"
+COND_Stretch = f"{CONDITION}_{STRETCH}"
+BLEND_Stretch_Scaler = f"{BLEND}_{STRETCH}_{SCALER}"
+
+PM_Pin = f"{PLUS_MINUS}_{PIN}"
+MD_Pin = f"{MULT_DIV}_{PIN}"
+MD_Pin_Scaler = f"{MULT_DIV}_{PIN}_{SCALER}"
+COND_Pin = f"{CONDITION}_{PIN}"
+BLEND_Pin = f"{BLEND}_{PIN}"
+
+PM_Slide = f"{PLUS_MINUS}_{SLIDE}"
+MD_Slide = f"{MULT_DIV}_{SLIDE}"
+MD_Slide_Scaler = f"{MULT_DIV}_{SLIDE}_{SCALER}"
+MD_Slide_Limiter = f"{MULT_DIV}_{SLIDE}_{LIMITER}"
+COND_Slide = f"{CONDITION}_{SLIDE}"
+BLEND_Slide_Scaler = f"{BLEND}_{SLIDE}_{SCALER}"
+
+LOCATOR_ORI = f"{LOCATOR}_{ORI}"
+DISTANCE_ORI = f"{DISTANCE}_{ORI}"
+
+LOCATOR_CTRL = f"{LOCATOR}_{CTRL}"
+DISTANCE_CTRL = f"{DISTANCE}_{CTRL}"
+
+LOCATOR_BASE = f"{LOCATOR}_{BASE}"
+DISTANCE_BASE = f"{DISTANCE}_{BASE}"
+
+LOCATOR_SOFT = f"{LOCATOR}_{SOFT}"
+DISTANCE_SOFT = f"{DISTANCE}_{SOFT}"
+
+LOCATOR_BLEND = f"{LOCATOR}_{BLEND}"
+DISTANCE_BLEND = f"{DISTANCE}_{BLEND}"
+
+LOCATOR_STRETCH = f"{LOCATOR}_{STRETCH}"
+REVERSE_STRETCH = f"{REVERSE}_{STRETCH}"
+DISTANCE_STRETCH = f"{DISTANCE}_{STRETCH}"
+
+LOCATOR_GROUP = f"{LOCATOR}_{GROUP}"

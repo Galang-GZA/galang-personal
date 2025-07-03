@@ -13,21 +13,21 @@ class LimbFKComponent:
         self.module = module
         self.guide = module.guide
         self.map: Dict[GuideInfo, Dict[str, Union[LimbControlCreator, str]]] = {}
-        self.group: str = None
+        self.groups: Dict = {}
 
     def create(self):
         # Step 0: Create FK module goup
         group_name = limb_level_format(PJ, FK, self.guide.side, self.guide.name_raw, GROUP)
         if not cmds.objExists(group_name):
-            self.group = cmds.group(em=True, name=group_name)
-            cmds.xform(self.group, t=self.guide.position, ro=self.guide.orientation)
+            self.groups[MASTER] = cmds.group(em=True, name=group_name)
+            cmds.xform(self.groups[MASTER], t=self.guide.position, ro=self.guide.orientation)
         else:
             cmds.warning(f"you've already made {group_name}. Skipppppz")
 
         # step 1: Create FK joint chain
         fk_joint_chain = LimbJointChainSetup(self.guide.name, FK)
         fk_joint_chain.build()
-        cmds.parent(fk_joint_chain.group, self.group)
+        self.groups[JNT] = fk_joint_chain.group
 
         # Step 2: Create FK controls
         parent_entry = None
@@ -37,7 +37,7 @@ class LimbFKComponent:
             fk_control.create()
 
             if not parent_entry:
-                cmds.parent(fk_control.top, self.group)
+                cmds.parent(fk_control.top, self.groups[MASTER])
             else:
                 cmds.parent(fk_control.top, parent_entry)
             parent_entry = fk_control.ctrl

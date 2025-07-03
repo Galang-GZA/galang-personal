@@ -104,5 +104,3 @@ class LimbControlCreator:
 
         cmds.xform(top_node, ws=True, t=self.guide.position, ro=self.guide.orientation)
         self.top = top_node  # Topmost node for parenting
-
-        # print(f"Created control: {self.ctrl}, Top group: {self.top}, shape {self.guide.module}")

@@ -5,6 +5,7 @@ from galang_utils.rigbuilder.modules.module_limb.operator.fk import LimbFKOperat
 from galang_utils.rigbuilder.modules.module_limb.operator.ik import LimbIKOperator
 from galang_utils.rigbuilder.modules.module_limb.operator.result import LimbResultOperator
 from galang_utils.rigbuilder.modules.module_limb.operator.settings import LimbSettingOperator
+from galang_utils.rigbuilder.modules.module_limb.operator.grp import LimbGroupOperator
 
 
 class LimbOperator(BaseOperator):
@@ -15,6 +16,7 @@ class LimbOperator(BaseOperator):
         self.ik = LimbIKOperator(component)
         self.result = LimbResultOperator(component)
         self.setting = LimbSettingOperator(component)
+        self.group = LimbGroupOperator(component)
 
     def run_bind(self):
         self.bind.run()
@@ -24,3 +26,4 @@ class LimbOperator(BaseOperator):
         self.ik.run()
         self.result.run()
         self.setting.run()
+        self.group.run()

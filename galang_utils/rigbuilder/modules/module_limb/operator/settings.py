@@ -14,8 +14,8 @@ class LimbSettingOperator:
     def run(self):
         guide = self.module.guide
         setting_control = self.component.setting.setting.ctrl
-        ik_group = self.component.ik.group
-        fk_group = self.component.fk.group
+        ik_group = self.component.ik.groups.get(MASTER)
+        fk_group = self.component.fk.groups.get(MASTER)
         ik_map = self.component.ik.map
         fk_map = self.component.fk.map
         result_map = self.component.result.map
@@ -38,17 +38,14 @@ class LimbSettingOperator:
             cmds.connectAttr(kinematic_switch_attr, f"{scale_blend}.blender", force=True)
 
             controls = [ik_control, fk_control]
+            proxy = "%s.%s" % (setting_control, IKFKSWITCH)
+
             for control in controls:
-                cmds.addAttr(
-                    control.ctrl,
-                    proxy="%s.%s" % (setting_control, IKFKSWITCH),
-                    ln=IKFKSWITCH,
-                    at="double",
-                    min=0,
-                    max=1,
-                    dv=0,
-                    keyable=True,
-                )
+                cmds.addAttr(control.ctrl, ln=KINEMATICS, at="enum", en="-", keyable=False)
+                cmds.setAttr(f"{control.ctrl}.{KINEMATICS}", e=True, cb=True)
+
+            for control in controls:
+                cmds.addAttr(control.ctrl, proxy=proxy, ln=IKFKSWITCH, at="double", min=0, max=1, keyable=True)
 
             if index == 2:
                 result_joint = result_map[guide.name][JNT]

@@ -20,6 +20,7 @@ class LimbResultComponent:
         if not cmds.objExists(group_name):
             self.group = cmds.group(em=True, name=group_name)
             cmds.xform(self.group, t=self.guide.position, ro=self.guide.orientation)
+            cmds.hide(self.group)
         else:
             cmds.warning(f"you've already made {group_name}. Skipppppz")
 

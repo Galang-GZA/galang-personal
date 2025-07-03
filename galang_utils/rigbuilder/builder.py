@@ -20,8 +20,7 @@ class ModuleAssembly:
 
             if module.type == LIMB:
                 component = LimbComponent(module)
-                operator = LimbOperator(component)
-                self.module_map[str(guide)] = {COMPONENT: component, OPERATOR: operator}
+                self.module_map[str(guide)] = {COMPONENT: component}
             # elif module.type == HAND:
             #     component = HandComponent(module)
             #     operator = HandOperator(component)
@@ -60,10 +59,10 @@ class ModuleAssembly:
     def run_operator(self):
         for module_name, data in self.module_map.items():
             component: LimbComponent = data[COMPONENT]
-            operator: LimbOperator = data[OPERATOR]
-
+            operator = LimbOperator(component)
+            data[OPERATOR] = operator
             if operator or component:
-                print(f"    Running operators for module: {module_name}")
+                print(f"    Running module: {module_name}")
             else:
                 print(f"    Skipping module {module_name}")
                 continue

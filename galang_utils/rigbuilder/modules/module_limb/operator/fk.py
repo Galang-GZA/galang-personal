@@ -20,4 +20,4 @@ class LimbFKOperator:
 
             if fk_control and fk_joint:
                 cmds.parentConstraint(fk_control, fk_joint)
-                cmds.scaleConstraint(fk_control, fk_joint)
+                cmds.scaleConstraint(fk_control, fk_joint, mo=True)
