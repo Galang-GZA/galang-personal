@@ -4,11 +4,13 @@ from galang_utils.rigbuilder.modules.module_base.operator.rig import BaseRigOper
 
 class BaseOperator:
     def __init__(self, guide):
-        self.bind = BaseBindOperator(guide)
+        self._bind = BaseBindOperator(guide)
         self.rig = BaseRigOperator(guide)
 
     def run_bind(self):
-        self.bind.run()
+        self._bind.run()
 
-    def run_fk(self):
-        self.rig.run()
+    def run(self):
+        for name, attr in vars(self).items():
+            if not name.startswith("_"):
+                attr.run()

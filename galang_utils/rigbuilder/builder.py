@@ -3,6 +3,7 @@
 from typing import Dict
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.core.guide import ModuleInfo
+from galang_utils.rigbuilder.modules.module_base.component.zcomponent import BaseComponent
 from galang_utils.rigbuilder.modules.module_limb.component.zcomponent import LimbComponent
 from galang_utils.rigbuilder.modules.module_limb.operator.zoperator import LimbOperator
 
@@ -44,7 +45,7 @@ class ModuleAssembly:
     def build_component(self):
 
         for module_name, data in self.module_map.items():
-            component: LimbComponent = data[COMPONENT]
+            component: BaseComponent = data[COMPONENT]
 
             if component:
                 print(f"    Building module: {module_name}")
@@ -54,12 +55,12 @@ class ModuleAssembly:
 
             # Build the components
             component.create_bind()
-            component.create_component()
+            component.create_rig()
 
     def run_operator(self):
         for module_name, data in self.module_map.items():
-            component: LimbComponent = data[COMPONENT]
-            operator = LimbOperator(component)
+            component: BaseComponent = data[COMPONENT]
+            operator = LimbOperator(component)  # PR UBAH JADIIN BASE OPERATOR
             data[OPERATOR] = operator
             if operator or component:
                 print(f"    Running module: {module_name}")
@@ -68,7 +69,7 @@ class ModuleAssembly:
                 continue
 
             operator.run_bind()
-            operator.run_component()
+            operator.run()
 
     # Debugging procedures
     def __repr__(self):

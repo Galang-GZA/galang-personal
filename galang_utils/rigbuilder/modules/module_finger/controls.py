@@ -38,7 +38,7 @@ class Finger_ControlCreator:
             self.ctrl = cmds.curve(
                 d=shape_data["degree"],
                 p=shape_data["control_points"],
-                name=finger_control_format(PJ, self.kinematics, self.guide.side, self.guide.name_raw, CTRL),
+                name=finger_control_format(PROJECT, self.kinematics, self.guide.side, self.guide.name_raw, CTRL),
             )
             cmds.xform(self.ctrl, s=(self.guide.size, self.guide.size, self.guide.size))
             cmds.makeIdentity(self.ctrl, a=True, t=1, r=1, s=1)
@@ -48,7 +48,7 @@ class Finger_ControlCreator:
             # print(f"Defaulting {self.guide.name} to circle")
             self.ctrl = cmds.circle(
                 n=finger_control_format(
-                    PJ,
+                    PROJECT,
                     self.kinematics,
                     self.guide.side,
                     self.guide.name_raw,
@@ -76,7 +76,7 @@ class Finger_ControlCreator:
                 node = cmds.group(
                     em=True,
                     name=finger_level_format(
-                        PJ,
+                        PROJECT,
                         self.kinematics,
                         self.guide.side,
                         self.guide.name_raw,

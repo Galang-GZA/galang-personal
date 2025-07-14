@@ -1,14 +1,14 @@
 """THIS CONSTANT IS TO BE CHANGED BASED ON THE PROJECT NEEDS"""
 
 # Project
-PJ = None  # Project Code
+PROJECT = None  # Project Code
 JNT = "jnt"  # Joint
 NUM = "001"  # Numbers
 IK = "ik"  # Inverse Kinematics
 FK = "fk"  # Forward Kinematics
 NK = None  # None Kinematics
 RESULT = "result"  # Result of IK & FK
-BIND = "Bind"  # Bind Joint
+BIND = "bind"  # Bind Joint
 CTRL = "ctrl"  # Controller
 MISC = "misc"  # Miscellaneous
 PV = "pv"  # Pole Vector
@@ -45,20 +45,26 @@ STASIS = "Stasis"
 SYSTEM = "System"
 CONSTRAINT = "Constraint"
 
+# Len
+LEN_DETAILS = 3
+
 # Attribute names
 FEATURES = "Features"
 KINEMATICS = "Kinematic"
 
 # Node Levels
+MAIN = "main"
 GROUP = "grp"
 OFFSET = "offset"
 SDK = "sdk"
 LINK = "link"
 MIRROR = "mirror"
 LOCAL = "local"
+DETAIL = "detail"
+ROLL = "roll"
 
 NODE_MAIN_LEVELS = [OFFSET, SDK, LINK, MIRROR, GROUP]
-NODE_LOCAL_LEVELS = [MIRROR, GROUP]
+NODE_SUB_LEVELS = [LINK, MIRROR, GROUP]
 NODE_DEFAULT_FLAGS = {OFFSET: True, SDK: True, LINK: True, MIRROR: True, GROUP: True}
 
 # Side
@@ -98,7 +104,7 @@ COLOR_INDEX = {
 }
 
 MAIN_COLOR = {1: COLOR_INDEX["blue"], 2: COLOR_INDEX["red"], 0: COLOR_INDEX["yellow"]}
-BENDY_COLOR = {1: COLOR_INDEX["cyan"], 2: COLOR_INDEX["magenta"], 0: COLOR_INDEX["green"]}
+SUB_COLOR = {1: COLOR_INDEX["cyan"], 2: COLOR_INDEX["magenta"], 0: COLOR_INDEX["green"]}
 
 
 # Name Format
@@ -107,7 +113,7 @@ def _join_parts(*parts):
 
 
 def name_format(kinematics, side, name, level, item=None):
-    return _join_parts(PJ, kinematics, side, name, item, level)
+    return _join_parts(PROJECT, kinematics, side, name, item, level)
 
 
 # Node combination

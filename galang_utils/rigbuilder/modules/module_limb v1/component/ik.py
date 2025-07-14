@@ -1,8 +1,8 @@
 from maya import cmds
-from typing import Dict, Union, List
+from typing import Dict, Union
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.core.guide import ModuleInfo
+from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
 from galang_utils.rigbuilder.modules.module_limb.rule.constant_module import *
 from galang_utils.rigbuilder.modules.module_limb.program.controls import LimbControlCreator
 from galang_utils.rigbuilder.modules.module_limb.program.jointchain import LimbJointChainSetup
@@ -12,10 +12,9 @@ class LimbIKComponent:
     def __init__(self, module: ModuleInfo):
         self.module = module
         self.guide = module.guide
-        self.groups: Dict = {}
-        self.joints: List = []
-        self.controls: List = []
+        self.map: Dict[GuideInfo, Dict[str, Union[LimbControlCreator, str]]] = {}
         self.handle: str = None
+        self.groups: Dict = {}
         self.comp_static_map: Dict = {}
         self.comp_active_map: Dict = {}
 

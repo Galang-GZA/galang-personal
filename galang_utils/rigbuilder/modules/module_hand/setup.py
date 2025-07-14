@@ -27,14 +27,14 @@ class Hand_ModuleBuilder:
 
     def build(self):
         # Step 0: Create Module Group
-        group_name = hand_level_format(PJ, self.guide.module, self.guide.side, self.guide.name_raw, GROUP)
+        group_name = hand_level_format(PROJECT, self.guide.module, self.guide.side, self.guide.name_raw, GROUP)
         if not cmds.objExists(group_name):
             self.module_group = cmds.group(em=True, name=group_name)
             cmds.xform(self.module_group, t=self.guide.position, ro=self.guide.orientation)
         else:
             cmds.warning(f"you've already made {group_name}. Skipppppz")
 
-        jnt_group_name = hand_level_format(PJ, self.kinematics, self.guide.side, "hand", GROUP, JNT)
+        jnt_group_name = hand_level_format(PROJECT, self.kinematics, self.guide.side, "hand", GROUP, JNT)
         if not cmds.objExists(jnt_group_name):
             self.joint_group = cmds.group(em=True, name=jnt_group_name)
             cmds.xform(self.module_group, t=self.guide.position, ro=self.guide.orientation)
@@ -83,7 +83,9 @@ class Hand_ModuleBuilder:
                         transform_divider = carpal_count_updated / carpal_count_ori
                         multiplier = cmds.createNode(
                             "multDoubleLinear",
-                            name=hand_misc_format(PJ, self.kinematics, guide.side, guide.name_raw, "MISC", local=None),
+                            name=hand_misc_format(
+                                PROJECT, self.kinematics, guide.side, guide.name_raw, "MISC", local=None
+                            ),
                         )
                         cmds.connectAttr(f"{self.hand_control.ctrl}.{attribute}", f"{multiplier}.input1")
                         cmds.connectAttr(f"{multiplier}.output", f"{carpal_control.nodes.get(LINK)}.{attribute}")

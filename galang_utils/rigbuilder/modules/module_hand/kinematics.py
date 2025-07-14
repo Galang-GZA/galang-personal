@@ -20,7 +20,7 @@ class Hand_FKSetup:
 
     def build(self):
         # Step 0: Create FK Module Group
-        group_name = hand_level_format(PJ, self.kinematics, self.guide.side, self.guide.name_raw, GROUP)
+        group_name = hand_level_format(PROJECT, self.kinematics, self.guide.side, self.guide.name_raw, GROUP)
         if not cmds.objExists(group_name):
             self.fk_module_group = cmds.group(em=True, name=group_name)
             cmds.xform(self.fk_module_group, t=self.guide.position, ro=self.guide.orientation)

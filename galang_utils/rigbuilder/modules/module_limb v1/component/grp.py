@@ -13,9 +13,9 @@ class LimbGroupComponent:
         self.map: Dict = {}
 
     def create(self):
-        grp_system = limb_format(PJ, "", self.guide.side, self.guide.name_raw, SYSTEM)
-        grp_stasis = limb_format(PJ, "", self.guide.side, self.guide.name_raw, STASIS)
-        grp_constraints = limb_format(PJ, "", self.guide.side, self.guide.name_raw, CONSTRAINT)
+        grp_system = limb_format(PROJECT, "", self.guide.side, self.guide.name_raw, SYSTEM)
+        grp_stasis = limb_format(PROJECT, "", self.guide.side, self.guide.name_raw, STASIS)
+        grp_constraints = limb_format(PROJECT, "", self.guide.side, self.guide.name_raw, CONSTRAINT)
 
         grp_names = [grp_system, grp_stasis, grp_constraints]
         grp_types = [SYSTEM, STASIS, CONSTRAINT]

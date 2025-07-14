@@ -12,8 +12,8 @@ class BaseBindComponent:
 
     def create(self):
         # Step 1 : Create bind joint chain
-        ik_joint_chain = BaseJointChainSetup(self.guide.name, None, False)
-        ik_joint_chain.build()
+        bind_joint_chain = BaseJointChainSetup(self.guide.name, None, False)
+        bind_joint_chain.build()
 
         # Step 2 : Map bind joints
-        self.map = ik_joint_chain.output
+        self.map = bind_joint_chain.output

@@ -17,7 +17,7 @@ class BaseRigComponent:
 
     def create(self):
         # Step 0: Create NK module goup
-        group_name = base_level_format(PJ, NK, self.guide.side, self.guide.name_raw, GROUP)
+        group_name = base_level_format(PROJECT, NK, self.guide.side, self.guide.name_raw, GROUP)
         if not cmds.objExists(group_name):
             self.group = cmds.group(em=True, name=group_name)
             cmds.xform(self.group, t=self.guide.position, ro=self.guide.orientation)

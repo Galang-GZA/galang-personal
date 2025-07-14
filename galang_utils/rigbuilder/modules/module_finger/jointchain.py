@@ -16,7 +16,7 @@ class Finger_JointChainSetup:
         self.group = None
 
     def build(self):
-        group_name = finger_level_format(PJ, self.kinematics, self.guide.side, self.guide.name_raw, GROUP, JNT)
+        group_name = finger_level_format(PROJECT, self.kinematics, self.guide.side, self.guide.name_raw, GROUP, JNT)
         if not cmds.objExists(group_name):
             self.group = cmds.group(empty=True, name=group_name)
             cmds.xform(self.group, t=self.guide.position, ro=self.guide.orientation)
@@ -32,14 +32,14 @@ class Finger_JointChainSetup:
             #     joint_name = name_format(self.kinematics, g.side, g.parent)
             # else:
             #     joint_name = name_format(self.kinematics, g.side, g.name_raw)
-            joint_name = finger_joint_format(PJ, self.kinematics, g.side, g.name_raw, JNT)
+            joint_name = finger_joint_format(PROJECT, self.kinematics, g.side, g.name_raw, JNT)
             if cmds.objExists(joint_name):
                 cmds.warning(f"{joint_name} is already created. Skipppz")
                 continue
 
             cmds.select(clear=True)
             jnt = cmds.joint(
-                name=finger_joint_format(PJ, self.kinematics, g.side, g.name_raw, JNT),
+                name=finger_joint_format(PROJECT, self.kinematics, g.side, g.name_raw, JNT),
                 position=g.position,
                 orientation=g.orientation,
             )

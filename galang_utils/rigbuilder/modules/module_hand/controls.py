@@ -40,7 +40,7 @@ class Hand_ControlCreator:
             self.ctrl = cmds.curve(
                 d=shape_data["degree"],
                 p=shape_data["control_points"],
-                name=hand_control_format(PJ, self.kinematics, self.guide.side, self.guide.name_raw, CTRL),
+                name=hand_control_format(PROJECT, self.kinematics, self.guide.side, self.guide.name_raw, CTRL),
             )
             cmds.xform(self.ctrl, s=(self.guide.size, self.guide.size, self.guide.size))
             cmds.makeIdentity(self.ctrl, a=True, t=1, r=1, s=1)
@@ -50,7 +50,7 @@ class Hand_ControlCreator:
             # print(f"Defaulting {self.guide.name} to circle")
             self.ctrl = cmds.circle(
                 n=hand_control_format(
-                    PJ,
+                    PROJECT,
                     self.kinematics,
                     self.guide.side,
                     self.guide.name_raw,
@@ -79,7 +79,7 @@ class Hand_ControlCreator:
                 node = cmds.group(
                     em=True,
                     name=hand_level_format(
-                        PJ,
+                        PROJECT,
                         self.kinematics,
                         self.guide.side,
                         self.guide.name_raw,

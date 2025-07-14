@@ -19,7 +19,7 @@ class Finger_FKSetup:
 
     def build(self):
         # Step 0: Create NK Module Group
-        group_name = finger_level_format(PJ, NK, self.guide.side, self.guide.name_raw, GROUP)
+        group_name = finger_level_format(PROJECT, NK, self.guide.side, self.guide.name_raw, GROUP)
         if not cmds.objExists(group_name):
             self.fk_module_group = cmds.group(em=True, name=group_name)
             cmds.xform(self.fk_module_group, t=self.guide.position, ro=self.guide.orientation)
@@ -78,7 +78,7 @@ class Finger_IKSetup:
 
     def build(self):
         # Step 0: Create IK Module Group
-        group_name = finger_level_format(PJ, IK, self.guide.side, self.guide.name_raw, GROUP)
+        group_name = finger_level_format(PROJECT, IK, self.guide.side, self.guide.name_raw, GROUP)
         if not cmds.objExists(group_name):
             self.ik_module_group = cmds.group(em=True, name=group_name)
             cmds.xform(self.ik_module_group, t=self.guide.position, ro=self.guide.orientation)
@@ -150,8 +150,8 @@ class Finger_IKSetup:
             cmds.error("Ay, cant make ik here lha")
 
         # Step 3: Create IK Handle
-        ik_handle_name = finger_level_format(PJ, IK, self.guide.side, finger_name, level=None)
-        ik_solver_name = finger_level_format(PJ, IK, self.guide.side, finger_name, level=None, item="RPsolver")
+        ik_handle_name = finger_level_format(PROJECT, IK, self.guide.side, finger_name, level=None)
+        ik_solver_name = finger_level_format(PROJECT, IK, self.guide.side, finger_name, level=None, item="RPsolver")
         self.ik_handle = cmds.ikHandle(
             n=ik_handle_name,
             sj=start_ik_joint,

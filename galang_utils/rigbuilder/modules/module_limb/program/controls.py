@@ -1,8 +1,9 @@
 from maya import cmds
+from typing import Dict
 from galang_utils.curve.shapes_library import *
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.modules.module_limb.rule.constant_module import *
+from galang_utils.rigbuilder.modules.module_limb.constants.format import LimbFormat
 from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
 
 
@@ -13,7 +14,6 @@ class LimbControlCreator:
         self.kinematics = kinematics
         self.ctrl = None
         self.top = None
-        self.color_id = None
         self.nodes = {}
 
         # Node level flags to be passed on later if needed
@@ -24,7 +24,7 @@ class LimbControlCreator:
         # Returns the transform node for the given node level (e.g., 'offset', 'sdk')
         return self.nodes.get(level)
 
-    def create(self, color_set=MAIN_COLOR, node_level=NODE_MAIN_LEVELS, local=None):
+    def create(self, color_set: Dict = MAIN_COLOR, node_level=NODE_MAIN_LEVELS, local=None):
         # Creates a cpmtrp; curve with the appropriate level hierarchy and mirror transform if needed.
         if self.guide.side_id == None or self.guide.position is None or self.guide.orientation is None:
             cmds.warning(f"Cannot creat control for this guide:{self.guide.name_raw} lha~")
@@ -41,7 +41,7 @@ class LimbControlCreator:
             self.ctrl = cmds.curve(
                 d=shape_data["degree"],
                 p=shape_data["control_points"],
-                name=limb_control_format(PJ, self.kinematics, self.guide.side, self.guide.name_raw, CTRL),
+                name=LimbFormat.level(PROJECT, self.kinematics, self.guide.side, self.guide.name_raw, CTRL),
             )
             cmds.xform(self.ctrl, s=(self.guide.size, self.guide.size, self.guide.size))
             cmds.makeIdentity(self.ctrl, a=True, t=1, r=1, s=1)
@@ -50,8 +50,8 @@ class LimbControlCreator:
             circle_normal = {"X": (1, 0, 0), "Y": (0, 1, 0), "Z": (0, 0, 1)}
             # print(f"Defaulting {self.guide.name} to circle")
             self.ctrl = cmds.circle(
-                n=limb_control_format(
-                    PJ,
+                n=LimbFormat.level(
+                    PROJECT,
                     self.kinematics,
                     self.guide.side,
                     self.guide.name_raw,
@@ -68,9 +68,9 @@ class LimbControlCreator:
 
         # Apply color to the control
         shape = cmds.listRelatives(self.ctrl, shapes=True)[0]
-        self.color_id = color_set.get(self.guide.side_id, COLOR_INDEX["yellow"])
+        color_id = color_set.get(self.guide.side_id, COLOR_INDEX["yellow"])
         cmds.setAttr(f"{shape}.overrideEnabled", 1)
-        cmds.setAttr(f"{shape}.overrideColor", self.color_id)
+        cmds.setAttr(f"{shape}.overrideColor", color_id)
 
         # Building controls level hieararchy based on NODE_LEVELS
         top_node = self.ctrl
@@ -79,13 +79,13 @@ class LimbControlCreator:
             if self.node_flags[level]:
                 node = cmds.group(
                     em=True,
-                    name=limb_level_format(
-                        PJ,
+                    name=LimbFormat.level(
+                        PROJECT,
                         self.kinematics,
                         self.guide.side,
                         self.guide.name_raw,
+                        CTRL,
                         level,
-                        item=CTRL,
                     ),
                 )
                 if self.guide.side_id == MIRROR_SIDE_ID and level == MIRROR:

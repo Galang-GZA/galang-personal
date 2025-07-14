@@ -2,11 +2,11 @@ from maya import cmds
 from galang_utils.curve.shapes_library import *
 from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.modules.module_base.rule.constant_module import *
+from galang_utils.rigbuilder.modules.module_limb.rule.constant_module import *
 from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
 
 
-class BaseControlCreator:
+class LimbControlCreator:
     def __init__(self, guide: GuideInfo, kinematics, module: ModuleInfo):
         self.guide = guide
         self.module = module
@@ -41,7 +41,7 @@ class BaseControlCreator:
             self.ctrl = cmds.curve(
                 d=shape_data["degree"],
                 p=shape_data["control_points"],
-                name=base_control_format(PROJECT, self.kinematics, self.guide.side, self.guide.name_raw, CTRL),
+                name=limb_control_format(PROJECT, self.kinematics, self.guide.side, self.guide.name_raw, CTRL),
             )
             cmds.xform(self.ctrl, s=(self.guide.size, self.guide.size, self.guide.size))
             cmds.makeIdentity(self.ctrl, a=True, t=1, r=1, s=1)
@@ -50,7 +50,7 @@ class BaseControlCreator:
             circle_normal = {"X": (1, 0, 0), "Y": (0, 1, 0), "Z": (0, 0, 1)}
             # print(f"Defaulting {self.guide.name} to circle")
             self.ctrl = cmds.circle(
-                n=base_control_format(
+                n=limb_control_format(
                     PROJECT,
                     self.kinematics,
                     self.guide.side,
@@ -79,7 +79,7 @@ class BaseControlCreator:
             if self.node_flags[level]:
                 node = cmds.group(
                     em=True,
-                    name=base_level_format(
+                    name=limb_level_format(
                         PROJECT,
                         self.kinematics,
                         self.guide.side,
@@ -104,5 +104,3 @@ class BaseControlCreator:
 
         cmds.xform(top_node, ws=True, t=self.guide.position, ro=self.guide.orientation)
         self.top = top_node  # Topmost node for parenting
-
-        # print(f"Created control: {self.ctrl}, Top group: {self.top}, shape {self.guide.module}")
