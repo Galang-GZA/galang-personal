@@ -1,7 +1,7 @@
 from maya import cmds
 from typing import Dict, List
 
-from galang_utils.rigbuilder.constant.project import role as TASK_ROLE
+from galang_utils.rigbuilder.constant.project import role as P_ROLE
 from galang_utils.rigbuilder.modules.limb.constant.format import LimbFormat 
 
 from galang_utils.rigbuilder.core.guide import ModuleInfo
@@ -21,7 +21,7 @@ class LimbIKComponent:
         self.handle: str = None
         self.static_comps: Dict = {}
         self.active_comps: Dict = {}
-        self.format = LimbFormat(self.guide.side, TASK_ROLE.IK)
+        self.format = LimbFormat(self.guide.side, P_ROLE.IK)
         
     def _create_loc_and_dist(self, name: str, dist_name: str, pos, rot, parent_loc: str, parent_dist: str):
         loc = cmds.spaceLocator(n=name)[0]
@@ -35,24 +35,24 @@ class LimbIKComponent:
     def create(self):
         print(f"update {self.module.guide.name} success")
         # Step 0: Create IK module groups
-        ik_grp_types = [TASK_ROLE.TOP, TASK_ROLE.LOCATOR, TASK_ROLE.DISTANCE]
+        ik_grp_types = [P_ROLE.TOP, P_ROLE.LOCATOR, P_ROLE.DISTANCE]
         ik_grp = LimbGroupCreator(ik_grp_types, self.module)
         ik_grp.create()
         self.groups = ik_grp.map
 
-        ik_grp_top = self.groups.get(TASK_ROLE.TOP)
-        ik_grp_loc = self.groups.get(TASK_ROLE.LOCATOR)
-        ik_grp_dist = self.groups.get(TASK_ROLE.DISTANCE)
+        ik_grp_top = self.groups.get(P_ROLE.TOP)
+        ik_grp_loc = self.groups.get(P_ROLE.LOCATOR)
+        ik_grp_dist = self.groups.get(P_ROLE.DISTANCE)
 
         if not all([ik_grp_top, ik_grp_loc, ik_grp_dist]):
             cmds.error("Missing one or more required groups")
 
         # Step 1 : Create IK joint chain
-        ik_jnt = LimbJointChainSetup(self.guide.name, TASK_ROLE.IK)
+        ik_jnt = LimbJointChainSetup(self.guide.name, P_ROLE.IK)
         ik_jnt.create()
         self.joints = ik_jnt.output
-        self.groups[TASK_ROLE.JNT] = ik_jnt.group
-        cmds.parent(self.groups[TASK_ROLE.JNT], ik_grp_top)
+        self.groups[P_ROLE.JNT] = ik_jnt.group
+        cmds.parent(self.groups[P_ROLE.JNT], ik_grp_top)
 
         # Step 2 : Create IK controls
         for index, guide in enumerate(self.guides):
@@ -63,10 +63,10 @@ class LimbIKComponent:
                 guide_obj = guide
                 loc_position = guide.position
 
-            ik_manipulator = LimbControlCreator(guide_obj, TASK_ROLE.IK, self.module)
+            ik_manipulator = LimbControlCreator(guide_obj, P_ROLE.IK, self.module)
             ik_manipulator.create()
-            cmds.addAttr(ik_manipulator.ctrl, ln=TASK_ROLE.FEATURES, at="enum", en="-", keyable=False)
-            cmds.setAttr(f"{ik_manipulator.ctrl}.{TASK_ROLE.FEATURES}", e=True, cb=True)
+            cmds.addAttr(ik_manipulator.ctrl, ln=P_ROLE.FEATURES, at="enum", en="-", keyable=False)
+            cmds.setAttr(f"{ik_manipulator.ctrl}.{P_ROLE.FEATURES}", e=True, cb=True)
             cmds.parent(ik_manipulator.top, ik_grp_top)
 
             # Fill up FK controls
@@ -74,19 +74,19 @@ class LimbIKComponent:
 
             # Step 3 : Create static distance and locator for soft feature and map them
             comp_sets = [
-                (self.static_comps, TASK_ROLE.LOCATOR, TASK_ROLE.DISTANCE, guide.position, guide.orientation, TASK_ROLE.STATIC),
-                (self.active_comps, TASK_ROLE.LOCATOR, TASK_ROLE.DISTANCE, loc_position, guide.orientation, TASK_ROLE.ACTIVE),
+                (self.static_comps, P_ROLE.LOCATOR, P_ROLE.DISTANCE, guide.position, guide.orientation, P_ROLE.STATIC),
+                (self.active_comps, P_ROLE.LOCATOR, P_ROLE.DISTANCE, loc_position, guide.orientation, P_ROLE.ACTIVE),
             ]
 
             # Additional nodes for index 2
             if index == 2:
-                types = [TASK_ROLE.STRETCH, TASK_ROLE.BASE, TASK_ROLE.BLEND]
+                types = [P_ROLE.STRETCH, P_ROLE.BASE, P_ROLE.BLEND]
                 for type in types:
                     comp_sets.append(
                         (
                             self.comp_active_map,
-                            f"{TASK_ROLE.LOCATOR}_{type}",
-                            f"{TASK_ROLE.DISTANCE}_{type}",
+                            f"{P_ROLE.LOCATOR}_{type}",
+                            f"{P_ROLE.DISTANCE}_{type}",
                             loc_position,
                             guide.orientation,
                             "",
@@ -95,10 +95,10 @@ class LimbIKComponent:
 
                 # Add attributes for soft, stretch, pin, slide
                 attrs = {
-                    TASK_ROLE.SOFT: [0.0001, 100, 0.0001],
-                    TASK_ROLE.STRETCH: [0.0, 1.0, 0.0],
-                    TASK_ROLE.PIN: [0.0, 1.0, 0.0],
-                    TASK_ROLE.SLIDE: [-1.0, 1.0, 0.0],
+                    P_ROLE.SOFT: [0.0001, 100, 0.0001],
+                    P_ROLE.STRETCH: [0.0, 1.0, 0.0],
+                    P_ROLE.PIN: [0.0, 1.0, 0.0],
+                    P_ROLE.SLIDE: [-1.0, 1.0, 0.0],
                 }
                 for attr, (min_val, max_val, default_val) in attrs.items():
                     if not cmds.attributeQuery(attr, node=ik_manipulator.ctrl, exists=True):
@@ -126,9 +126,9 @@ class LimbIKComponent:
         active2 = self.active_comps[self.guides[2].name]
 
         # Parent active end locator to a link group
-        active2_loc_grp = cmds.group(n=f"{active2[TASK_ROLE.LOCATOR]}_{TASK_ROLE.LINK}", em=True)
+        active2_loc_grp = cmds.group(n=f"{active2[P_ROLE.LOCATOR]}_{P_ROLE.LINK}", em=True)
         cmds.xform(active2_loc_grp, ws=True, t=self.guides[2].position, ro=self.guides[2].orientation)
-        cmds.parent(active2[TASK_ROLE.LOCATOR], active2_loc_grp)
+        cmds.parent(active2[P_ROLE.LOCATOR], active2_loc_grp)
 
         # Step 5 : Create IK handle
         ik_handle_name = self.format.name(guide.name_raw)

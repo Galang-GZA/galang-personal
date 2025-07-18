@@ -1,6 +1,6 @@
 from maya import cmds
 from typing import Dict, List
-from galang_utils.rigbuilder.constant.project import role as TASK_ROLE
+from galang_utils.rigbuilder.constant.project import role as P_ROLE
 from galang_utils.rigbuilder.core.guide import ModuleInfo
 from galang_utils.rigbuilder.modules.base.program.group import BaseGroupCreator
 from galang_utils.rigbuilder.modules.base.program.control import BaseControlCreator
@@ -18,14 +18,14 @@ class BaseFKComponent:
 
     def create(self):
         # Step 0: Create FK module goup
-        fk_grp_types = [TASK_ROLE.MASTER]
+        fk_grp_types = [P_ROLE.MASTER]
         fk_grp = BaseGroupCreator(fk_grp_types, self.module)
         fk_grp.create()
         self.groups = fk_grp.map
-        fk_grp_top = self.groups.get(TASK_ROLE.MASTER)
+        fk_grp_top = self.groups.get(P_ROLE.MASTER)
 
         # step 1: Create FK joint chain
-        fk_chain = BaseJointChainSetup(self.guide.name, TASK_ROLE.FK, create_group=False)
+        fk_chain = BaseJointChainSetup(self.guide.name, P_ROLE.FK, create_group=False)
         fk_chain.create()
         fk_chain.joints = self.joints
 
@@ -33,7 +33,7 @@ class BaseFKComponent:
         parent_entry = None
         for guide_jnt, fk_jnt in zip (self.guides, self.joints):
             cmds.select(clear=True)
-            fk_manipulator = BaseControlCreator(guide_jnt, TASK_ROLE.FK, self.module)
+            fk_manipulator = BaseControlCreator(guide_jnt, P_ROLE.FK, self.module)
             fk_manipulator.create()
             self.controls.append(fk_manipulator)
 

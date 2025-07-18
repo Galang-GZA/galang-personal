@@ -2,8 +2,8 @@ from maya import cmds
 from typing import Dict
 from collections import defaultdict
 from galang_utils.rigbuilder.constant.constant_project import *
-from galang_utils.rigbuilder.constant.project import role as TASK_ROLE
-from galang_utils.rigbuilder.constant.project import setup as TASK_SETUP
+from galang_utils.rigbuilder.constant.project import role as P_ROLE
+from galang_utils.rigbuilder.constant.project import setup as P_SETUP
 
 from galang_utils.rigbuilder.modules.limb.constant.format import LimbFormat 
 from galang_utils.rigbuilder.modules.limb.program.node import NodeCreator 
@@ -23,8 +23,8 @@ class LimbIKOperator:
         self.static_comps = component.ik.static_comps 
         self.active_comps = component.ik.active_comps
 
-        self.format = LimbFormat(self.side, TASK_ROLE.IK)
-        self.node = NodeCreator(self.side, TASK_ROLE.IK)
+        self.format = LimbFormat(self.side, P_ROLE.IK)
+        self.node = NodeCreator(self.side, P_ROLE.IK)
 
     def _connect_distance(self, loc_start: str, loc_end: str, dist: str):
         cmds.connectAttr(f"{loc_start}.worldPosition[0]", f"{dist}.startPoint", force=True)
@@ -45,10 +45,10 @@ class LimbIKOperator:
 
         # Step 0 : Connect controls to joints
         attrs = {
-            TASK_ROLE.SOFT: [0.0001, 100, 0.0001, "%s.%s" % (ik_control, TASK_ROLE.SOFT)],
-            TASK_ROLE.STRETCH: [0.0, 1.0, 0.0, "%s.%s" % (ik_control, TASK_ROLE.STRETCH)],
-            TASK_ROLE.TASK_ROLE.PIN: [0.0, 1.0, 0.0, "%s.%s" % (ik_control, TASK_ROLE.PIN)],
-            TASK_ROLE.SLIDE: [-1.0, 1.0, 0.0, "%s.%s" % (ik_control, TASK_ROLE.SLIDE)],
+            P_ROLE.SOFT: [0.0001, 100, 0.0001, "%s.%s" % (ik_control, P_ROLE.SOFT)],
+            P_ROLE.STRETCH: [0.0, 1.0, 0.0, "%s.%s" % (ik_control, P_ROLE.STRETCH)],
+            P_ROLE.TASK_ROLE.PIN: [0.0, 1.0, 0.0, "%s.%s" % (ik_control, P_ROLE.PIN)],
+            P_ROLE.SLIDE: [-1.0, 1.0, 0.0, "%s.%s" % (ik_control, P_ROLE.SLIDE)],
         }
         for i in range(len(self.guides)):
             if i == 0:
@@ -75,31 +75,31 @@ class LimbIKOperator:
 
         # Step 1 : Set up math nodes for IK features
         # Create normalization nodes
-        if self.side_id == TASK_SETUP.MIRROR_SIDE_ID:
-            limb1_multDiv_normal_1 = self.node.setup(limb1, TASK_ROLE.MULT_DIV, TASK_ROLE.NORMAL, attr1='input2', value1=-1.0, i=1)
-            limb2_multDiv_normal_1 = self.node.setup(limb2, TASK_ROLE.MULT_DIV, TASK_ROLE.NORMAL, attr1='input2', value1=-1.0, i=1)
+        if self.side_id == P_SETUP.MIRROR_SIDE_ID:
+            limb1_multDiv_normal_1 = self.node.setup(limb1, P_ROLE.MULT_DIV, P_ROLE.NORMAL, attr1='input2', value1=-1.0, i=1)
+            limb2_multDiv_normal_1 = self.node.setup(limb2, P_ROLE.MULT_DIV, P_ROLE.NORMAL, attr1='input2', value1=-1.0, i=1)
         else:
-            limb1_multDiv_normal_1 = self.node.setup(limb1, TASK_ROLE.MULT_DIV, TASK_ROLE.NORMAL, attr1='input2', value1=1.0, i=1)
-            limb2_multDiv_normal_1 = self.node.setup(limb2, TASK_ROLE.MULT_DIV, TASK_ROLE.NORMAL, attr1='input2', value1=1.0, i=1)
+            limb1_multDiv_normal_1 = self.node.setup(limb1, P_ROLE.MULT_DIV, P_ROLE.NORMAL, attr1='input2', value1=1.0, i=1)
+            limb2_multDiv_normal_1 = self.node.setup(limb2, P_ROLE.MULT_DIV, P_ROLE.NORMAL, attr1='input2', value1=1.0, i=1)
 
         # Create chain len nodes
-        limb3_plusMinus_LenStatic_1 = self.node.setup(limb3, TASK_ROLE.PLUS_MIN, TASK_ROLE.STATIC, attr1='operation', value1=1, i=1)
-        limb3_plusMinus_LenActive_1 = self.node.setup(limb3, TASK_ROLE.PLUS_MIN, TASK_ROLE.ACTIVE, attr1='operation', value1=1, i=1)
+        limb3_plusMinus_LenStatic_1 = self.node.setup(limb3, P_ROLE.PLUS_MIN, P_ROLE.STATIC, attr1='operation', value1=1, i=1)
+        limb3_plusMinus_LenActive_1 = self.node.setup(limb3, P_ROLE.PLUS_MIN, P_ROLE.ACTIVE, attr1='operation', value1=1, i=1)
 
         # Create soft math nodes
-        limb3_plusMinus_soft_1 = self.node.setup(limb3, TASK_ROLE.PLUS_MIN, TASK_ROLE.SOFT, attr1='operation', value1=2, i=1)
-        limb3_plusMinus_soft_2 = self.node.setup(limb3, TASK_ROLE.PLUS_MIN, TASK_ROLE.SOFT, attr1='operation', value1=2, i=2)
-        limb3_plusMinus_soft_3 = self.node.setup(limb3, TASK_ROLE.PLUS_MIN, TASK_ROLE.SOFT, attr1='operation', value1=2, i=3)
-        limb3_plusMinus_soft_4 = self.node.setup(limb3, TASK_ROLE.PLUS_MIN, TASK_ROLE.SOFT, attr1='operation', value1=2, i=4)
+        limb3_plusMinus_soft_1 = self.node.setup(limb3, P_ROLE.PLUS_MIN, P_ROLE.SOFT, attr1='operation', value1=2, i=1)
+        limb3_plusMinus_soft_2 = self.node.setup(limb3, P_ROLE.PLUS_MIN, P_ROLE.SOFT, attr1='operation', value1=2, i=2)
+        limb3_plusMinus_soft_3 = self.node.setup(limb3, P_ROLE.PLUS_MIN, P_ROLE.SOFT, attr1='operation', value1=2, i=3)
+        limb3_plusMinus_soft_4 = self.node.setup(limb3, P_ROLE.PLUS_MIN, P_ROLE.SOFT, attr1='operation', value1=2, i=4)
 
-        limb3_multdiv_soft_1 = self.node.setup(limb3, TASK_ROLE.MULT_DIV, TASK_ROLE.SOFT, attr1='operation', value1=2, i=1)
-        limb3_multdiv_soft_2 = self.node.setup(limb3, TASK_ROLE.MULT_DIV, TASK_ROLE.SOFT, attr1='input2X', value1=-1.0, i=2)
-        limb3_multdiv_soft_3 = self.node.setup(limb3, TASK_ROLE.MULT_DIV, TASK_ROLE.SOFT, attr1='operation', value1=3, attr2=".input1X", value2=2.718, i=3)
-        limb3_multdiv_soft_4 = self.node.setup(limb3, TASK_ROLE.MULT_DIV, TASK_ROLE.SOFT, i=4)
+        limb3_multdiv_soft_1 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.SOFT, attr1='operation', value1=2, i=1)
+        limb3_multdiv_soft_2 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.SOFT, attr1='input2X', value1=-1.0, i=2)
+        limb3_multdiv_soft_3 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.SOFT, attr1='operation', value1=3, attr2=".input1X", value2=2.718, i=3)
+        limb3_multdiv_soft_4 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.SOFT, i=4)
 
-        limb3_multdiv_softScaler_1 = self.node.setup(limb3, TASK_ROLE.MULT_DIV, TASK_ROLE.SOFT, TASK_ROLE.SCALER, attr1='operation', value1=2, i=1)
-        limb3_multdiv_attrScaler_1 = self.node.setup(limb3, TASK_ROLE.MULT_DIV, TASK_ROLE.ATTR, TASK_ROLE.SCALER, attr1='operation', value1=2, i=1)
-        limb3_cond_soft_1 = self.node.setup(limb3, TASK_ROLE.MULT_DIV, TASK_ROLE.SOFT, attr1='operation', value1=2, i=1)
+        limb3_multdiv_softScaler_1 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.SOFT, P_ROLE.SCALER, attr1='operation', value1=2, i=1)
+        limb3_multdiv_attrScaler_1 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.ATTR, P_ROLE.SCALER, attr1='operation', value1=2, i=1)
+        limb3_cond_soft_1 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.SOFT, attr1='operation', value1=2, i=1)
 
         # Create stretch math nodes
 

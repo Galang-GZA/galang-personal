@@ -2,8 +2,8 @@ from maya import cmds
 from typing import Dict, Union
 
 from galang_utils.rigbuilder.constant.general import role as GEN_ROLE
-from galang_utils.rigbuilder.constant.project import role as TASK_ROLE
-from galang_utils.rigbuilder.constant.project import setup as TASK_SETUP
+from galang_utils.rigbuilder.constant.project import role as P_ROLE
+from galang_utils.rigbuilder.constant.project import setup as P_SETUP
 
 from galang_utils.rigbuilder.modules.limb.constant.format import LimbFormat 
 from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent
@@ -22,12 +22,12 @@ class LimbSubOperator:
 
     def run(self):
         # Connect manipulator to ik handle
-        if cmds.ls(f"*{TASK_ROLE.RESULT}*"):
+        if cmds.ls(f"*{P_ROLE.RESULT}*"):
             self.driver = self.component.result
 
-        LEN_INDEX = TASK_SETUP.LEN_DETAILS - 1
+        LEN_INDEX = P_SETUP.LEN_DETAILS - 1
         for i in range(len(self.guides)-1):
-            ik_root_jnt = self.sub.joints[self.guides[i]][TASK_ROLE.IK][0]
+            ik_root_jnt = self.sub.joints[self.guides[i]][P_ROLE.IK][0]
             ik_handle = self.sub.handles[self.guides[i]]
             ik_root_driver = self.driver.joints[i]
             ik_handle_driver = self.driver.joints[i+1]
@@ -39,10 +39,10 @@ class LimbSubOperator:
             roll_root = self.sub.joints[self.guides[i]][0]
             roll_end = self.sub.joints[self.guides[i]][LEN_INDEX]
 
-            for n in range(TASK_SETUP.LEN_DETAILS):
+            for n in range(P_SETUP.LEN_DETAILS):
                 roll_jnt = self.sub.joints[self.guides[i]][n]
-                roll_manipulator = self.sub.controls[self.guides[i]][TASK_ROLE.ROLL][n]
-                detail_manipulator = self.sub.controls[self.guides[i]][TASK_ROLE.DETAIL][n]
+                roll_manipulator = self.sub.controls[self.guides[i]][P_ROLE.ROLL][n]
+                detail_manipulator = self.sub.controls[self.guides[i]][P_ROLE.DETAIL][n]
                 ratio = n / LEN_INDEX if LEN_INDEX != 0 else 0
 
                 # Connect end roll joint to ik handle driver
@@ -51,7 +51,7 @@ class LimbSubOperator:
 
                 # Connect translate
                 if 0 < n < LEN_INDEX:
-                    pos_node_name = self.format.name(self.guides[i].name_raw, TASK_ROLE.MULT_DIV, TASK_ROLE.ROLL, TASK_ROLE.POSITION, index=n )
+                    pos_node_name = self.format.name(self.guides[i].name_raw, P_ROLE.MULT_DIV, P_ROLE.ROLL, P_ROLE.POSITION, index=n )
                     pos_node = cmds.createNode("multDoubleLinear", n=pos_node_name)
                     cmds.setAttr(f"{pos_node}.input1", ratio)
                     cmds.connectAttr(f"{roll_end}.translate{self.axis}", f"{pos_node}.input2")
@@ -59,7 +59,7 @@ class LimbSubOperator:
 
                 # Connect Rotation
                 if n < LEN_INDEX:
-                    orient_node_name = self.format.name(self.guides[i].name_raw, TASK_ROLE.MULT_DIV, TASK_ROLE.ROLL, TASK_ROLE.ORIENT, index=n )
+                    orient_node_name = self.format.name(self.guides[i].name_raw, P_ROLE.MULT_DIV, P_ROLE.ROLL, P_ROLE.ORIENT, index=n )
                     orient_node = cmds.createNode("multDoubleLinear", n=orient_node_name)
                     cmds.setAttr(f"{orient_node}.input1", ratio - 1)
                     cmds.connectAttr(f"{ik_root_jnt}.rotate{self.axis}", f"{orient_node}.input2")
