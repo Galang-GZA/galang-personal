@@ -1,8 +1,8 @@
 from maya import cmds
 from typing import Dict, Union
-from galang_utils.rigbuilder.constants.constant_general import *
-from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.modules.module_limb.rule.constant_module import *
+from galang_utils.rigbuilder.constant.constant_general import *
+from galang_utils.rigbuilder.constant.constant_project import *
+from galang_utils.rigbuilder.modules.limb.rule.constant_module import *
 from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
 
 

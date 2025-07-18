@@ -1,7 +1,7 @@
 from maya import cmds
 from typing import List, Dict
-from galang_utils.rigbuilder.constants.constant_general import *
-from galang_utils.rigbuilder.constants.constant_project import *
+from galang_utils.rigbuilder.constant.constant_general import *
+from galang_utils.rigbuilder.constant.constant_project import *
 
 
 class GuideInfo:
@@ -84,6 +84,8 @@ class ModuleInfo:
         self.guide = GuideInfo(guide)
         self.type: str = None
         self.axis: str = None
+        self.side: str = None
+        self.side_id: int = None
         self.guides: List[GuideInfo] = []
         self.guides_end: List[GuideInfo] = []
         self.guides_pv: List[GuideInfo] = []

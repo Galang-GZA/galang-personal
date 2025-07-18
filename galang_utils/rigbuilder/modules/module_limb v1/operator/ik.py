@@ -1,9 +1,9 @@
 from maya import cmds
 from typing import Dict
 from collections import defaultdict
-from galang_utils.rigbuilder.constants.constant_general import *
-from galang_utils.rigbuilder.constants.constant_project import *
-from galang_utils.rigbuilder.constants import constant_project as const_proj
+from galang_utils.rigbuilder.constant.constant_general import *
+from galang_utils.rigbuilder.constant.constant_project import *
+from galang_utils.rigbuilder.constant import constant_project as const_proj
 from galang_utils.rigbuilder.modules.module_limb.rule.constant_module import *
 from galang_utils.rigbuilder.modules.module_limb.component.zcomponent import *
 

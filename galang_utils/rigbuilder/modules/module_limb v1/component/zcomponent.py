@@ -1,13 +1,13 @@
 from typing import Dict
-from galang_utils.rigbuilder.constants.constant_project import *
+from galang_utils.rigbuilder.constant.constant_project import *
 from galang_utils.rigbuilder.core.guide import ModuleInfo
-from galang_utils.rigbuilder.modules.module_base.component.zcomponent import BaseComponent
-from galang_utils.rigbuilder.modules.module_limb.component.fk import LimbFKComponent
-from galang_utils.rigbuilder.modules.module_limb.component.ik import LimbIKComponent
-from galang_utils.rigbuilder.modules.module_limb.component.result import LimbResultComponent
-from galang_utils.rigbuilder.modules.module_limb.component.roll import LimbRollComponent
-from galang_utils.rigbuilder.modules.module_limb.component.settings import LimbSettingComponent
-from galang_utils.rigbuilder.modules.module_limb.component.grp import LimbGroupComponent
+from galang_utils.rigbuilder.modules.base.component.zcomponent import BaseComponent
+from galang_utils.rigbuilder.modules.limb.component.fk import LimbFKComponent
+from galang_utils.rigbuilder.modules.limb.component.ik import LimbIKComponent
+from galang_utils.rigbuilder.modules.limb.component.result import LimbResultComponent
+from rigbuilder.modules.limb.component.sub import LimbRollComponent
+from galang_utils.rigbuilder.modules.limb.component.settings import LimbSettingComponent
+from rigbuilder.modules.limb.component.container import LimbGroupComponent
 
 
 class LimbComponent(BaseComponent):

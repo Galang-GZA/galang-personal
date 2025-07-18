@@ -1,7 +1,7 @@
 from maya import cmds
 from galang_utils.curve.shapes_library import *
-from galang_utils.rigbuilder.constants.constant_general import *
-from galang_utils.rigbuilder.constants.constant_project import *
+from galang_utils.rigbuilder.constant.constant_general import *
+from galang_utils.rigbuilder.constant.constant_project import *
 from galang_utils.rigbuilder.modules.module_limb.rule.constant_module import *
 from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
 

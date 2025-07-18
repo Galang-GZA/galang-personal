@@ -1,0 +1,36 @@
+from typing import List
+
+from galang_utils.rigbuilder.core.guide import ModuleInfo
+
+from galang_utils.rigbuilder.modules.base.component.zcomponent import BaseComponent
+from galang_utils.rigbuilder.modules.limb.component.fk import LimbFKComponent
+from galang_utils.rigbuilder.modules.limb.component.ik import LimbIKComponent
+from galang_utils.rigbuilder.modules.limb.component.result import LimbResultComponent
+from galang_utils.rigbuilder.modules.limb.component.sub import LimbRollComponent
+from galang_utils.rigbuilder.modules.limb.component.settings import LimbSettingComponent
+from galang_utils.rigbuilder.modules.limb.component.container import LimbContainerComponent
+
+
+class LimbComponent(BaseComponent):
+    def __init__(self, module: ModuleInfo):
+        super().__init__(module)
+        self.module = module
+
+        self.fk = LimbFKComponent(module)
+        self.ik = LimbIKComponent(module)
+        self.result = LimbResultComponent(module)
+        self.setting = LimbSettingComponent(module)
+        self.sub = LimbRollComponent(module)
+        self.container = LimbContainerComponent(module)
+        self.bind_connection: List = []
+
+    def create_rig(self):
+        self.container.create()
+        self.fk.create()
+        self.ik.create()
+        self.result.create()
+        self.sub.create()
+        self.setting.create()
+
+        # Add result joints to bind connection
+        self.bind_connection = self.result.joints
