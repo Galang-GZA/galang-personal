@@ -6,9 +6,9 @@ from galang_utils.rigbuilder.modules.base.component.zcomponent import BaseCompon
 from galang_utils.rigbuilder.modules.limb.component.fk import LimbFKComponent
 from galang_utils.rigbuilder.modules.limb.component.ik import LimbIKComponent
 from galang_utils.rigbuilder.modules.limb.component.result import LimbResultComponent
-from galang_utils.rigbuilder.modules.limb.component.sub import LimbRollComponent
+from rigbuilder.modules.limb.component.bendy import LimbRollComponent
 from galang_utils.rigbuilder.modules.limb.component.settings import LimbSettingComponent
-from galang_utils.rigbuilder.modules.limb.component.container import LimbContainerComponent
+from rigbuilder.modules.limb.component.group import LimbContainerComponent
 
 
 class LimbComponent(BaseComponent):
@@ -22,7 +22,9 @@ class LimbComponent(BaseComponent):
         self.setting = LimbSettingComponent(module)
         self.sub = LimbRollComponent(module)
         self.container = LimbContainerComponent(module)
-        self.bind_connection: List = []
+
+    def bind_twist(self):
+        pass
 
     def create_rig(self):
         self.container.create()

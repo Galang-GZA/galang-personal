@@ -1,20 +1,25 @@
 """THIS CONSTANT IS TO BE CHANGED BASED ON THE MODULE NEEDS"""
-from galang_utils.rigbuilder.constant.project import role as P_ROLE
+
+from typing import List
+from galang_utils.rigbuilder.constant.project import role as role
 
 
 class LimbFormat:
-    def __init__(self, side, kinematcs=None):
-        self.kinematics = kinematcs
+    def __init__(self, side, kinematics):
+        self.kinematics = kinematics
         self.side = side
 
     @staticmethod
     def join_parts(*parts):
         return "_".join([p for p in parts if p]).strip("_")
-    
-    def name(self, name, type = None, properties1=None, properties2=None, level=None, local=None, index=None):
-        return self.join_parts(P_ROLE.PROJECT, self.kinematics, self.side, name, type, properties1, properties2, level, index)
-    
+
+    def name(self, name: str, types: List = None, i: int = None):
+        index_part = f"{i+1:02d}" if i is not None else None
+        type_parts = types if types else []
+        return self.join_parts(role.PROJECT, self.kinematics, self.side, name, *type_parts, index_part)
+
     @staticmethod
-    def name_static(name, side, kinematics=None, type=None, properties1=None, properties2=None, level=None, local=None, index=None):
-        return LimbFormat.join_parts(P_ROLE.PROJECT, kinematics, side, name, type, properties1, properties2, level, index)
-    
+    def name_static(side: str, kinematics: str, name: str, types: List = None, i: int = None):
+        index_part = f"{i+1:02d}" if i is not None else None
+        type_parts = types if types else []
+        return LimbFormat.join_parts(role.PROJECT, kinematics, side, name, *type_parts, index_part)

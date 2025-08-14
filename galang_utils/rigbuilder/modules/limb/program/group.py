@@ -1,20 +1,31 @@
 from maya import cmds
 from typing import Dict, List
+from galang_utils.rigbuilder.constant.project import role as role
 from galang_utils.rigbuilder.modules.limb.constant.format import LimbFormat
-from galang_utils.rigbuilder.core.guide import ModuleInfo
+from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
+from galang_utils.rigbuilder.modules.limb.program.base import LimbBaseNode
 
 
-class LimbGroupCreator:
-    def __init__(self, grp_types, module: ModuleInfo):
-        self.module = module
-        self.guide = module.guide
-        self.grp_types: List = grp_types
-        self.map: Dict = []
-        self.format = LimbFormat(None, self.guide.side)
+class LimbGroupNode(LimbBaseNode):
+    """
+    LimbGroupNode behaves like a string (the Maya node name) but also carries extra
+    metadata (position, orientation, etc.) and has helper methods like create().
+    """
+
+    def __init__(
+        self,
+        guide: GuideInfo,
+        module: ModuleInfo,
+        kinematics: str,
+        types: List = [],
+        position: List[float] = None,
+        orientation: List[float] = None,
+    ):
+        super().__init__(guide, module, kinematics, types, position, orientation)
 
     def create(self):
-        for type in self.grp_types:
-            grp_name = self.format.name(self.guide.name_raw, type)
-            if not cmds.objExists(grp_name):
-                self.map[type] = cmds.group(em=True, name=grp_name)
-                cmds.xform(self.map[type], t=self.guide.position, ro=self.guide.orientation)
+        """
+        Creates an empty Maya group at the given position & orientation.
+        """
+        grp_node = cmds.group(em=True, name=self)
+        cmds.xform(grp_node, t=self.position, ro=self.orientation)

@@ -1,27 +1,31 @@
-from galang_utils.rigbuilder.constant.project import role as Role
-
+from typing import Dict
+from galang_utils.rigbuilder.constant.project import role as role
+from galang_utils.rigbuilder.constant.general import role as general_role
 
 # Side Mapping
-SIDE_MAP = {0: Role.CENTER, 1: Role.LEFT, 2: Role.RIGHT}
+SIDE_MAP = {0: role.CENTER, 1: role.LEFT, 2: role.RIGHT}
 
 # Mirror Side
 MIRROR_SIDE_ID = 2
 MIRROR_AXIS = "X"
+MIRROR_SCALE = True
 
 # Joint Mirror
 MIRROR_PLANE = "YZ"
 
 # Node Levels
-NODE_MAIN_LEVELS = [Role.OFFSET, Role.SDK, Role.LINK, Role.MIRROR, Role.GROUP]
-NODE_SUB_LEVELS = [Role.LINK, Role.MIRROR, Role.GROUP]
-NODE_DEFAULT_FLAGS = {Role.OFFSET: True, Role.SDK: True, Role.LINK: True, Role.MIRROR: True, Role.GROUP: True}
+NODE_MAIN_LEVELS = [role.OFFSET, role.SDK, role.LINK, role.CONSTRAINT, role.MIRROR, role.TOP]
+NODE_SUB_LEVELS = [role.OFFSET, role.SDK, role.LINK]
 
 # Color Library
 COLOR_INDEX = {"red": 13, "blue": 6, "yellow": 17, "green": 14, "cyan": 18, "magenta": 9, "black": 1, "white": 16}
 
-MAIN_COLOR = {1: COLOR_INDEX["blue"], 2: COLOR_INDEX["red"], 0: COLOR_INDEX["yellow"]}
-SUB_COLOR = {1: COLOR_INDEX["cyan"], 2: COLOR_INDEX["magenta"], 0: COLOR_INDEX["green"]}
+MAIN_COLOR: Dict = {1: COLOR_INDEX["blue"], 2: COLOR_INDEX["red"], 0: COLOR_INDEX["yellow"]}
+SUB_COLOR: Dict = {1: COLOR_INDEX["cyan"], 2: COLOR_INDEX["magenta"], 0: COLOR_INDEX["green"]}
+
+# Control type mapping
+MAIN = {general_role.LEVEL: MAIN_COLOR, general_role.COLOR: MAIN_COLOR}
+SUB = {general_role.LEVEL: SUB_COLOR, general_role.COLOR: SUB_COLOR}
 
 # Ammounts
 LEN_DETAILS = 3
-

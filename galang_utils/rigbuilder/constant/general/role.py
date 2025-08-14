@@ -22,3 +22,7 @@ PROPERTIES = "properties"
 # Class
 COMPONENT = "component"
 OPERATOR = "operator"
+
+# Dictionary keys
+LEVEL = "level"
+COLOR = "color"

@@ -2,7 +2,7 @@
 
 # Project
 PROJECT = None  # Project Code
-JNT = "jnt"  # Joint
+JOINT = "jnt"  # Joint
 NUM = "001"  # Numbers
 IK = "ik"  # Inverse Kinematics
 FK = "fk"  # Forward Kinematics
@@ -10,13 +10,16 @@ NK = None  # None Kinematics
 SUB = None
 RESULT = "result"  # Result of IK & FK
 BIND = "bind"  # Bind Joint
-CTRL = "ctrl"  # Controller
+CONTROL = "ctrl"  # Controller
 MISC = "misc"  # Miscellaneous
 PV = "pv"  # Pole Vector
-SCALE = 'scale'
-DETAIL = 'detail'
-ROLL = 'roll'
+SCALE = "scale"
+DETAIL = "detail"
+ROLL = "roll"
 SETTINGS = "setings"
+WORLD = "world"
+ROOT = "root"
+END = "end"
 
 # Sides
 LEFT = "lt"
@@ -24,22 +27,25 @@ RIGHT = "rt"
 CENTER = None
 
 # Node Levels
-SYSTEM = "system" # Containts all movable objects
+RIG = "rig"
+SYSTEM = "system"  # Containts all movable objects
 DNT = "DNT"  # Do Not Touch Containts all non movable objects
-STASIS = "Stasis" # Containts all non movable objects per module
-TOP = 'grp'
-MASTER = 'grp'
-MAIN = "main" # Main Container
-GROUP = "grp" # Usually the top node
+STASIS = "Stasis"  # Containts all non movable objects per module
+TOP = "top"
+MASTER = "grp"
+MAIN = "main"  # Main Container
+GROUP = "grp"  # Usually the top node
 OFFSET = "offset"
 SDK = "sdk"
 LINK = "link"
 MIRROR = "mirror"
 LOCAL = "local"
+BUFFER = "buffer"
 
 # Misc DAG
 LOCATOR = "loc"
 DISTANCE = "dis"
+SPACE = "space"
 
 # Nodes
 PAIRBLEND = "pairBlend"
@@ -49,7 +55,7 @@ PLUS_MIN = "plusplusMinusAverageMinus"
 MULT_DIV = "multiplyDivide"
 CONDITION = "condition"
 BLEND = "blendTwoAttr"
-CONSTRAINT = "constraint"
+CONSTRAINT = "cons"
 
 # Node Function
 NORMAL = "normalizer"
@@ -68,8 +74,8 @@ LIMITER = "limiter"
 # Node Properties
 STATIC = "static"
 ACTIVE = "active"
-POSITION = 'position'
-ORIENT = 'orient'
+POSITION = "position"
+ORIENT = "orient"
 
 # Attribute names
 FEATURES = "Features"

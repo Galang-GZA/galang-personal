@@ -78,7 +78,7 @@ from galang_utils.rigbuilder.builder import ModuleAssembly
 from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
 from galang_utils.rigbuilder.modules.limb.rule.constant_module import *
 from rigbuilder.modules.limb.program.control import LimbControlCreator
-from galang_utils.rigbuilder.modules.limb.program.jointchain import LimbJointChainSetup
+from galang_utils.rigbuilder.modules.limb.program.jointchain import LimbJointSet
 
 from galang_utils.rigbuilder.modules.base.component.bind import BaseBindComponent
 from rigbuilder.modules.base.component.fk import BaseRigComponent

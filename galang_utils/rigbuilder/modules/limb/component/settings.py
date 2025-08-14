@@ -1,6 +1,6 @@
 from maya import cmds
 
-from galang_utils.rigbuilder.constant.project import role as P_ROLE
+from galang_utils.rigbuilder.constant.project import role as role
 
 from galang_utils.rigbuilder.core.guide import ModuleInfo
 from galang_utils.rigbuilder.modules.limb.program.control import LimbControlCreator
@@ -13,7 +13,7 @@ class LimbSettingComponent:
 
     def create(self):
         limb_setting = self.module.guides_end[0]
-        self.setting = LimbControlCreator(limb_setting, P_ROLE.SETTINGS, self.module)
+        self.setting = LimbControlCreator(limb_setting, role.SETTINGS, self.module)
         self.setting.create()
 
         #   Lock and hide oiriginal attributes
@@ -22,5 +22,5 @@ class LimbSettingComponent:
             cmds.setAttr(f"{self.setting.ctrl}.{attr}", lock=True, keyable=False, channelBox=False)
 
         #   Create kinematic switch attribute
-        if not cmds.attributeQuery(P_ROLE.IKFKSWITCH, node=self.setting.ctrl, exists=True):
-            cmds.addAttr(self.setting.ctrl, ln=P_ROLE.IKFKSWITCH, at="double", min=0, max=1, dv=0, keyable=True)
+        if not cmds.attributeQuery(role.IKFKSWITCH, node=self.setting.ctrl, exists=True):
+            cmds.addAttr(self.setting.ctrl, ln=role.IKFKSWITCH, at="double", min=0, max=1, dv=0, keyable=True)

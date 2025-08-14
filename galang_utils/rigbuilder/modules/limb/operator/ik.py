@@ -1,12 +1,9 @@
 from maya import cmds
-from typing import Dict
-from collections import defaultdict
 from galang_utils.rigbuilder.constant.constant_project import *
-from galang_utils.rigbuilder.constant.project import role as P_ROLE
-from galang_utils.rigbuilder.constant.project import setup as P_SETUP
+from galang_utils.rigbuilder.constant.project import role as role
+from galang_utils.rigbuilder.constant.project import setup as setup
 
-from galang_utils.rigbuilder.modules.limb.constant.format import LimbFormat 
-from galang_utils.rigbuilder.modules.limb.program.node import NodeCreator 
+from galang_utils.rigbuilder.modules.limb.program.node import NodeCreator
 from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent
 
 
@@ -14,17 +11,15 @@ class LimbIKOperator:
     def __init__(self, component: LimbComponent):
         self.guides = component.ik.module.guides
         self.side = component.ik.module.side
+        self.axis = component.ik.module.axis
         self.side_id = component.ik.module.side_id
 
         self.joints = component.ik.joints
         self.controls = component.ik.controls
         self.handle = component.ik.handle
-        
-        self.static_comps = component.ik.static_comps 
-        self.active_comps = component.ik.active_comps
 
-        self.format = LimbFormat(self.side, P_ROLE.IK)
-        self.node = NodeCreator(self.side, P_ROLE.IK)
+        self.static_comps = component.ik.static_comps
+        self.active_comps = component.ik.active_comps
 
     def _connect_distance(self, loc_start: str, loc_end: str, dist: str):
         cmds.connectAttr(f"{loc_start}.worldPosition[0]", f"{dist}.startPoint", force=True)
@@ -40,15 +35,14 @@ class LimbIKOperator:
         limb3 = self.guides[2].name_raw
 
         translate_axis_map = {"X": ".translateX", "Y": ".translateY", "Z": ".translateZ"}
-        axis = translate_axis_map.get(self.module.axis)
-
+        axis = translate_axis_map.get(self.axis)
 
         # Step 0 : Connect controls to joints
         attrs = {
-            P_ROLE.SOFT: [0.0001, 100, 0.0001, "%s.%s" % (ik_control, P_ROLE.SOFT)],
-            P_ROLE.STRETCH: [0.0, 1.0, 0.0, "%s.%s" % (ik_control, P_ROLE.STRETCH)],
-            P_ROLE.TASK_ROLE.PIN: [0.0, 1.0, 0.0, "%s.%s" % (ik_control, P_ROLE.PIN)],
-            P_ROLE.SLIDE: [-1.0, 1.0, 0.0, "%s.%s" % (ik_control, P_ROLE.SLIDE)],
+            role.SOFT: [0.0001, 100, 0.0001, "%s.%s" % (ik_control, role.SOFT)],
+            role.STRETCH: [0.0, 1.0, 0.0, "%s.%s" % (ik_control, role.STRETCH)],
+            role.PIN: [0.0, 1.0, 0.0, "%s.%s" % (ik_control, role.PIN)],
+            role.SLIDE: [-1.0, 1.0, 0.0, "%s.%s" % (ik_control, role.SLIDE)],
         }
         for i in range(len(self.guides)):
             if i == 0:
@@ -74,119 +68,104 @@ class LimbIKOperator:
                         )
 
         # Step 1 : Set up math nodes for IK features
-        # Create normalization nodes
-        if self.side_id == P_SETUP.MIRROR_SIDE_ID:
-            limb1_multDiv_normal_1 = self.node.setup(limb1, P_ROLE.MULT_DIV, P_ROLE.NORMAL, attr1='input2', value1=-1.0, i=1)
-            limb2_multDiv_normal_1 = self.node.setup(limb2, P_ROLE.MULT_DIV, P_ROLE.NORMAL, attr1='input2', value1=-1.0, i=1)
+        # Setup normalization nodes
+        node = NodeCreator(self.side, role.IK)
+        if self.side_id == setup.MIRROR_SIDE_ID:
+            limb1_normalize_multDiv_1 = node.setup(limb1, role.MULT_DIV, role.NORMAL, i=1, attr1="input2X", val1=-1.0)
+            limb2_normalize_multDiv_1 = node.setup(limb2, role.MULT_DIV, role.NORMAL, i=1, attr1="input2X", val1=-1.0)
         else:
-            limb1_multDiv_normal_1 = self.node.setup(limb1, P_ROLE.MULT_DIV, P_ROLE.NORMAL, attr1='input2', value1=1.0, i=1)
-            limb2_multDiv_normal_1 = self.node.setup(limb2, P_ROLE.MULT_DIV, P_ROLE.NORMAL, attr1='input2', value1=1.0, i=1)
+            limb1_normalize_multDiv_1 = node.setup(limb1, role.MULT_DIV, role.NORMAL, i=1, attr1="input2X", val1=1.0)
+            limb2_normalize_multDiv_1 = node.setup(limb2, role.MULT_DIV, role.NORMAL, i=1, attr1="input2X", val1=1.0)
 
-        # Create chain len nodes
-        limb3_plusMinus_LenStatic_1 = self.node.setup(limb3, P_ROLE.PLUS_MIN, P_ROLE.STATIC, attr1='operation', value1=1, i=1)
-        limb3_plusMinus_LenActive_1 = self.node.setup(limb3, P_ROLE.PLUS_MIN, P_ROLE.ACTIVE, attr1='operation', value1=1, i=1)
+        #
+        # Setup chain len nodes
+        limb3_LenStatic_plusMin_1 = node.setup(limb3, role.PLUS_MIN, role.STATIC, i=1, attr1="operation", val1=1)
+        limb3_LenActive_plusMin_1 = node.setup(limb3, role.PLUS_MIN, role.ACTIVE, i=1, attr1="operation", val1=1)
 
-        # Create soft math nodes
-        limb3_plusMinus_soft_1 = self.node.setup(limb3, P_ROLE.PLUS_MIN, P_ROLE.SOFT, attr1='operation', value1=2, i=1)
-        limb3_plusMinus_soft_2 = self.node.setup(limb3, P_ROLE.PLUS_MIN, P_ROLE.SOFT, attr1='operation', value1=2, i=2)
-        limb3_plusMinus_soft_3 = self.node.setup(limb3, P_ROLE.PLUS_MIN, P_ROLE.SOFT, attr1='operation', value1=2, i=3)
-        limb3_plusMinus_soft_4 = self.node.setup(limb3, P_ROLE.PLUS_MIN, P_ROLE.SOFT, attr1='operation', value1=2, i=4)
+        #
+        # Setup soft math nodes
+        limb3_soft_plusMin_1 = node.setup(limb3, role.PLUS_MIN, role.SOFT, i=1, attr1="operation", val1=2)
+        limb3_soft_plusMin_2 = node.setup(limb3, role.PLUS_MIN, role.SOFT, i=2, attr1="operation", val1=2)
+        limb3_soft_plusMin_3 = node.setup(limb3, role.PLUS_MIN, role.SOFT, i=3, attr1="operation", val1=2)
+        limb3_soft_plusMin_4 = node.setup(limb3, role.PLUS_MIN, role.SOFT, i=4, attr1="operation", val1=2)
 
-        limb3_multdiv_soft_1 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.SOFT, attr1='operation', value1=2, i=1)
-        limb3_multdiv_soft_2 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.SOFT, attr1='input2X', value1=-1.0, i=2)
-        limb3_multdiv_soft_3 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.SOFT, attr1='operation', value1=3, attr2=".input1X", value2=2.718, i=3)
-        limb3_multdiv_soft_4 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.SOFT, i=4)
+        limb3_soft_multDiv_1 = node.setup(limb3, role.MULT_DIV, role.SOFT, i=1, attr1="operation", val1=2)
+        limb3_soft_multDiv_2 = node.setup(limb3, role.MULT_DIV, role.SOFT, i=2, attr1="input2X", val1=-1.0)
+        limb3_soft_multDiv_3 = node.setup(
+            limb3, role.MULT_DIV, role.SOFT, i=3, attr1="operation", val1=3, attr2=".input1X", val2=2.718
+        )
+        limb3_soft_multDiv_4 = node.setup(limb3, role.MULT_DIV, role.SOFT, i=4)
 
-        limb3_multdiv_softScaler_1 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.SOFT, P_ROLE.SCALER, attr1='operation', value1=2, i=1)
-        limb3_multdiv_attrScaler_1 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.ATTR, P_ROLE.SCALER, attr1='operation', value1=2, i=1)
-        limb3_cond_soft_1 = self.node.setup(limb3, P_ROLE.MULT_DIV, P_ROLE.SOFT, attr1='operation', value1=2, i=1)
+        limb3_softScaler_multDiv_1 = node.setup(
+            limb3, role.MULT_DIV, role.SOFT, role.SCALER, i=1, attr1="operation", val1=2
+        )
+        limb3_attrScaler_multDiv_1 = node.setup(
+            limb3, role.MULT_DIV, role.ATTR, role.SCALER, i=1, attr1="operation", val1=2
+        )
 
-        # Create stretch math nodes
+        limb3_soft_cond_1 = node.setup(limb3, role.MULT_DIV, role.SOFT, i=1, attr1="operation", val1=2)
 
+        # Setup stretch math nodes
+        limb1_stretch_plusMin_1 = node.setup(limb1, role.PLUS_MIN, role.STRETCH, i=1, attr1="operation", val1=1)
+        limb2_stretch_plusMin_1 = node.setup(limb2, role.PLUS_MIN, role.STRETCH, i=1, attr1="operation", val1=1)
 
-        node_defs = [
-            # chain len
-            ("plusMinusAverage", LimbEnd, PM_LenStatic, "001", ".operation", 1),
-            ("plusMinusAverage", LimbEnd, PM_LenActive, "001", ".operation", 1),
-            #
-            # Soft math nodes
-            ("plusMinusAverage", LimbEnd, PM_Soft, "001", ".operation", 2),
-            ("plusMinusAverage", LimbEnd, PM_Soft, "002", ".operation", 2),
-            ("plusMinusAverage", LimbEnd, PM_Soft, "003", ".operation", 2),
-            ("plusMinusAverage", LimbEnd, PM_Soft, "004", ".operation", 2),
-            ("multiplyDivide", LimbEnd, MD_Soft, "001", ".operation", 2),
-            ("multDoubleLinear", LimbEnd, MD_Soft, "002", ".input2", -1.0),
-            ("multiplyDivide", LimbEnd, MD_Soft, "003", ".operation", 3, ".input1X", 2.718),
-            ("multDoubleLinear", LimbEnd, MD_Soft, "004"),
-            ("multiplyDivide", LimbEnd, MD_Soft_Scaler, "001", ".operation", 2),
-            ("multiplyDivide", LimbEnd, MD_Attr_Scaler, "001", ".operation", 2),
-            ("condition", LimbEnd, COND_Soft, "001", ".operation", 2),
-            #
-            # Stretch
-            ("plusMinusAverage", LimbUp, PM_Stretch, "001", ".operation", 1),
-            ("plusMinusAverage", LimbLow, PM_Stretch, "001", ".operation", 1),
-            ("multiplyDivide", LimbUp, MD_Stretch, "001", ".operation", 2),
-            ("multDoubleLinear", LimbUp, MD_Stretch, "002"),
-            ("multDoubleLinear", LimbUp, MD_Stretch, "003"),
-            ("multiplyDivide", LimbLow, MD_Stretch, "001", ".operation", 2),
-            ("multDoubleLinear", LimbLow, MD_Stretch, "002"),
-            ("multDoubleLinear", LimbLow, MD_Stretch, "003"),
-            ("multiplyDivide", LimbEnd, MD_Stretch_Scaler, "001", ".operation", 2),
-            #
-            # Pin
-            ("multiplyDivide", LimbUp, MD_Pin_Scaler, "001", ".operation", 2),
-            ("multiplyDivide", LimbLow, MD_Pin_Scaler, "001", ".operation", 2),
-            ("blendTwoAttr", LimbUp, BLEND_Pin, "001"),
-            ("blendTwoAttr", LimbLow, BLEND_Pin, "001"),
-            #
-            # Slide
-            ("plusMinusAverage", LimbUp, PM_Slide, "001", ".operation", 2),
-            ("plusMinusAverage", LimbUp, PM_Slide, "002", ".operation", 1),
-            ("plusMinusAverage", LimbLow, PM_Slide, "001", ".operation", 2),
-            ("plusMinusAverage", LimbLow, PM_Slide, "002", ".operation", 2),
-            ("multiplyDivide", LimbEnd, MD_Slide_Scaler, "001", ".operation", 2),
-            ("multiplyDivide", LimbEnd, MD_Slide_Limiter, "001"),
-            ("multDoubleLinear", LimbUp, MD_Slide_Scaler, "001"),
-            ("multDoubleLinear", LimbLow, MD_Slide_Scaler, "001"),
-            ("condition", LimbEnd, COND_Slide, "001", ".operation", 2),
-            #
-            # Blend
-            ("reverse", LimbEnd, REVERSE_STRETCH, "001"),
-        ]
-        nodes = defaultdict(lambda: defaultdict(dict))
-        for node_type, guide_name, node_label, index, *rest in node_normalization + node_defs:
-            attr1, p1, attr2, p2, attr3, p3 = (rest + [None, None, None, None, None, None])[:6]
+        limb1_stretch_multDiv_1 = node.setup(limb1, role.MULT_DIV, role.STRETCH, i=1, attr1="operation", val1=2)
+        limb1_stretch_multDiv_2 = node.setup(limb1, role.MULT_DIV, role.STRETCH, i=2)
+        limb1_stretch_multDiv_3 = node.setup(limb1, role.MULT_DIV, role.STRETCH, i=3)
+        limb2_stretch_multDiv_1 = node.setup(limb2, role.MULT_DIV, role.STRETCH, i=1, attr1="operation", val1=2)
+        limb2_stretch_multDiv_2 = node.setup(limb2, role.MULT_DIV, role.STRETCH, i=2)
+        limb2_stretch_multDiv_3 = node.setup(limb2, role.MULT_DIV, role.STRETCH, i=3)
 
-            node_name = limb_node_format(PROJECT, IK, self.side, guide_name, node_label, index)
-            node = cmds.createNode(node_type, n=node_name)
-            nodes[guide_name][node_label][index] = node
+        limb3_stretchScaler_multDiv_1 = node.setup(
+            limb3, role.MULT_DIV, role.STRETCH, role.SCALER, i=1, attr1="operation", val1=2
+        )
 
-            if attr1 is not None and p1 is not None:
-                cmds.setAttr(f"{node}{attr1}", p1)
-            if attr2 is not None and p2 is not None:
-                cmds.setAttr(f"{node}{attr2}", p2)
-            if attr3 is not None and p3 is not None:
-                cmds.setAttr(f"{node}{attr3}", p3)
+        # Setup pin math nodes
+        limb1_pinScaler_multDiv_1 = node.setup(
+            limb1, role.MULT_DIV, role.PIN, role.SCALER, i=1, attr1="operation", val1=2
+        )
+        limb2_pinScaler_multDiv_1 = node.setup(
+            limb2, role.MULT_DIV, role.PIN, role.SCALER, i=1, attr1="operation", val1=2
+        )
+
+        limb1_pin_blend_1 = node.setup(limb1, role.BLEND, role.PIN, i=1)
+        limb2_pin_blend_1 = node.setup(limb2, role.BLEND, role.PIN, i=1)
+
+        # Setup slide math nodes
+        limb1_slide_plusMin_1 = node.setup(limb1, role.PLUS_MIN, i=1, attr1="operation", val1=2)
+        limb1_slide_plusMin_2 = node.setup(limb1, role.PLUS_MIN, i=2, attr1="operation", val1=2)
+        limb2_slide_plusMin_1 = node.setup(limb2, role.PLUS_MIN, i=1, attr1="operation", val1=2)
+        limb2_slide_plusMin_2 = node.setup(limb2, role.PLUS_MIN, i=2, attr1="operation", val1=2)
+
+        limb3_slide_cond_1 = node.setup(limb3, role.CONDITION, i=1, attr="operation", val1=2)
+
+        limb1_slideScaler_multDiv_1 = node.setup(limb1, role.MULT_DIV, role.SCALER, i=1)
+        limb2_slideScaler_multDiv_1 = node.setup(limb2, role.MULT_DIV, role.SCALER, i=1)
+        limb3_slideScaler_multDiv_1 = node.setup(limb3, role.MULT_DIV, i=1, attr1="operation", val1=2)
+        limb3_slideLimiter_multDiv_1 = node.setup(limb3, role.MULT_DIV, i=1)
+
+        # Setup blend math nodes
+        limb3_stretch_reverse_1 = node.setup(limb3, role.REVERSE, role.STRETCH, i=1)
 
         # Step 2 : Connect locators to distance
         # Define static and active components
-        static0 = self.static_comps[guides[0].name]
-        static1 = self.static_comps[guides[1].name]
-        static2 = self.static_comps[guides[2].name]
+        static0 = self.static_comps[self.guides[0].name]
+        static1 = self.static_comps[self.guides[1].name]
+        static2 = self.static_comps[self.guides[2].name]
 
-        active0 = self.active_comps[guides[0].name]
-        active1 = self.active_comps[guides[1].name]
-        active2 = self.active_comps[guides[2].name]
+        active0 = self.active_comps[self.guides[0].name]
+        active1 = self.active_comps[self.guides[1].name]
+        active2 = self.active_comps[self.guides[2].name]
 
         # Connect basic static components
         connection_pairs = [(0, 1), (1, 2), (2, 0)]
         for start_idx, end_idx in connection_pairs:
-            g_start = guides[start_idx].name
-            g_end = guides[end_idx].name
+            g_start = self.guides[start_idx].name
+            g_end = self.guides[end_idx].name
 
-            loc_start = self.static_comps[g_start][LOCATOR]
-            loc_end = self.static_comps[g_end][LOCATOR]
-            dist = self.static_comps[g_start][DISTANCE]
+            loc_start = self.static_comps[g_start][role.LOCATOR]
+            loc_end = self.static_comps[g_end][role.LOCATOR]
+            dist = self.static_comps[g_start][role.DISTANCE]
             self._connect_distance(loc_start, loc_end, dist)
 
         # Connect soft, stretch components
@@ -204,7 +183,7 @@ class LimbIKOperator:
 
         # Step 3 : Constraint locators
         # Aim connect - delete - re-aim connect root active locator to ik control
-        cmds.pointConstraint(self.ik_map[guides[0].name][JNT], active0[LOCATOR])
+        cmds.pointConstraint(self.joints[0], active0[LOCATOR])
         aimConstraint = cmds.aimConstraint(
             ik_control, active0[LOCATOR], aim=[1, 0, 0], wut="scene", u=(0.0, 1.0, 0.0), skip=["x", "z"]
         )
@@ -214,13 +193,11 @@ class LimbIKOperator:
         )
 
         # Connect blend locator to ik control and active end locator
-        BlendConstraint = cmds.pointConstraint(
-            [self.ik_map[guides[2].name].get(CTRL).ctrl, active2[LOCATOR]], active2[LOCATOR_BLEND]
-        )[0]
+        BlendConstraint = cmds.pointConstraint([self.controls[2].ctrl, active2[LOCATOR]], active2[LOCATOR_BLEND])[0]
 
         # Connect ik control to active pole vector locator and stretch locator
-        cmds.pointConstraint(self.ik_map[guides[1].name].get(CTRL).ctrl, active1[LOCATOR])
-        cmds.pointConstraint(self.ik_map[guides[2].name].get(CTRL).ctrl, active2[LOCATOR_STRETCH])
+        cmds.pointConstraint(self.controls[1].ctrl, active1[LOCATOR])
+        cmds.pointConstraint(self.controls[2].ctrl, active2[LOCATOR_STRETCH])
 
         # Connect blend locator to ik handle
         cmds.pointConstraint(active2[LOCATOR_BLEND], self.handle)
@@ -233,190 +210,163 @@ class LimbIKOperator:
         cmds.parent(active2[LOCATOR_GROUP], active0[LOCATOR])
 
         # Step 4 : Connect the nodes
-        if self.module.guide.side_id == MIRROR_SIDE_ID:
-            mirror_connection = [
-                # limb soft average 4
-                (f'{nodes[LimbEnd][COND_Soft]["001"]}.outColorR', f'{nodes[LimbEnd][PM_Soft]["004"]}.input1D[1]'),
-                (f'{nodes[LimbEnd][MD_Soft_Scaler]["001"]}.outputX', f'{nodes[LimbEnd][PM_Soft]["004"]}.input1D[0]'),
-            ]
+        if self.side_id == MIRROR_SIDE_ID:
+            cmds.connectAttr(f"{limb3_soft_cond_1}.outColorR", f"{limb3_soft_plusMin_4}.input1D[1]")
+            cmds.connectAttr(f"{limb3_softScaler_multDiv_1}.outputX", f"{limb3_soft_plusMin_4}.input1D[0]")
         else:
-            mirror_connection = [
-                # limb soft average 4
-                (f'{nodes[LimbEnd][COND_Soft]["001"]}.outColorR', f'{nodes[LimbEnd][PM_Soft]["004"]}.input1D[0]'),
-                (f'{nodes[LimbEnd][MD_Soft_Scaler]["001"]}.outputX', f'{nodes[LimbEnd][PM_Soft]["004"]}.input1D[1]'),
-            ]
+            cmds.connectAttr(f"{limb3_soft_cond_1}.outColorR", f"{limb3_soft_plusMin_4}.input1D[0]")
+            cmds.connectAttr(f"{limb3_softScaler_multDiv_1}", f"{limb3_soft_plusMin_4}.input1D[1]")
 
-        connections = [
-            # static limb chain len 1
-            (f"{static0[DISTANCE]}.distance", f'{nodes[LimbEnd][PM_LenStatic]["001"]}.input1D[0]'),
-            (f"{static1[DISTANCE]}.distance", f'{nodes[LimbEnd][PM_LenStatic]["001"]}.input1D[1]'),
-            #
-            #
-            #
-            # Soft connections
-            # limb attribute scaler 1
-            (f"{active2[DISTANCE_BASE]}.distance", f'{nodes[LimbEnd][MD_Attr_Scaler]["001"]}.input1X'),
-            (f"{static2[DISTANCE]}.distance", f'{nodes[LimbEnd][MD_Attr_Scaler]["001"]}.input2X'),
-            #
-            # limb soft average 1
-            (f'{nodes[LimbEnd][PM_LenStatic]["001"]}.output1D', f'{nodes[LimbEnd][PM_Soft]["001"]}.input1D[0]'),
-            (f"{ik_control}.{SOFT}", f'{nodes[LimbEnd][PM_Soft]["001"]}.input1D[1]'),
-            #
-            # limb soft scaler 1
-            (f"{active2[DISTANCE]}.distance", f'{nodes[LimbEnd][MD_Soft_Scaler]["001"]}.input1X'),
-            (f'{nodes[LimbEnd][MD_Attr_Scaler]["001"]}.outputX', f'{nodes[LimbEnd][MD_Soft_Scaler]["001"]}.input2X'),
-            #
-            # limb soft average 2
-            (f'{nodes[LimbEnd][PM_Soft]["001"]}.output1D', f'{nodes[LimbEnd][PM_Soft]["002"]}.input1D[1]'),
-            (f'{nodes[LimbEnd][MD_Soft_Scaler]["001"]}.outputX', f'{nodes[LimbEnd][PM_Soft]["002"]}.input1D[0]'),
-            #
-            # limb soft multiply divide 1
-            (f"{ik_control}.{SOFT}", f'{nodes[LimbEnd][MD_Soft]["001"]}.input2X'),
-            (f'{nodes[LimbEnd][PM_Soft]["002"]}.output1D', f'{nodes[LimbEnd][MD_Soft]["001"]}.input1X'),
-            #
-            # limb soft multiply divide 2
-            (f'{nodes[LimbEnd][MD_Soft]["001"]}.outputX', f'{nodes[LimbEnd][MD_Soft]["002"]}.input1'),
-            #
-            # limb soft multiply divide 3
-            (f'{nodes[LimbEnd][MD_Soft]["002"]}.output', f'{nodes[LimbEnd][MD_Soft]["003"]}.input2X'),
-            #
-            # limb soft multiply divide 4
-            (f'{nodes[LimbEnd][MD_Soft]["003"]}.outputX', f'{nodes[LimbEnd][MD_Soft]["004"]}.input1'),
-            (f"{ik_control}.{SOFT}", f'{nodes[LimbEnd][MD_Soft]["004"]}.input2'),
-            #
-            # limb soft average 3
-            (f'{nodes[LimbEnd][MD_Soft]["004"]}.output', f'{nodes[LimbEnd][PM_Soft]["003"]}.input1D[1]'),
-            (f'{nodes[LimbEnd][PM_LenStatic]["001"]}.output1D', f'{nodes[LimbEnd][PM_Soft]["003"]}.input1D[0]'),
-            #
-            # limb soft condition 1
-            (f'{nodes[LimbEnd][MD_Soft_Scaler]["001"]}.outputX', f'{nodes[LimbEnd][COND_Soft]["001"]}.colorIfFalseR'),
-            (f'{nodes[LimbEnd][PM_Soft]["003"]}.output1D', f'{nodes[LimbEnd][COND_Soft]["001"]}.colorIfTrueR'),
-            (f'{nodes[LimbEnd][MD_Soft_Scaler]["001"]}.outputX', f'{nodes[LimbEnd][COND_Soft]["001"]}.firstTerm'),
-            (f'{nodes[LimbEnd][PM_Soft]["001"]}.output1D', f'{nodes[LimbEnd][COND_Soft]["001"]}.secondTerm'),
-            #
-            # # limb ik active locator
-            (f'{nodes[LimbEnd][PM_Soft]["004"]}.output1D', f"{active2[LOCATOR]}{axis}"),
-            #
-            #
-            #
-            # Stretch connections
-            # limb stretch scaler 1
-            (f"{active2[DISTANCE_BLEND]}.distance", f'{nodes[LimbEnd][MD_Stretch_Scaler]["001"]}.input1X'),
-            (
-                f'{nodes[LimbEnd][MD_Attr_Scaler]["001"]}.outputX',
-                f'{nodes[LimbEnd][MD_Stretch_Scaler]["001"]}.input2X',
-            ),
-            #
-            # limb up stretch multiply divide 1
-            (f"{static0[DISTANCE]}.distance", f'{nodes[LimbUp][MD_Stretch]["001"]}.input1X'),
-            (f'{nodes[LimbEnd][PM_LenStatic]["001"]}.output1D', f'{nodes[LimbUp][MD_Stretch]["001"]}.input2X'),
-            #
-            # limb low stretch multiply divide 1
-            (f"{static1[DISTANCE]}.distance", f'{nodes[LimbLow][MD_Stretch]["001"]}.input1X'),
-            (f'{nodes[LimbEnd][PM_LenStatic]["001"]}.output1D', f'{nodes[LimbLow][MD_Stretch]["001"]}.input2X'),
-            #
-            # limb up stretch multiply divide 2
-            (f'{nodes[LimbEnd][MD_Stretch_Scaler]["001"]}.outputX', f'{nodes[LimbUp][MD_Stretch]["002"]}.input1'),
-            (f'{nodes[LimbUp][MD_Stretch]["001"]}.outputX', f'{nodes[LimbUp][MD_Stretch]["002"]}.input2'),
-            #
-            # limb low stretch multiply divide 2
-            (f'{nodes[LimbEnd][MD_Stretch_Scaler]["001"]}.outputX', f'{nodes[LimbLow][MD_Stretch]["002"]}.input1'),
-            (f'{nodes[LimbLow][MD_Stretch]["001"]}.outputX', f'{nodes[LimbLow][MD_Stretch]["002"]}.input2'),
-            #
-            # limb up stretch multiply divide 3
-            (f'{nodes[LimbUp][MD_Stretch]["002"]}.output', f'{nodes[LimbUp][MD_Stretch]["003"]}.input1'),
-            (f"{ik_control}.{STRETCH}", f'{nodes[LimbUp][MD_Stretch]["003"]}.input2'),
-            #
-            # limb low stretch multiply divide 3
-            (f'{nodes[LimbLow][MD_Stretch]["002"]}.output', f'{nodes[LimbLow][MD_Stretch]["003"]}.input1'),
-            (f"{ik_control}.{STRETCH}", f'{nodes[LimbLow][MD_Stretch]["003"]}.input2'),
-            #
-            # limb up stretch average 1
-            (f"{static0[DISTANCE]}.distance", f'{nodes[LimbUp][PM_Stretch]["001"]}.input1D[1]'),
-            (f'{nodes[LimbLow][MD_Stretch]["003"]}.output', f'{nodes[LimbUp][PM_Stretch]["001"]}.input1D[0]'),
-            #
-            # limb low stretch average 1
-            (f"{static1[DISTANCE]}.distance", f'{nodes[LimbLow][PM_Stretch]["001"]}.input1D[1]'),
-            (f'{nodes[LimbLow][MD_Stretch]["003"]}.output', f'{nodes[LimbLow][PM_Stretch]["001"]}.input1D[0]'),
-            #
-            #
-            #
-            # Hinge pin connections
-            # limb up hinge pin multiply divide 1
-            (f"{active0[DISTANCE]}.distance", f'{nodes[LimbUp][MD_Pin_Scaler]["001"]}.input1X'),
-            (f'{nodes[LimbEnd][MD_Attr_Scaler]["001"]}.outputX', f'{nodes[LimbUp][MD_Pin_Scaler]["001"]}.input2X'),
-            #
-            # limb low hinge pin multiply divide 1
-            (f"{active1[DISTANCE]}.distance", f'{nodes[LimbLow][MD_Pin_Scaler]["001"]}.input1X'),
-            (f'{nodes[LimbEnd][MD_Attr_Scaler]["001"]}.outputX', f'{nodes[LimbLow][MD_Pin_Scaler]["001"]}.input2X'),
-            #
-            # limb up hinge pin blend 1
-            (f"{ik_control}.{PIN}", f'{nodes[LimbUp][BLEND_Pin]["001"]}.attributesBlender'),
-            (f'{nodes[LimbUp][PM_Slide]["002"]}.output1D', f'{nodes[LimbUp][BLEND_Pin]["001"]}.input[0]'),
-            (f'{nodes[LimbUp][MD_Pin_Scaler]["001"]}.outputX', f'{nodes[LimbUp][BLEND_Pin]["001"]}.input[1]'),
-            #
-            # limb low hinge pin blend 1
-            (f"{ik_control}.{PIN}", f'{nodes[LimbLow][BLEND_Pin]["001"]}.attributesBlender'),
-            (f'{nodes[LimbLow][PM_Slide]["002"]}.output1D', f'{nodes[LimbLow][BLEND_Pin]["001"]}.input[0]'),
-            (f'{nodes[LimbLow][MD_Pin_Scaler]["001"]}.outputX', f'{nodes[LimbLow][BLEND_Pin]["001"]}.input[1]'),
-            #
-            #
-            #
-            # Hinge slide connections
-            # limb hinge slide scaler 1
-            (f"{active2[DISTANCE_STRETCH]}.distance", f'{nodes[LimbEnd][MD_Slide_Scaler]["001"]}.input1X'),
-            (f'{nodes[LimbEnd][MD_Attr_Scaler]["001"]}.outputX', f'{nodes[LimbEnd][MD_Slide_Scaler]["001"]}.input2X'),
-            #
-            # limb hinge slide limiter 1
-            (f"{ik_control}.{SLIDE}", f'{nodes[LimbEnd][MD_Slide_Limiter]["001"]}.input1X'),
-            #
-            # limb up hinge slide average 1
-            (f'{nodes[LimbEnd][MD_Slide_Scaler]["001"]}.outputX', f'{nodes[LimbUp][PM_Slide]["001"]}.input1D[0]'),
-            (f'{nodes[LimbUp][PM_Stretch]["001"]}.output1D', f'{nodes[LimbUp][PM_Slide]["001"]}.input1D[1]'),
-            #
-            # limb low hinge slide average 1
-            (f'{nodes[LimbEnd][MD_Slide_Scaler]["001"]}.outputX', f'{nodes[LimbLow][PM_Slide]["001"]}.input1D[0]'),
-            (f'{nodes[LimbLow][PM_Stretch]["001"]}.output1D', f'{nodes[LimbLow][PM_Slide]["001"]}.input1D[1]'),
-            #
-            # limb up hinge slide average 2
-            (f'{nodes[LimbUp][PM_Stretch]["001"]}.output1D', f'{nodes[LimbUp][PM_Slide]["002"]}.input1D[0]'),
-            (f'{nodes[LimbEnd][COND_Slide]["001"]}.outColorR', f'{nodes[LimbUp][PM_Slide]["002"]}.input1D[1]'),
-            #
-            # limb low hinge slide average 2
-            (f'{nodes[LimbLow][PM_Stretch]["001"]}.output1D', f'{nodes[LimbLow][PM_Slide]["002"]}.input1D[0]'),
-            (f'{nodes[LimbEnd][COND_Slide]["001"]}.outColorR', f'{nodes[LimbLow][PM_Slide]["002"]}.input1D[1]'),
-            #
-            # limb up hinge slide multiply divide 1
-            (f'{nodes[LimbUp][PM_Slide]["001"]}.output1D', f'{nodes[LimbUp][MD_Slide_Scaler]["001"]}.input1'),
-            (f'{nodes[LimbEnd][MD_Slide_Limiter]["001"]}.outputX', f'{nodes[LimbUp][MD_Slide_Scaler]["001"]}.input2'),
-            #
-            # limb low hinge slide multiply divide 1
-            (f'{nodes[LimbLow][PM_Slide]["001"]}.output1D', f'{nodes[LimbLow][MD_Slide_Scaler]["001"]}.input1'),
-            (f'{nodes[LimbEnd][MD_Slide_Limiter]["001"]}.outputX', f'{nodes[LimbLow][MD_Slide_Scaler]["001"]}.input2'),
-            #
-            # limb hinge slide condition 1
-            (f'{nodes[LimbLow][MD_Slide_Scaler]["001"]}.output', f'{nodes[LimbEnd][COND_Slide]["001"]}.colorIfFalseR'),
-            (f'{nodes[LimbUp][MD_Slide_Scaler]["001"]}.output', f'{nodes[LimbEnd][COND_Slide]["001"]}.colorIfTrueR'),
-            (f'{nodes[LimbEnd][MD_Slide_Limiter]["001"]}.outputX', f'{nodes[LimbEnd][COND_Slide]["001"]}.firstTerm'),
-            #
-            #
-            #
-            # Feature normalization
-            (f'{nodes[LimbUp][BLEND_Pin]["001"]}.output', f'{nodes[LimbUp][MD_Normal]["001"]}.input1'),
-            (f'{nodes[LimbLow][BLEND_Pin]["001"]}.output', f'{nodes[LimbLow][MD_Normal]["001"]}.input1'),
-            #
-            #
-            #
-            # Limb joint connection
-            (f'{nodes[LimbUp][MD_Normal]["001"]}.output', f"{self.ik_map[guides[1].name].get(JNT)}{axis}"),
-            (f'{nodes[LimbLow][MD_Normal]["001"]}.output', f"{self.ik_map[guides[2].name].get(JNT)}{axis}"),
-            #
-            #
-            #
-            # Blend Constraint
-            (f"{ik_control}.{STRETCH}", f'{nodes[LimbEnd][REVERSE_STRETCH]["001"]}.inputX'),
-            (f"{ik_control}.{STRETCH}", f"{BlendConstraint}.{self.ik_map[guides[2].name].get(CTRL).ctrl}W0"),
-            (f'{nodes[LimbEnd][REVERSE_STRETCH]["001"]}.outputX', f"{BlendConstraint}.{active2[LOCATOR]}W1"),
-        ]
-        for input, output in connections + mirror_connection:
-            cmds.connectAttr(input, output)
+        # static limb chain len 1
+        cmds.connectAttr(f"{static0[DISTANCE]}.distance", f"{limb3_LenStatic_plusMin_1}.input1D[0]")
+        cmds.connectAttr(f"{static1[DISTANCE]}.distance", f"{limb3_LenStatic_plusMin_1}.input1D[0]")
+
+        # limb attribute scaler 1
+        cmds.connectAttr(f"{active2[DISTANCE_BASE]}.distance", f"{limb3_attrScaler_multDiv_1}.input1X")
+        cmds.connectAttr(f"{static2[DISTANCE]}.distance", f"{limb3_attrScaler_multDiv_1}.input2X")
+
+        # Soft connections
+        # limb soft average 1
+        cmds.connectAttr(f"{limb3_LenStatic_plusMin_1}.output1D", f"{limb3_soft_plusMin_1}.input1D[0]")
+        cmds.connectAttr(f"{ik_control}.{role.SOFT}", f"{limb3_soft_plusMin_1}.input1D[1]")
+
+        # limb soft scaler 1
+        cmds.connectAttr(f"{active2[DISTANCE]}", f"{limb3_softScaler_multDiv_1}.input1X")
+        cmds.connectAttr(f"{limb3_attrScaler_multDiv_1}.outputX", f"{limb3_softScaler_multDiv_1}.input2X")
+
+        # limb soft average 2
+        cmds.connectAttr(f"{limb3_soft_plusMin_1}.output1D", f"{limb3_soft_plusMin_2}.input1D[1]")
+        cmds.connectAttr(f"{limb3_softScaler_multDiv_1}.outputX", f"{limb3_soft_plusMin_2}.input1D[0]")
+
+        # limb soft multiply divide 1
+        cmds.connectAttr(f"{ik_control}.{SOFT}", f"{limb3_soft_multDiv_1}.input2X")
+        cmds.connectAttr(f"{limb3_soft_plusMin_2}.output1D", f"{limb3_soft_multDiv_1}.input1X")
+
+        # limb soft multiply divide 2
+        cmds.connectAttr(f"{limb3_soft_multDiv_1}.outputX", f"{limb3_soft_multDiv_2}.input1X")
+
+        # limb soft multiply divide 3
+        cmds.connectAttr(f"{limb3_soft_multDiv_2}.outputX", f"{limb3_soft_multDiv_3}.input2X")
+
+        # limb soft multiply divide 4
+        cmds.connectAttr(f"{limb3_soft_multDiv_3}.outputX", f"{limb3_soft_multDiv_4}.input1X")
+        cmds.connectAttr(f"{ik_control}.{SOFT}", f"{limb3_soft_multDiv_4}.input2X")
+
+        # limb soft average 3
+        cmds.connectAttr(f"{limb3_soft_multDiv_4}.outputX", f"{limb3_soft_plusMin_3}.input1D[1]")
+        cmds.connectAttr(f"{limb3_LenStatic_plusMin_1}.output1D", f"{limb3_soft_plusMin_3}.input1D[0]")
+
+        # limb soft condition 1
+        cmds.connectAttr(f"{limb3_softScaler_multDiv_1}.outputX", f"{limb3_soft_cond_1}.colorIfFalseR")
+        cmds.connectAttr(f"{limb3_soft_plusMin_3}.output1D", f"{limb3_soft_cond_1}.colorIfTrueR")
+        cmds.connectAttr(f"{limb3_softScaler_multDiv_1}.outputX", f"{limb3_soft_cond_1}.firstTerm")
+        cmds.connectAttr(f"{limb3_soft_plusMin_1}.output1D", f"{limb3_soft_cond_1}.secondTerm")
+
+        # limb ik active locator
+        cmds.connectAttr(f"{limb3_soft_plusMin_4}.output1D", f"{active2[LOCATOR]}{axis}")
+
+        # Stretch connections
+        # limb stretch scaler 1
+        cmds.connectAttr(f"{active2[DISTANCE_BLEND]}.distance", f"{limb3_stretchScaler_multDiv_1}.input1X")
+        cmds.connectAttr(f"{limb3_attrScaler_multDiv_1}.outputX", f"{limb3_stretchScaler_multDiv_1}.input2X")
+
+        # limb up stretch multiply divide 1
+        cmds.connectAttr(f"{static0[DISTANCE]}.distance", f"{limb1_stretch_multDiv_1}.input1X")
+        cmds.connectAttr(f"{limb3_LenStatic_plusMin_1}.output1D", f"{limb1_stretch_multDiv_1}.input2X")
+
+        # limb low stretch multiply divide 1
+        cmds.connectAttr(f"{static1[DISTANCE]}.distance", f"{limb2_stretch_multDiv_1}.input1X")
+        cmds.connectAttr(f"{limb3_LenStatic_plusMin_1}.output1D", f"{limb2_stretch_multDiv_1}.input2X")
+
+        # limb up stretch multiply divide 2
+        cmds.connectAttr(f"{limb3_stretchScaler_multDiv_1}.outputX", f"{limb1_stretch_multDiv_2}.input1X")
+        cmds.connectAttr(f"{limb1_stretch_multDiv_1}.outputX", f"{limb1_stretch_multDiv_2}.input2X")
+
+        # limb low stretch multiply divide 2
+        cmds.connectAttr(f"{limb3_stretchScaler_multDiv_1}.outputX", f"{limb2_stretch_multDiv_2}.input1X")
+        cmds.connectAttr(f"{limb2_stretch_multDiv_1}.outputX", f"{limb2_stretch_multDiv_2}.input2X")
+
+        # limb up stretch multiply divide 3
+        cmds.connectAttr(f"{limb1_stretch_multDiv_2}.outputX", f"{limb1_stretch_multDiv_3}.input1X")
+        cmds.connectAttr(f"{ik_control}.{STRETCH}", f"{limb1_stretch_multDiv_3}.input2X")
+
+        # limb low stretch multiply divide 3
+        cmds.connectAttr(f"{limb2_stretch_multDiv_2}.outputX", f"{limb2_stretch_multDiv_3}.input1X")
+        cmds.connectAttr(f"{ik_control}.{STRETCH}", f"{limb2_stretch_multDiv_3}.input2X")
+
+        # limb up stretch average 1
+        cmds.connectAttr(f"{static0[DISTANCE]}.distance", f"{limb1_stretch_plusMin_1}.input1D[1]")
+        cmds.connectAttr(f"{limb2_stretch_multDiv_3}.outputX", f"{limb1_stretch_plusMin_1}.input1D[0]")
+
+        # limb low stretch average 1
+        cmds.connectAttr(f"{static1[DISTANCE]}.distance", f"{limb2_stretch_plusMin_1}.input1D[1]")
+        cmds.connectAttr(f"{limb2_stretch_multDiv_3}.outputX", f"{limb2_stretch_plusMin_1}.input1D[0]")
+
+        # Hinge pin connections
+        # limb up hinge pin multiply divide 1
+        cmds.connectAttr(f"{active0[DISTANCE]}.distance", f"{limb1_pinScaler_multDiv_1}.input1X")
+        cmds.connectAttr(f"{limb3_attrScaler_multDiv_1}.outputX", f"{limb1_pinScaler_multDiv_1}.input2X")
+
+        # limb low hinge pin multiply divide 1
+        cmds.connectAttr(f"{active1[DISTANCE]}.distance", f"{limb2_pinScaler_multDiv_1}.input1X")
+        cmds.connectAttr(f"{limb3_attrScaler_multDiv_1}.outputX", f"{limb2_pinScaler_multDiv_1}.input2X")
+
+        # limb up hinge pin blend 1
+        cmds.connectAttr(f"{ik_control}.{PIN}", f"{limb1_pin_blend_1}.attributesBlender")
+        cmds.connectAttr(f"{limb1_slide_plusMin_2}.output1D", f"{limb1_pin_blend_1}.input[0]")
+        cmds.connectAttr(f"{limb1_pinScaler_multDiv_1}.outputX", f"{limb1_pin_blend_1}.input[1]")
+
+        # limb up hinge pin blend 1
+        cmds.connectAttr(f"{ik_control}.{PIN}", f"{limb2_pin_blend_1}.attributesBlender")
+        cmds.connectAttr(f"{limb2_slide_plusMin_2}.output1D", f"{limb2_pin_blend_1}.input[0]")
+        cmds.connectAttr(f"{limb2_pinScaler_multDiv_1}.outputX", f"{limb2_pin_blend_1}.input[1]")
+
+        # Hinge slide connections
+        # limb hinge slide scaler 1
+        cmds.connectAttr(f"{active2[DISTANCE_STRETCH]}.distance", f"{limb3_slideScaler_multDiv_1}.input1X")
+        cmds.connectAttr(f"{limb3_attrScaler_multDiv_1}.outputX", f"{limb3_slideScaler_multDiv_1}.input2X")
+
+        # limb hinge slide limiter 1
+        cmds.connectAttr(f"{ik_control}.{SLIDE}", f"{limb3_slideLimiter_multDiv_1}.input1X")
+
+        # limb up hinge slide average 1
+        cmds.connectAttr(f"{limb3_slideScaler_multDiv_1}.outputX", f"{limb1_slide_plusMin_1}.input1D[0]")
+        cmds.connectAttr(f"{limb1_stretch_plusMin_1}.output1D", f"{limb1_slide_plusMin_1}.input1D[1]")
+
+        # limb low hinge slide average 1
+        cmds.connectAttr(f"{limb3_slideScaler_multDiv_1}.outputX", f"{limb2_slide_plusMin_1}.input1D[0]")
+        cmds.connectAttr(f"{limb2_stretch_plusMin_1}.output1D", f"{limb2_slide_plusMin_1}.input1D[1]")
+
+        # limb up hinge slide average 2
+        cmds.connectAttr(f"{limb1_stretch_plusMin_1}.output1D", f"{limb1_slide_plusMin_2}.input1D[0]")
+        cmds.connectAttr(f"{limb3_slide_cond_1}.outColorR", f"{limb1_slide_plusMin_2}.input1D[1]")
+
+        # limb low hinge slide average 2
+        cmds.connectAttr(f"{limb2_stretch_plusMin_1}.output1D", f"{limb2_slide_plusMin_2}.input1D[0]")
+        cmds.connectAttr(f"{limb3_slide_cond_1}.outColorR", f"{limb2_slide_plusMin_2}.input1D[1]")
+
+        # limb up hinge slide multiply divide 1
+        cmds.connectAttr(f"{limb1_slide_plusMin_1}.output1D", f"{limb1_slideScaler_multDiv_1}.input1X")
+        cmds.connectAttr(f"{limb3_slideLimiter_multDiv_1}.outputX", f"{limb1_slideScaler_multDiv_1}.input2X")
+
+        # limb low hinge slide multiply divide 1
+        cmds.connectAttr(f"{limb2_slide_plusMin_1}.output1D", f"{limb2_slideScaler_multDiv_1}.input1X")
+        cmds.connectAttr(f"{limb3_slideLimiter_multDiv_1}.outputX", f"{limb2_slideScaler_multDiv_1}.input2X")
+
+        # limb hinge slide condition 1
+        cmds.connectAttr(f"{limb2_slideScaler_multDiv_1}.outputX", f"{limb3_slide_cond_1}.colorIfFalseR")
+        cmds.connectAttr(f"{limb1_slideScaler_multDiv_1}.outputX", f"{limb3_slide_cond_1}.colorIfTrueR")
+        cmds.connectAttr(f"{limb3_slideLimiter_multDiv_1}.outputX", f"{limb3_slide_cond_1}.firstTerm")
+
+        # Feature normalization
+        cmds.connectAttr(f"{limb1_pin_blend_1}.outputX", f"{limb1_normalize_multDiv_1}.input1")
+        cmds.connectAttr(f"{limb2_pin_blend_1}.outputX", f"{limb2_normalize_multDiv_1}.input1")
+
+        # Limb joint connection
+        cmds.connectAttr(f"{limb1_normalize_multDiv_1}.outputX", f"{self.joints[1]}{axis}")
+        cmds.connectAttr(f"{limb2_normalize_multDiv_1}.outputX", f"{self.joints[2]}{axis}")
+
+        # Blend Constraint
+        cmds.connectAttr(f"{ik_control}.{STRETCH}", f"{limb3_stretch_reverse_1}.input1X")
+        cmds.connectAttr(f"{ik_control}.{STRETCH}", f"{BlendConstraint}.{self.controls[2].ctrl}WO")
+        cmds.connectAttr(f"{limb3_stretch_reverse_1}.outputX", f"{BlendConstraint}.{active2[LOCATOR]}W1")

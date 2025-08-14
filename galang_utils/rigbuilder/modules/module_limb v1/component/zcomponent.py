@@ -5,9 +5,9 @@ from galang_utils.rigbuilder.modules.base.component.zcomponent import BaseCompon
 from galang_utils.rigbuilder.modules.limb.component.fk import LimbFKComponent
 from galang_utils.rigbuilder.modules.limb.component.ik import LimbIKComponent
 from galang_utils.rigbuilder.modules.limb.component.result import LimbResultComponent
-from rigbuilder.modules.limb.component.sub import LimbRollComponent
+from rigbuilder.modules.limb.component.bendy import LimbRollComponent
 from galang_utils.rigbuilder.modules.limb.component.settings import LimbSettingComponent
-from rigbuilder.modules.limb.component.container import LimbGroupComponent
+from rigbuilder.modules.limb.component.group import LimbGroupComponent
 
 
 class LimbComponent(BaseComponent):

@@ -1,5 +1,5 @@
 from maya import cmds
-from galang_utils.rigbuilder.constant.project import role as P_ROLE
+from galang_utils.rigbuilder.constant.project import role as role
 from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent
 
 
@@ -10,9 +10,9 @@ class LimbGroupOperator:
         self.side = component.container.module.guide.side
 
     def run(self):
-        grp_system = self.component.container.groups[P_ROLE.SYSTEM]
-        grp_stasis = self.component.container.groups[P_ROLE.STASIS]
-        grp_constraint = self.component.container.groups[P_ROLE.CONSTRAINT]
+        grp_system = self.component.container.groups[role.SYSTEM]
+        grp_stasis = self.component.container.groups[role.STASIS]
+        grp_constraint = self.component.container.groups[role.CONSTRAINT]
 
         grp_ik = self.component.ik.groups
         grp_fk = self.component.fk.groups
@@ -28,12 +28,18 @@ class LimbGroupOperator:
                     cmds.parent(node, grp_constraint)
 
         # Step 2 : Parent stasis components to their group
-        grps_stasis = [grp_ik[P_ROLE.JNT], grp_fk[P_ROLE.JNT], grp_ik[P_ROLE.LOCATOR], grp_ik[P_ROLE.DISTANCE], grp_constraint]
+        grps_stasis = [
+            grp_ik[role.JOINT],
+            grp_fk[role.JOINT],
+            grp_ik[role.LOCATOR],
+            grp_ik[role.DISTANCE],
+            grp_constraint,
+        ]
         for grp in grps_stasis:
             cmds.parent(grp, grp_stasis)
 
         # Step 3 : Parent system components to their group
-        grps_sys = [grp_ik[P_ROLE.MASTER], grp_fk[P_ROLE.MASTER], grp_roll[P_ROLE.MASTER], grp_result, grp_setting]
+        grps_sys = [grp_ik[role.MASTER], grp_fk[role.MASTER], grp_roll[role.MASTER], grp_result, grp_setting]
         for grp in grps_sys:
             cmds.parent(grp, grp_system)
 
