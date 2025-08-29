@@ -8,46 +8,46 @@ from galang_utils.rigbuilder.constant.project import setup as setup
 
 from galang_utils.rigbuilder.modules.limb.constant import setup as limb_setup
 
-from galang_utils.rigbuilder.modules.limb.program.group import LimbGroupNode
-from galang_utils.rigbuilder.modules.limb.program.locator import LimbLocatorNode
+from galang_utils.rigbuilder.modules.base.component.group import GroupNode
+from galang_utils.rigbuilder.modules.base.component.locator import LocatorNode
 
 from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
-from galang_utils.rigbuilder.modules.limb.program.base import LimbBaseNode
+from rigbuilder.modules.base.component.dag import Node
 
 
-class LimbControlNode(LimbBaseNode):
+class ControlNode(Node):
     """
-    LimbControlNode behaves like a string (the Maya node name) but also carries extra
-    metadata (guide, module, node hierarchy, etc.) and has helper methods like create().
+    LimbControlNode LimbControlNode behaves like a string (the Maya node name) but also carries extra
+     metadata (guide, module, node hierarchy, etc.) and has helper methods like create().
     """
 
     def __init__(
         self,
         guide: GuideInfo,
         module: ModuleInfo,
-        kinematics: str,
         types: List,
-        index: int,
         layout: Dict = setup.MAIN,
         position: List[float] = None,
         orientation: List[float] = None,
     ):
-        super().__init__(guide, module, kinematics, types, position, orientation)
+        # pre-compute control name
+        control_types = types.append(role.CONTROL)
+        super().__init__(guide, module, control_types, position, orientation)
+
+        # Pre compute node levels
+        self.group = GroupNode(guide, module, types.append(role.GROUP))
+        self.mirror = GroupNode(guide, module, types.append(role.MIRROR))
+        self.constraint = GroupNode(guide, module, types.append(role.CONSTRAINT))
+        self.link = GroupNode(guide, module, types.append(role.LINK))
+        self.SDK = GroupNode(guide, module, types.append(role.SDK))
+        self.offset = GroupNode(guide, module, types.append(role.OFFSET))
+        self.space_locator = LocatorNode(guide, module, [role.LOCATOR, role.SPACE])
 
         self.color_set: Dict = layout.get(general_role.COLOR)
         self.node_levels: List = layout.get(general_role.LEVEL)
         self.nolde_level_flags: Dict = limb_setup.NODE_LEVEL_FLAGS
 
-        # Pre compute node levels
-        self.group = LimbGroupNode(guide, module, kinematics, [index, role.GROUP])
-        self.mirror = LimbGroupNode(guide, module, kinematics, [index, role.MIRROR])
-        self.constraint = LimbGroupNode(guide, module, kinematics, [index, role.CONSTRAINT])
-        self.link = LimbGroupNode(guide, module, kinematics, [index, role.LINK])
-        self.SDK = LimbGroupNode(guide, module, kinematics, [index, role.SDK])
-        self.offset = LimbGroupNode(guide, module, kinematics, [index, role.OFFSET])
-        self.space_locator = LimbLocatorNode(guide, module, kinematics, [index, role.LOCATOR, role.SPACE])
-
-        self.level_nodes: list[LimbGroupNode] = [
+        self.level_nodes: list[GroupNode] = [
             self.offset,
             self.SDK,
             self.link,
@@ -70,7 +70,7 @@ class LimbControlNode(LimbBaseNode):
             shape_type = general_role.HINGES
         else:
             shape_type = self.module.type
-        shape_data = general_shapes.SHAPES_LIBRARY.get(self.kinematics, {}).get(shape_type)
+        shape_data = general_shapes.SHAPES_LIBRARY.get(self.types[0], {}).get(shape_type)
 
         if shape_data:
             ctrl = cmds.curve(d=shape_data["degree"], p=shape_data["control_points"], name=self)
@@ -124,7 +124,7 @@ class LimbControlNode(LimbBaseNode):
         cmds.xform(top_node, ws=True, t=self.guide.position, ro=self.guide.orientation)
 
 
-class LimbControlSet(List[LimbControlNode]):
+class ControlSet(List[ControlNode]):
     """
     A list of LimbControlNode with module/guide metadata + create().
     """
@@ -134,21 +134,19 @@ class LimbControlSet(List[LimbControlNode]):
         guides: List[GuideInfo],
         module: ModuleInfo,
         kinematics: str,
-        Bendy=False,
+        twist=False,
         positions: List = [],
         layout: Dict = setup.MAIN,
     ):
         self.kinematics = kinematics
-        self.group: LimbGroupNode = None
-        self.sub_groups: List[LimbGroupNode] = []
+        self.group: GroupNode = None
+        self.sub_groups: List[GroupNode] = []
 
         # Pre compute controls and group
-        group_type = [role.CONTROL, role.GROUP]
-        self.group = LimbGroupNode(guides[0], module, kinematics, group_type)
+        self.group = GroupNode(guides[0], module, kinematics, [role.CONTROL, role.GROUP])
         for i, (guide, position) in enumerate(zip(guides, positions)):
-            index = None if Bendy is None else f"{i+1:02d}"
-            control_type = [index, role.CONTROL]
-            ctrl_node = LimbControlNode(guide, module, kinematics, control_type, index, layout, position)
+            index = None if twist is None else f"{i+1:02d}"
+            ctrl_node = ControlNode(guide, module, kinematics, [index], layout, position)
             self.append(ctrl_node)
 
     def create(self):

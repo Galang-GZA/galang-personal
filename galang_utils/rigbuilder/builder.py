@@ -3,7 +3,7 @@
 from typing import Dict
 from galang_utils.rigbuilder.constant.general import role as general_role
 from galang_utils.rigbuilder.core.guide import ModuleInfo
-from galang_utils.rigbuilder.modules.base.component.zcomponent import BaseComponent
+from rigbuilder.modules.base.component.z_component import BaseComponent
 from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent
 from galang_utils.rigbuilder.modules.limb.operator.zoperator import LimbOperator
 

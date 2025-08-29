@@ -12,6 +12,14 @@ CARPAL = "MetaCarpal"
 END_GUIDE = "EndGuide"
 END = "End"
 
+# JOINT
+SIDE = "side"
+
+# IK
+EFFECTOR1 = "effector1"
+IK_SC_SOLVER = "ikSCsolver"
+IK_RP_SOLVER = "ikRPsolver"
+
 # Module Misc
 TYPE = "typ"
 AXIS = "aim_axis"

@@ -3,10 +3,10 @@ from typing import Dict, List
 from galang_utils.rigbuilder.constant.project import role as role
 from galang_utils.rigbuilder.modules.limb.constant.format import LimbFormat
 from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
-from galang_utils.rigbuilder.modules.limb.program.base import LimbBaseNode
+from rigbuilder.modules.base.component.dag import Node
 
 
-class LimbGroupNode(LimbBaseNode):
+class GroupNode(Node):
     """
     LimbGroupNode behaves like a string (the Maya node name) but also carries extra
     metadata (position, orientation, etc.) and has helper methods like create().
@@ -16,12 +16,11 @@ class LimbGroupNode(LimbBaseNode):
         self,
         guide: GuideInfo,
         module: ModuleInfo,
-        kinematics: str,
         types: List = [],
         position: List[float] = None,
         orientation: List[float] = None,
     ):
-        super().__init__(guide, module, kinematics, types, position, orientation)
+        super().__init__(guide, module, types, position, orientation)
 
     def create(self):
         """

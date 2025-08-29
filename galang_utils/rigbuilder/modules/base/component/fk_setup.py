@@ -8,7 +8,7 @@ from galang_utils.rigbuilder.modules.base.component.control import ControlSet
 from rigbuilder.modules.base.component.joint_chain import JointChain
 
 
-class LimbFKComponent:
+class FKComponent:
     def __init__(self, module: ModuleInfo):
         self.module = module
         self.guide = module.guide

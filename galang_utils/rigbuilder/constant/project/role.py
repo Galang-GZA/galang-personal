@@ -6,8 +6,10 @@ JOINT = "jnt"  # Joint
 NUM = "001"  # Numbers
 IK = "ik"  # Inverse Kinematics
 FK = "fk"  # Forward Kinematics
+EFFECTOR = "effector"
 NK = None  # None Kinematics
 SUB = None
+BENDY = "bendy"
 RESULT = "result"  # Result of IK & FK
 BIND = "bind"  # Bind Joint
 CONTROL = "ctrl"  # Controller
@@ -16,10 +18,12 @@ PV = "pv"  # Pole Vector
 SCALE = "scale"
 DETAIL = "detail"
 ROLL = "roll"
+TWIST = "twist"
 SETTINGS = "setings"
 WORLD = "world"
 ROOT = "root"
 END = "end"
+
 
 # Sides
 LEFT = "lt"

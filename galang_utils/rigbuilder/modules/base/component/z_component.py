@@ -1,7 +1,7 @@
 from typing import List
 from galang_utils.rigbuilder.core.guide import ModuleInfo
 from galang_utils.rigbuilder.modules.base.component.bind import BaseBindComponent
-from galang_utils.rigbuilder.modules.base.component.fk import BaseFKComponent
+from rigbuilder.modules.base.component.fk_setup import BaseFKComponent
 
 
 class BaseComponent:

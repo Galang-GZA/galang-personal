@@ -1,15 +1,16 @@
 from maya import cmds
 from typing import Dict, List
 
+from galang_utils.rigbuilder.constant.general import role as general_role
 from galang_utils.rigbuilder.constant.project import role as role
 from galang_utils.rigbuilder.modules.limb.constant.format import LimbFormat
 
 from galang_utils.rigbuilder.core.guide import ModuleInfo
-from galang_utils.rigbuilder.modules.limb.program.group import LimbGroupNode
-from galang_utils.rigbuilder.modules.limb.program.control import LimbControlSet
-from galang_utils.rigbuilder.modules.limb.program.jointchain import LimbJointSet
-from galang_utils.rigbuilder.modules.limb.program.distance import LimbDistanceSet
-from galang_utils.rigbuilder.modules.limb.program.locator import LimbLocatorNode, LimbLocatorSet
+from galang_utils.rigbuilder.modules.base.component.group import GroupNode
+from galang_utils.rigbuilder.modules.base.component.control import ControlSet
+from rigbuilder.modules.base.component.joint_chain import JointChain
+from rigbuilder.modules.base.operator.distance import DistanceSet
+from galang_utils.rigbuilder.modules.base.component.locator import LocatorNode, LimbLocatorSet
 
 
 class LimbIKComponent:
@@ -19,16 +20,16 @@ class LimbIKComponent:
         self.guides = module.guides
         self.format = LimbFormat(self.guide.side, role.IK)
 
-        self.group = LimbGroupNode(self.guide, module, role.IK, [role.RIG, role.GROUP])
-        self.joints = LimbJointSet(self.guides, module, role.IK)
-        self.controls = LimbControlSet(self.guides, module, role.IK)
-        self.loc_handle = LimbLocatorNode(module.guide, module, role.IK)
+        self.group = GroupNode(self.guide, module, [role.IK, role.RIG, role.GROUP])
+        self.joints = JointChain(self.guides, module, [role.IK])
+        self.controls = ControlSet(self.guides, module, [role.IK])
+        self.loc_handle = LocatorNode(module.guide, module, [role.IK])
         self.handle = None
 
-        self.static_locators = LimbLocatorSet(module, role.IK, [role.STATIC])
-        self.static_distances = LimbDistanceSet(module, role.IK, [role.STATIC])
-        self.active_locators = LimbLocatorSet(module, role.IK, [role.ACTIVE])
-        self.active_distances = LimbDistanceSet(module, role.IK, [role.ACTIVE])
+        self.static_locators = LimbLocatorSet(module, [role.IK, role.STATIC])
+        self.static_distances = DistanceSet(module, [role.IK, role.STATIC])
+        self.active_locators = LimbLocatorSet(module, [role.IK, role.ACTIVE])
+        self.active_distances = DistanceSet(module, [role.IK, role.ACTIVE])
 
     def create(self):
         print(f"update {self.module.guide.name} success")

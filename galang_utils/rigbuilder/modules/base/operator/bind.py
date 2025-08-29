@@ -3,7 +3,7 @@ from typing import Dict
 from galang_utils.rigbuilder.constant.constant_general import *
 from galang_utils.rigbuilder.constant.constant_project import *
 from galang_utils.rigbuilder.modules.base.rule.constant_module import *
-from galang_utils.rigbuilder.modules.base.component.zcomponent import *
+from rigbuilder.modules.base.component.z_component import *
 
 
 class BaseBindOperator:

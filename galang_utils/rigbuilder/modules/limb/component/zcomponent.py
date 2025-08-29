@@ -2,11 +2,11 @@ from typing import List
 
 from galang_utils.rigbuilder.core.guide import ModuleInfo
 
-from galang_utils.rigbuilder.modules.base.component.zcomponent import BaseComponent
+from rigbuilder.modules.base.component.z_component import BaseComponent
 from galang_utils.rigbuilder.modules.limb.component.fk import LimbFKComponent
 from galang_utils.rigbuilder.modules.limb.component.ik import LimbIKComponent
 from galang_utils.rigbuilder.modules.limb.component.result import LimbResultComponent
-from rigbuilder.modules.limb.component.bendy import LimbRollComponent
+from rigbuilder.modules.limb.component.twist import LimbRollComponent
 from galang_utils.rigbuilder.modules.limb.component.settings import LimbSettingComponent
 from rigbuilder.modules.limb.component.group import LimbContainerComponent
 

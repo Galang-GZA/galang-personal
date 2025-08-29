@@ -86,10 +86,10 @@ class ModuleInfo:
         self.axis: str = None
         self.side: str = None
         self.side_id: int = None
-        self.guides: List[GuideInfo] = []
-        self.guides_end: List[GuideInfo] = []
-        self.guides_pv: List[GuideInfo] = []
-        self.child: List = []
+        self.guides: List[GuideInfo] = None
+        self.guides_end: List[GuideInfo] = None
+        self.guides_pv: GuideInfo = None
+        self.child: List = None
         self.parent: str = None
         self.__init__module(guide)
 
@@ -119,7 +119,7 @@ class ModuleInfo:
                 self.axis = MODULE_AIM_AXIS.get(self.type)
 
             if PV in guide.name:
-                self.guides_pv.append(guide)
+                self.guides_pv = guide
             else:
                 self.guides.append(guide)
 
