@@ -2,10 +2,11 @@
 
 from maya import cmds
 from typing import List
-from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.constant.general import role as gen_role
-from galang_utils.rigbuilder.modules.base.component.group import GroupNode
-from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
+from rigbuilder.constant.project import role as role
+from rigbuilder.constant.project import setup as setup
+from rigbuilder.constant.general import role as gen_role
+from rigbuilder.modules.base.component.group import GroupNode
+from rigbuilder.core.guide import GuideInfo, ModuleInfo
 from rigbuilder.modules.base.component.dag import Node
 
 
@@ -21,11 +22,10 @@ class JointNode(Node):
         module: ModuleInfo,
         types: List = None,
         position: List[float] = None,
-        orientation: List[float] = None,
     ):
         # Pre-compute joint name
         joint_types = types.append(role.JOINT)
-        super().__init__(guide, module, joint_types, position, orientation)
+        super().__init__(guide, module, joint_types, position)
 
     def create(self):
         """
@@ -47,7 +47,7 @@ class JointChain(List[JointNode]):
         self,
         guides,
         module: ModuleInfo,
-        types: List = None,
+        types: List,
         positions: List = None,
         group_enabled: bool = True,
     ):
@@ -58,8 +58,10 @@ class JointChain(List[JointNode]):
             self.group = GroupNode(guides[0], module, group_types)
 
         # Pre-compute joints
-        for guide, position in zip(guides, positions):
-            jnt_node = JointNode(guide, module, types, position)
+        for i, (guide, position) in enumerate(zip(guides, positions)):
+            i = f"{i+1:02d}"
+            resolved_types = [(i if t is setup.INDEX else t) for t in types]
+            jnt_node = JointNode(guide, module, resolved_types, position)
             self.append(jnt_node)
 
     def create(self):
@@ -67,7 +69,8 @@ class JointChain(List[JointNode]):
         Creates the Maya joints.
         """
         # Define and create top node
-        top_node = self.group.create()
+        if self.group:
+            top_node = self.group.create()
 
         # Create each joint & parent accordingly
         for jnt_node in self:

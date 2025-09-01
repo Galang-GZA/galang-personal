@@ -1,6 +1,6 @@
 from typing import Dict, List
-from galang_utils.rigbuilder.core.guide import ModuleInfo
-from galang_utils.rigbuilder.modules.base.component.joint_chain import JointChain
+from rigbuilder.core.guide import ModuleInfo
+from rigbuilder.modules.base.component.joint_chain import JointChain
 
 
 class BindComponent:

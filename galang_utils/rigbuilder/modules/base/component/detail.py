@@ -1,33 +1,32 @@
 from maya import cmds
 from typing import Dict, List
 
-from galang_utils.rigbuilder.constant.general import role as gen_role
-from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.constant.project import setup as setup
+from rigbuilder.constant.general import role as gen_role
+from rigbuilder.constant.project import role as role
+from rigbuilder.constant.project import setup as setup
 
-from galang_utils.rigbuilder.core.guide import ModuleInfo, GuideInfo
+from rigbuilder.core.guide import ModuleInfo, GuideInfo
 from rigbuilder.modules.base.component.dag import Node
-from galang_utils.rigbuilder.modules.base.component.group import GroupNode
+from rigbuilder.modules.base.component.group import GroupNode
 from rigbuilder.modules.base.component.joint_chain import JointNode
 from rigbuilder.modules.base.component.joint_chain import JointChain
-from galang_utils.rigbuilder.modules.base.component.control import ControlSet
-from galang_utils.rigbuilder.modules.base.component.locator import LocatorNode
-from galang_utils.rigbuilder.modules.base.component.ik_handle import IkHandleNode
+from rigbuilder.modules.base.component.control import ControlSet
+from rigbuilder.modules.base.component.locator import LocatorNode
+from rigbuilder.modules.base.component.ik_handle import IkHandleNode
 
 
-class BendyComponent:
+class DetailComponent:
     def __init__(self, module: ModuleInfo, sub_divs: int, i: int):
         guides = module.guides
         div_guides = [guides[i]] * sub_divs
         positions = self._get_sub_positions(module, sub_divs, i)
-        index = [i for i in range (sub_divs)]
 
         # Pre-compute upper details components
         self.group = GroupNode(guides[i], module, [role.DETAIL, role.GROUP])
-        self.joints = JointChain(div_guides, module, [role.DETAIL, i for i in range (sub_divs)], True, positions)
+        self.joints = JointChain(div_guides, module, [role.DETAIL, setup.INDEX], positions)
         self.root_joint = JointNode(guides[i], module, [role.DETAIL, role.IK, 1], positions[0])
         self.end_joint = JointNode(guides[i], module, [role.DETAIL, role.IK, 2], positions[-1])
-        self.controls = ControlSet(div_guides, module, [role.DETAIL], True, positions)
+        self.controls = ControlSet(div_guides, module, [role.DETAIL, setup.INDEX], positions)
         self.ik_locator = LocatorNode(guides[i], module, [role.DETAIL, role.IK], guides[i + 1].position)
         self.ik_effector = Node(guides[i], module, [role.DETAIL, role.EFFECTOR], guides[i + 1].position)
         self.ik_handle = IkHandleNode(

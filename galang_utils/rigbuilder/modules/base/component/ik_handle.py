@@ -1,8 +1,8 @@
 from maya import cmds
 from typing import List
-from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.constant.general import role as gen_role
-from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
+from rigbuilder.constant.project import role as role
+from rigbuilder.constant.general import role as gen_role
+from rigbuilder.core.guide import GuideInfo, ModuleInfo
 from rigbuilder.modules.base.component.dag import Node
 
 
@@ -21,14 +21,13 @@ class IkHandleNode(Node):
         solver: str,
         types: List = None,
         position: List[float] = None,
-        orientation: List[float] = None,
     ):
         self.solver = solver
         self.source_joint = source_joint
         self.end_effector = end_effector
         ik_handle_types = types.append(role.IK)
         self.effector = Node(guide, module, [role.DETAIL, role.EFFECTOR], position)
-        super().__init__(guide, module, ik_handle_types, position, orientation)
+        super().__init__(guide, module, ik_handle_types, position)
 
     def create(self):
         """

@@ -1,7 +1,7 @@
 from maya import cmds
 from typing import Dict, List
 
-from galang_utils.rigbuilder.constant.general import role as general_role
+from galang_utils.rigbuilder.constant.general import role as gen_role
 from galang_utils.rigbuilder.constant.project import role as role
 from galang_utils.rigbuilder.modules.limb.constant.format import LimbFormat
 

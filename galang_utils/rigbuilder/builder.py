@@ -1,7 +1,7 @@
 """Create Hand Rig Based On the Guide Joints"""
 
 from typing import Dict
-from galang_utils.rigbuilder.constant.general import role as general_role
+from galang_utils.rigbuilder.constant.general import role as gen_role
 from galang_utils.rigbuilder.core.guide import ModuleInfo
 from rigbuilder.modules.base.component.z_component import BaseComponent
 from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent
@@ -19,10 +19,10 @@ class ModuleAssembly:
             # Map the guide module with contents
             module = ModuleInfo(guide)
 
-            if module.type == general_role.LIMB:
+            if module.type == gen_role.LIMB:
                 component = LimbComponent(module)
                 operator = LimbOperator(module)
-                self.module_map[str(guide)] = {general_role.COMPONENT: component, general_role.OPERATOR: operator}
+                self.module_map[str(guide)] = {gen_role.COMPONENT: component, gen_role.OPERATOR: operator}
             # elif module.type == HAND:
             #     component = HandComponent(module)
             #     operator = HandOperator(component)
@@ -46,7 +46,7 @@ class ModuleAssembly:
     def build_component(self):
 
         for module_name, data in self.module_map.items():
-            component: BaseComponent = data[general_role.COMPONENT]
+            component: BaseComponent = data[gen_role.COMPONENT]
 
             if component:
                 print(f"    Building module: {module_name}")
@@ -60,9 +60,9 @@ class ModuleAssembly:
 
     def run_operator(self):
         for module_name, data in self.module_map.items():
-            component: BaseComponent = data[general_role.COMPONENT]
+            component: BaseComponent = data[gen_role.COMPONENT]
             operator = LimbOperator(component)  # PR UBAH JADIIN BASE OPERATOR
-            data[general_role.OPERATOR] = operator
+            data[gen_role.OPERATOR] = operator
             if operator or component:
                 print(f"    Running module: {module_name}")
             else:

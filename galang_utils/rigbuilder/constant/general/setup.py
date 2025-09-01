@@ -1,4 +1,4 @@
-from galang_utils.rigbuilder.constant.general import role as general_role
+from galang_utils.rigbuilder.constant.general import role as gen_role
 
 # Side
 DEFAULT_LEFT = "lt"
@@ -12,22 +12,22 @@ MIRROR_AXIS_DATA = {
 }
 
 MODULE_MAP = {
-    general_role.ROOT: {"ids": [1]},
-    general_role.SPINE: {"ids": [6]},
-    general_role.LIMB: {"ids": [10, 2]},
-    general_role.HINGES: {"ids": [3, 11]},
-    general_role.FOOT: {"ids": [4]},
-    general_role.HAND: {"ids": [12]},
-    general_role.FINGER: {"ids": [13, 14, 19, 20, 21, 22]},
-    general_role.TOES: {"ids": [5]},
+    gen_role.ROOT: {"ids": [1]},
+    gen_role.SPINE: {"ids": [6]},
+    gen_role.LIMB: {"ids": [10, 2]},
+    gen_role.HINGES: {"ids": [3, 11]},
+    gen_role.FOOT: {"ids": [4]},
+    gen_role.HAND: {"ids": [12]},
+    gen_role.FINGER: {"ids": [13, 14, 19, 20, 21, 22]},
+    gen_role.TOES: {"ids": [5]},
 }
 
 
 # Module Aim Axis
 MODULE_AIM_AXIS = {
-    general_role.SPINE: "Y",
-    general_role.LIMB: "X",
-    general_role.FINGER: "X",
-    general_role.HAND: "X",
-    general_role.ROOT: "Y",
+    gen_role.SPINE: "Y",
+    gen_role.LIMB: "X",
+    gen_role.FINGER: "X",
+    gen_role.HAND: "X",
+    gen_role.ROOT: "Y",
 }

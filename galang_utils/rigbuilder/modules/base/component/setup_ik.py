@@ -1,17 +1,17 @@
 from maya import cmds
 from typing import Dict, List
 
-from galang_utils.rigbuilder.constant.general import role as general_role
-from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.modules.limb.constant.format import LimbFormat
+from rigbuilder.constant.general import role as gen_role
+from rigbuilder.constant.project import role as role
+from rigbuilder.modules.limb.constant.format import LimbFormat
 
-from galang_utils.rigbuilder.core.guide import ModuleInfo
-from galang_utils.rigbuilder.modules.base.component.dag import Node
-from galang_utils.rigbuilder.modules.base.component.group import GroupNode
-from galang_utils.rigbuilder.modules.base.component.control import ControlSet
-from galang_utils.rigbuilder.modules.base.component.joint_chain import JointChain
-from galang_utils.rigbuilder.modules.base.component.ik_handle import IkHandleNode
-from galang_utils.rigbuilder.modules.base.component.locator import LocatorNode, LimbLocatorSet
+from rigbuilder.core.guide import ModuleInfo
+from rigbuilder.modules.base.component.dag import Node
+from rigbuilder.modules.base.component.group import GroupNode
+from rigbuilder.modules.base.component.control import ControlSet
+from rigbuilder.modules.base.component.joint_chain import JointChain
+from rigbuilder.modules.base.component.ik_handle import IkHandleNode
+from rigbuilder.modules.base.component.locator import LocatorNode, LimbLocatorSet
 
 
 class IKComponent:
@@ -28,7 +28,7 @@ class IKComponent:
             module=module,
             source_joint=self.joints[0],
             end_effector=self.joints[-1],
-            solver=general_role.IK_RP_SOLVER,
+            solver=gen_role.IK_RP_SOLVER,
             types=[role.DETAIL],
             position=guides[2].position,
         )

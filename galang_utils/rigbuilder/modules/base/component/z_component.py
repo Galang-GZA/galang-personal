@@ -1,20 +1,18 @@
 from typing import List
-from galang_utils.rigbuilder.core.guide import ModuleInfo
-from galang_utils.rigbuilder.modules.base.component.bind import BaseBindComponent
-from rigbuilder.modules.base.component.fk_setup import BaseFKComponent
+from rigbuilder.core.guide import ModuleInfo
+from rigbuilder.modules.base.component.dag import Node
+from rigbuilder.modules.base.component.setup_bind import BindComponent
+from rigbuilder.modules.base.component.setup_ik import IKComponent
+from rigbuilder.modules.base.component.setup_fk import FKComponent
 
 
 class BaseComponent:
     def __init__(self, module: ModuleInfo):
-        self.bind = BaseBindComponent(module)
-        self.fk = BaseFKComponent(module)
-        self.bind_connection: List = []
+        self.bind = BindComponent(module)
+        self.ik = IKComponent(module)
+        self.fk = FKComponent(module)
 
-    def create_bind(self):
-        self.bind.create()
-
-    def create_rig(self):
-        self.fk.create()
-
-        # Add result joints to bind connection
-        self.bind_connection = self.fk.joints
+    def create(self):
+        components: List[Node] = [self.bind, self.ik, self.fk]
+        for component in components:
+            component.create()

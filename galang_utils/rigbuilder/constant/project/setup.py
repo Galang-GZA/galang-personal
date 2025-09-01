@@ -1,6 +1,6 @@
 from typing import Dict
 from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.constant.general import role as general_role
+from galang_utils.rigbuilder.constant.general import role as gen_role
 
 # Side Mapping
 SIDE_MAP = {0: role.CENTER, 1: role.LEFT, 2: role.RIGHT}
@@ -14,7 +14,7 @@ MIRROR_SCALE = True
 MIRROR_PLANE = "YZ"
 
 # Node Levels
-NODE_MAIN_LEVELS = [role.OFFSET, role.SDK, role.LINK, role.CONSTRAINT, role.MIRROR, role.TOP]
+NODE_MAIN_LEVELS = [role.OFFSET, role.SDK, role.LINK, role.CONSTRAINT, role.MIRROR, role.GROUP]
 NODE_SUB_LEVELS = [role.OFFSET, role.SDK, role.LINK]
 
 # Color Library
@@ -24,8 +24,11 @@ MAIN_COLOR: Dict = {1: COLOR_INDEX["blue"], 2: COLOR_INDEX["red"], 0: COLOR_INDE
 SUB_COLOR: Dict = {1: COLOR_INDEX["cyan"], 2: COLOR_INDEX["magenta"], 0: COLOR_INDEX["green"]}
 
 # Control type mapping
-MAIN = {general_role.LEVEL: MAIN_COLOR, general_role.COLOR: MAIN_COLOR}
-SUB = {general_role.LEVEL: SUB_COLOR, general_role.COLOR: SUB_COLOR}
+MAIN = {gen_role.LEVEL: MAIN_COLOR, gen_role.COLOR: MAIN_COLOR}
+SUB = {gen_role.LEVEL: SUB_COLOR, gen_role.COLOR: SUB_COLOR}
 
 # Ammounts
 LEN_DETAILS = 3
+
+# Placeholder
+INDEX = "index"

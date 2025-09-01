@@ -60,6 +60,7 @@ MULT_DIV = "multiplyDivide"
 CONDITION = "condition"
 BLEND = "blendTwoAttr"
 CONSTRAINT = "cons"
+MIRROR = "mirror"
 
 # Node Function
 NORMAL = "normalizer"

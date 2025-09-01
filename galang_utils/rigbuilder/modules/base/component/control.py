@@ -1,17 +1,17 @@
 from maya import cmds
 from typing import Dict, List
-from galang_utils.curve import shapes_library as general_shapes
-from galang_utils.rigbuilder.constant.general import role as general_role
-from galang_utils.rigbuilder.constant.general import setup as general_setup
-from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.constant.project import setup as setup
+from curve import shapes_library as gen_shapes
+from rigbuilder.constant.general import role as gen_role
+from rigbuilder.constant.general import setup as general_setup
+from rigbuilder.constant.project import role as role
+from rigbuilder.constant.project import setup as setup
 
-from galang_utils.rigbuilder.modules.limb.constant import setup as limb_setup
+from rigbuilder.modules.limb.constant import setup as limb_setup
 
-from galang_utils.rigbuilder.modules.base.component.group import GroupNode
-from galang_utils.rigbuilder.modules.base.component.locator import LocatorNode
+from rigbuilder.modules.base.component.group import GroupNode
+from rigbuilder.modules.base.component.locator import LocatorNode
 
-from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
+from rigbuilder.core.guide import GuideInfo, ModuleInfo
 from rigbuilder.modules.base.component.dag import Node
 
 
@@ -41,20 +41,19 @@ class ControlNode(Node):
         self.link = GroupNode(guide, module, types.append(role.LINK))
         self.SDK = GroupNode(guide, module, types.append(role.SDK))
         self.offset = GroupNode(guide, module, types.append(role.OFFSET))
-        self.space_locator = LocatorNode(guide, module, [role.LOCATOR, role.SPACE])
 
-        self.color_set: Dict = layout.get(general_role.COLOR)
-        self.node_levels: List = layout.get(general_role.LEVEL)
-        self.nolde_level_flags: Dict = limb_setup.NODE_LEVEL_FLAGS
+        self.color_set: Dict = layout.get(gen_role.COLOR)
+        self.node_levels: List = layout.get(gen_role.LEVEL)
+        self.top = self.node_levels[-1]
 
-        self.level_nodes: list[GroupNode] = [
-            self.offset,
-            self.SDK,
-            self.link,
-            self.constraint,
-            self.mirror,
-            self.group,
-        ]
+        self.level_dictionary: Dict[str:GroupNode] = {
+            role.GROUP: self.group,
+            role.MIRROR: self.mirror,
+            role.CONSTRAINT: self.constraint,
+            role.LINK: self.link,
+            role.SDK: self.SDK,
+            role.OFFSET: self.offset,
+        }
 
     def create(self):
         """
@@ -66,11 +65,10 @@ class ControlNode(Node):
             return
 
         # Create control based on the shapes library or basic shapes
-        if role.PV in self.guide.name:
-            shape_type = general_role.HINGES
-        else:
-            shape_type = self.module.type
-        shape_data = general_shapes.SHAPES_LIBRARY.get(self.types[0], {}).get(shape_type)
+        shape_type = gen_role.HINGES if role.PV in self.guide.name else self.module.type
+        item_types_order = [role.SETTINGS, role.DETAIL, role.IK, role.FK]
+        item_type = next((item for item in item_types_order if item in self.types), None)
+        shape_data = gen_shapes.SHAPES_LIBRARY.get(item_type, {}).get(shape_type) if item_type else None
 
         if shape_data:
             ctrl = cmds.curve(d=shape_data["degree"], p=shape_data["control_points"], name=self)
@@ -92,36 +90,36 @@ class ControlNode(Node):
         cmds.setAttr(f"{shape}.overrideEnabled", 1)
         cmds.setAttr(f"{shape}.overrideColor", color_id)
 
-        # Create space locators
-        self.space_locator.create()
-        cmds.parent(self.space_locator, self)
+        # Resize detail control
+        if role.DETAIL in self.types:
+            cmds.xform(self, s=[0.85, 0.85, 0.85])
+            cmds.makeIdentity(self, a=True, s=1)
 
         # Build hierarchy levels
-        top_node = self
-        for level, node in zip(self.node_levels, self.level_nodes):
-            if self.nolde_level_flags.get(level):
-                cmds.select(clear=True)
-                node.create()
+        self.top_node = self
+        for level in self.node_levels:
+            node: GroupNode = self.level_dictionary.get(level)
+            node.create()
 
-                # Mirror node handling
-                if self.module.side_id == setup.MIRROR_SIDE_ID and level == role.MIRROR:
-                    if setup.MIRROR_SCALE:
-                        mirror_data = general_setup.MIRROR_AXIS_DATA[setup.MIRROR_AXIS]
-                        cmds.xform(node, ro=mirror_data["orientation"], s=mirror_data["scale"])
+            # Mirror node handling
+            if self.module.side_id == setup.MIRROR_SIDE_ID and level == role.MIRROR:
+                if setup.MIRROR_SCALE:
+                    mirror_data = general_setup.MIRROR_AXIS_DATA[setup.MIRROR_AXIS]
+                    cmds.xform(node, ro=mirror_data["orientation"], s=mirror_data["scale"])
 
-                # Parent lower node under this one
-                cmds.parent(top_node, node)
+            # Parent lower node under this one
+            cmds.parent(self.top_node, node)
 
-                # If mirrored, apply 180-degree rotation & freeze
-                if self.module.side_id == setup.MIRROR_SIDE_ID and level == role.MIRROR:
-                    if setup.MIRROR_SCALE:
-                        cmds.xform(top_node, ro=mirror_data["orientation"])
-                        cmds.makeIdentity(top_node, a=True, t=1, r=1, s=1)
+            # If mirrored, apply 180-degree rotation & freeze
+            if self.module.side_id == setup.MIRROR_SIDE_ID and level == role.MIRROR:
+                if setup.MIRROR_SCALE:
+                    cmds.xform(self.top_node, ro=mirror_data["orientation"])
+                    cmds.makeIdentity(self.top_node, a=True, t=1, r=1, s=1)
 
-                top_node = node
+            self.top_node = node
 
         # Final placement
-        cmds.xform(top_node, ws=True, t=self.guide.position, ro=self.guide.orientation)
+        cmds.xform(self.top_node, ws=True, t=self.guide.position, ro=self.guide.orientation)
 
 
 class ControlSet(List[ControlNode]):
@@ -133,20 +131,17 @@ class ControlSet(List[ControlNode]):
         self,
         guides: List[GuideInfo],
         module: ModuleInfo,
-        kinematics: str,
-        twist=False,
-        positions: List = [],
+        types: List,
         layout: Dict = setup.MAIN,
+        positions: List = [],
     ):
-        self.kinematics = kinematics
-        self.group: GroupNode = None
-        self.sub_groups: List[GroupNode] = []
-
+        self.types = types
         # Pre compute controls and group
-        self.group = GroupNode(guides[0], module, kinematics, [role.CONTROL, role.GROUP])
+        self.group = GroupNode(guides[0], module, types.append(role.GROUP))
         for i, (guide, position) in enumerate(zip(guides, positions)):
-            index = None if twist is None else f"{i+1:02d}"
-            ctrl_node = ControlNode(guide, module, kinematics, [index], layout, position)
+            i = f"{i+1:02d}"
+            resolved_types = [(i if t is setup.INDEX else t) for t in types]
+            ctrl_node = ControlNode(guide, module, [resolved_types], layout, position)
             self.append(ctrl_node)
 
     def create(self):
@@ -160,15 +155,10 @@ class ControlSet(List[ControlNode]):
         for ctrl_node in self:
             ctrl_node.create()
 
-            # Resize detail control
-            if self.kinematics == role.DETAIL:
-                cmds.xform(ctrl_node, s=[0.85, 0.85, 0.85])
-                cmds.makeIdentity(ctrl_node, a=True, s=1)
-
             # Parent to group
             if top_node:
                 cmds.parent(ctrl_node.group, top_node)
 
             # FK Chaining
-            if self.kinematics == role.FK:
+            if role.FK in self.types:
                 top_node = ctrl_node

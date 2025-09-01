@@ -14,8 +14,8 @@ import galang_utils.rigbuilder.modules.limb.rule.constant_module as limb_constan
 import rigbuilder.modules.limb.program.control as limb_base_controls
 import galang_utils.rigbuilder.modules.limb.program.jointchain as limb_base_jointchain
 
-import galang_utils.rigbuilder.modules.base.component.bind as base_component_bind
-import rigbuilder.modules.base.component.fk_setup as base_component_rig
+import rigbuilder.modules.base.component.setup_bind as base_component_bind
+import rigbuilder.modules.base.component.setup_fk as base_component_rig
 import rigbuilder.modules.base.component.z_component as base_component
 
 import galang_utils.rigbuilder.modules.base.operator.bind as base_operator_bind
@@ -80,8 +80,8 @@ from galang_utils.rigbuilder.modules.limb.rule.constant_module import *
 from rigbuilder.modules.limb.program.control import LimbControlCreator
 from galang_utils.rigbuilder.modules.limb.program.jointchain import LimbJointSet
 
-from galang_utils.rigbuilder.modules.base.component.bind import BaseBindComponent
-from rigbuilder.modules.base.component.fk_setup import BaseRigComponent
+from rigbuilder.modules.base.component.setup_bind import BaseBindComponent
+from rigbuilder.modules.base.component.setup_fk import BaseRigComponent
 from rigbuilder.modules.base.component.z_component import BaseComponent
 
 from galang_utils.rigbuilder.modules.base.operator.bind import BaseBindOperator
