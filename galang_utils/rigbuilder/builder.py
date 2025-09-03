@@ -1,9 +1,9 @@
 """Create Hand Rig Based On the Guide Joints"""
 
 from typing import Dict
-from galang_utils.rigbuilder.constant.general import role as gen_role
-from galang_utils.rigbuilder.core.guide import ModuleInfo
-from rigbuilder.modules.base.component.z_component import BaseComponent
+from galang_utils.rigbuilder.constants.general import role as gen_role
+from galang_utils.rigbuilder.cores.guide import ModuleInfo
+from rigbuilder.modules.base.component.zcomponent import BaseComponent
 from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent
 from galang_utils.rigbuilder.modules.limb.operator.zoperator import LimbOperator
 

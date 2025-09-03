@@ -1,38 +1,41 @@
 from typing import List
 
-from galang_utils.rigbuilder.core.guide import ModuleInfo
+from galang_utils.rigbuilder.cores.guide import ModuleInfo
 
-from rigbuilder.modules.base.component.z_component import BaseComponent
-from galang_utils.rigbuilder.modules.limb.component.fk import LimbFKComponent
-from galang_utils.rigbuilder.modules.limb.component.ik import LimbIKComponent
-from galang_utils.rigbuilder.modules.limb.component.result import LimbResultComponent
-from rigbuilder.modules.limb.component.twist import LimbRollComponent
-from galang_utils.rigbuilder.modules.limb.component.settings import LimbSettingComponent
-from rigbuilder.modules.limb.component.group import LimbContainerComponent
+from rigbuilder.modules.base.component.dag import Node
+from rigbuilder.modules.base.component.zcomponent import Component
+from rigbuilder.modules.limb.component.setup_ik import LimbIKComponent
+from rigbuilder.modules.limb.component.setup_result import LimbResultComponent
+from rigbuilder.modules.limb.component.setup_detail import LimbDetailComponent
+from rigbuilder.modules.limb.component.setup_settings import LimbSettingComponent
+from rigbuilder.modules.limb.component.setup_group import LimbGroupComponent
 
 
-class LimbComponent(BaseComponent):
+class LimbComponent(Component):
     def __init__(self, module: ModuleInfo):
         super().__init__(module)
-        self.module = module
-
-        self.fk = LimbFKComponent(module)
+        self.bind_detail = None
         self.ik = LimbIKComponent(module)
         self.result = LimbResultComponent(module)
         self.setting = LimbSettingComponent(module)
-        self.sub = LimbRollComponent(module)
-        self.container = LimbContainerComponent(module)
+        self.detail = LimbDetailComponent(module)
+        self.group = LimbGroupComponent(module)
+        self.bind_driver = self.result.joints
+        self.bind_detail_driver = None
 
     def bind_twist(self):
         pass
 
-    def create_rig(self):
-        self.container.create()
-        self.fk.create()
-        self.ik.create()
-        self.result.create()
-        self.sub.create()
-        self.setting.create()
-
-        # Add result joints to bind connection
-        self.bind_connection = self.result.joints
+    def create(self):
+        components: List[Node] = [
+            self.bind,
+            self.bind_detail,
+            self.fk,
+            self.ik,
+            self.result,
+            self.setting,
+            self.detail,
+            self.group,
+        ]
+        for component in components:
+            component.create()

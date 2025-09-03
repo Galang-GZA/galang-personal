@@ -1,7 +1,7 @@
 from maya import cmds
-from galang_utils.rigbuilder.constant.constant_project import *
-from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.constant.project import setup as setup
+from galang_utils.rigbuilder.constants.constant_project import *
+from galang_utils.rigbuilder.constants.project import role as role
+from galang_utils.rigbuilder.constants.project import setup as setup
 
 from galang_utils.rigbuilder.modules.limb.program.node import NodeCreator
 from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent

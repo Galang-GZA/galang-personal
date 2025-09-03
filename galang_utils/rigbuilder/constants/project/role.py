@@ -52,6 +52,7 @@ DISTANCE = "dis"
 SPACE = "space"
 
 # Nodes
+DISTANCE_BETWEEN = "distanceBetween"
 PAIRBLEND = "pairBlend"
 SCALEBLEND = "scaleBlend"
 REVERSE = "reverse"

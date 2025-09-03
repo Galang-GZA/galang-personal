@@ -1,18 +1,14 @@
 from maya import cmds
 from typing import Dict, List
 from curve import shapes_library as gen_shapes
-from rigbuilder.constant.general import role as gen_role
-from rigbuilder.constant.general import setup as general_setup
-from rigbuilder.constant.project import role as role
-from rigbuilder.constant.project import setup as setup
+from rigbuilder.constants.general import role as gen_role
+from rigbuilder.constants.general import setup as general_setup
+from rigbuilder.constants.project import role as role
+from rigbuilder.constants.project import setup as setup
+from rigbuilder.cores.guide import GuideInfo, ModuleInfo
 
-from rigbuilder.modules.limb.constant import setup as limb_setup
-
-from rigbuilder.modules.base.component.group import GroupNode
-from rigbuilder.modules.base.component.locator import LocatorNode
-
-from rigbuilder.core.guide import GuideInfo, ModuleInfo
 from rigbuilder.modules.base.component.dag import Node
+from rigbuilder.modules.base.component.group import GroupNode
 
 
 class ControlNode(Node):

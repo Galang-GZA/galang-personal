@@ -4,11 +4,11 @@ import galang_utils
 
 from galang_utils.curve import shapes_library
 import galang_utils.curve.shapes_library as shape_library
-import galang_utils.rigbuilder.constant.constant_general as constant_general
-import galang_utils.rigbuilder.constant.constant_project as constant_project
+import galang_utils.rigbuilder.constants.constant_general as constant_general
+import galang_utils.rigbuilder.constants.constant_project as constant_project
 
 import galang_utils.rigbuilder.builder as builder
-import galang_utils.rigbuilder.core.guide as guide
+import galang_utils.rigbuilder.cores.guide as guide
 
 import galang_utils.rigbuilder.modules.limb.rule.constant_module as limb_constants_constant
 import rigbuilder.modules.limb.program.control as limb_base_controls
@@ -16,22 +16,22 @@ import galang_utils.rigbuilder.modules.limb.program.jointchain as limb_base_join
 
 import rigbuilder.modules.base.component.setup_bind as base_component_bind
 import rigbuilder.modules.base.component.setup_fk as base_component_rig
-import rigbuilder.modules.base.component.z_component as base_component
+import rigbuilder.modules.base.component.zcomponent as base_component
 
-import galang_utils.rigbuilder.modules.base.operator.bind as base_operator_bind
+import rigbuilder.modules.base.operator.setup_bind as base_operator_bind
 import galang_utils.rigbuilder.modules.base.operator.rig as base_operator_rig
 import galang_utils.rigbuilder.modules.base.operator.zoperator as base_operator
 
 import galang_utils.rigbuilder.modules.limb.component.fk as limb_component_fk
 import galang_utils.rigbuilder.modules.limb.component.ik as limb_component_ik
-import galang_utils.rigbuilder.modules.limb.component.result as limb_component_result
-import galang_utils.rigbuilder.modules.limb.component.settings as limb_component_settings
+import rigbuilder.modules.limb.component.setup_result as limb_component_result
+import rigbuilder.modules.limb.component.setup_settings as limb_component_settings
 import galang_utils.rigbuilder.modules.limb.component.zcomponent as limb_component
 
 import galang_utils.rigbuilder.modules.limb.operator.fk as limb_operator_fk
 import galang_utils.rigbuilder.modules.limb.operator.ik as limb_operator_ik
-import galang_utils.rigbuilder.modules.limb.operator.result as limb_operator_result
-import galang_utils.rigbuilder.modules.limb.operator.settings as limb_operator_settings
+import rigbuilder.modules.limb.operator.setup_result as limb_operator_result
+import rigbuilder.modules.limb.operator.setup_settings as limb_operator_settings
 import galang_utils.rigbuilder.modules.limb.operator.zoperator as limb_operator
 
 # - - - - - - - - - - - - - - - - - -
@@ -71,31 +71,31 @@ reload(limb_operator)
 # - - - - - - - - - - - - - - - - - -
 
 from galang_utils.curve.shapes_library import *
-from galang_utils.rigbuilder.constant.constant_general import *
-from galang_utils.rigbuilder.constant.constant_project import *
+from galang_utils.rigbuilder.constants.constant_general import *
+from galang_utils.rigbuilder.constants.constant_project import *
 
 from galang_utils.rigbuilder.builder import ModuleAssembly
-from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
+from galang_utils.rigbuilder.cores.guide import GuideInfo, ModuleInfo
 from galang_utils.rigbuilder.modules.limb.rule.constant_module import *
 from rigbuilder.modules.limb.program.control import LimbControlCreator
 from galang_utils.rigbuilder.modules.limb.program.jointchain import LimbJointSet
 
 from rigbuilder.modules.base.component.setup_bind import BaseBindComponent
 from rigbuilder.modules.base.component.setup_fk import BaseRigComponent
-from rigbuilder.modules.base.component.z_component import BaseComponent
+from rigbuilder.modules.base.component.zcomponent import BaseComponent
 
-from galang_utils.rigbuilder.modules.base.operator.bind import BaseBindOperator
+from rigbuilder.modules.base.operator.setup_bind import BaseBindOperator
 from galang_utils.rigbuilder.modules.base.operator.rig import BaseRigOperator
-from galang_utils.rigbuilder.modules.base.operator.zoperator import BaseOperator
+from galang_utils.rigbuilder.modules.base.operator.zoperator import Operator
 
 from galang_utils.rigbuilder.modules.limb.component.fk import LimbFKComponent
 from galang_utils.rigbuilder.modules.limb.component.ik import LimbIKComponent
-from galang_utils.rigbuilder.modules.limb.component.result import LimbResultComponent
-from galang_utils.rigbuilder.modules.limb.component.settings import LimbSettingComponent
+from rigbuilder.modules.limb.component.setup_result import LimbResultComponent
+from rigbuilder.modules.limb.component.setup_settings import LimbSettingComponent
 from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent
 
 from galang_utils.rigbuilder.modules.limb.operator.fk import LimbFKOperator
 from galang_utils.rigbuilder.modules.limb.operator.ik import LimbIKOperator
-from galang_utils.rigbuilder.modules.limb.operator.result import LimbResultOperator
-from galang_utils.rigbuilder.modules.limb.operator.settings import LimbSettingOperator
+from rigbuilder.modules.limb.operator.setup_result import LimbResultOperator
+from rigbuilder.modules.limb.operator.setup_settings import LimbSettingOperator
 from galang_utils.rigbuilder.modules.limb.operator.zoperator import LimbOperator

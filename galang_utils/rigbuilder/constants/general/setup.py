@@ -1,4 +1,4 @@
-from galang_utils.rigbuilder.constant.general import role as gen_role
+from galang_utils.rigbuilder.constants.general import role as gen_role
 
 # Side
 DEFAULT_LEFT = "lt"

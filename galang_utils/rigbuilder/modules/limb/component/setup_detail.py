@@ -1,11 +1,11 @@
 from maya import cmds
 from typing import Dict, List
 
-from galang_utils.rigbuilder.constant.general import role as gen_role
-from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.constant.project import setup as setup
+from galang_utils.rigbuilder.constants.general import role as gen_role
+from galang_utils.rigbuilder.constants.project import role as role
+from galang_utils.rigbuilder.constants.project import setup as setup
 
-from galang_utils.rigbuilder.core.guide import ModuleInfo, GuideInfo
+from galang_utils.rigbuilder.cores.guide import ModuleInfo, GuideInfo
 from rigbuilder.modules.base.component.dag import Node
 from galang_utils.rigbuilder.modules.base.component.group import GroupNode
 from rigbuilder.modules.base.component.joint_chain import JointChain
@@ -14,7 +14,7 @@ from galang_utils.rigbuilder.modules.base.component.locator import LocatorNode
 from galang_utils.rigbuilder.modules.base.component.ik_handle import IkHandleNode
 
 
-class LimbBendyComponent:
+class LimbDetailComponent:
     def __init__(self, module: ModuleInfo, sub_divs: int):
         self.module = module
         self.guide = module.guide

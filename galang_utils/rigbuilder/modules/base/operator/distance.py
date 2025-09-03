@@ -1,7 +1,7 @@
 from maya import cmds
 from typing import List
-from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.core.guide import GuideInfo, ModuleInfo
+from galang_utils.rigbuilder.constants.project import role as role
+from galang_utils.rigbuilder.cores.guide import GuideInfo, ModuleInfo
 from rigbuilder.modules.base.component.dag import Node
 from galang_utils.rigbuilder.modules.base.component.group import GroupNode
 
@@ -18,14 +18,13 @@ class DistanceNode(Node):
         module: ModuleInfo,
         types: List = None,
         position: List[float] = None,
-        orientation: List[float] = None,
     ):
         distance_types = types.append(role.DISTANCE)
-        super().__init__(guide, module, types, distance_types, position, orientation)
+        super().__init__(guide, module, types, distance_types, position)
 
     def create(self):
         """Creates an empty Maya distance node."""
-        cmds.rename(cmds.createNode("distanceBetween"), self)
+        cmds.rename(cmds.createNode("distanceBetween", n=self))
 
 
 class DistanceSet(List[DistanceNode]):

@@ -1,5 +1,5 @@
 from maya import cmds
-from galang_utils.rigbuilder.constant.project import role as role
+from galang_utils.rigbuilder.constants.project import role as role
 from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent
 
 

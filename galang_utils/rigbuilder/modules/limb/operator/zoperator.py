@@ -1,21 +1,37 @@
-from galang_utils.rigbuilder.modules.base.operator.zoperator import BaseOperator
+from typing import List
+from galang_utils.rigbuilder.modules.base.operator.zoperator import Operator
 
-from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent
-from galang_utils.rigbuilder.modules.limb.operator.fk import LimbFKOperator
-from galang_utils.rigbuilder.modules.limb.operator.ik import LimbIKOperator
-from galang_utils.rigbuilder.modules.limb.operator.result import LimbResultOperator
-from rigbuilder.modules.limb.operator.sub import LimbRollOperator
-from galang_utils.rigbuilder.modules.limb.operator.settings import LimbSettingOperator
-from galang_utils.rigbuilder.modules.limb.operator.grp import LimbGroupOperator
+from rigbuilder.modules.base.operator.dg import Node
+from rigbuilder.modules.base.operator.zoperator import Operator
+from rigbuilder.modules.limb.component.zcomponent import LimbComponent
+from rigbuilder.modules.limb.operator.setup_ik import LimbIKOperator
+from rigbuilder.modules.limb.operator.setup_result import LimbResultOperator
+from rigbuilder.modules.limb.operator.setup_detail import LimbDetailOperator
+from rigbuilder.modules.limb.operator.setup_settings import LimbSettingOperator
+from rigbuilder.modules.limb.operator.setup_group import LimbGroupOperator
 
 
-class LimbOperator(BaseOperator):
+class LimbOperator(Operator):
     def __init__(self, component: LimbComponent):
-        super().__init__(component)
+        super().__init__(Operator)
 
-        self.fk = LimbFKOperator(component)
+        self.bind_detail = None
         self.ik = LimbIKOperator(component)
         self.result = LimbResultOperator(component)
-        self.roll = LimbRollOperator(component)
+        self.detail = LimbDetailOperator(component)
         self.setting = LimbSettingOperator(component)
         self.group = LimbGroupOperator(component)
+
+    def run(self):
+        operators: List[Node] = [
+            self.bind,
+            self.bind_detail,
+            self.fk,
+            self.ik,
+            self.result,
+            self.detail,
+            self.setting,
+            self.group,
+        ]
+        for operator in operators:
+            operator.run()

@@ -1,7 +1,7 @@
 from maya import cmds
 from typing import List
-from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.core.guide import ModuleInfo
+from galang_utils.rigbuilder.constants.project import role as role
+from galang_utils.rigbuilder.cores.guide import ModuleInfo
 from rigbuilder.modules.base.component.dag import Node
 
 from galang_utils.rigbuilder.modules.limb.constant.format import LimbFormat

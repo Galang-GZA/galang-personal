@@ -34,3 +34,13 @@ OPERATOR = "operator"
 # Dictionary keys
 LEVEL = "level"
 COLOR = "color"
+
+# Nodes
+DISTANCE = "distanceBetween"
+PAIRBLEND = "pairBlend"
+SCALEBLEND = "scaleBlend"
+REVERSE = "reverse"
+PLUS_MIN = "plusplusMinusAverageMinus"
+MULT_DIV = "multiplyDivide"
+CONDITION = "condition"
+BLEND = "blendTwoAttr"

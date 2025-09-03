@@ -1,20 +1,22 @@
 """THIS CONSTANT IS TO BE CHANGED BASED ON THE MODULE NEEDS"""
 
+from typing import List
+from galang_utils.rigbuilder.constants.project import role as role
 
-class BaseFormat:
-    def __init__(self, project, kinematcs, side):
-        self.project = project
-        self.kinematics = kinematcs
+
+class Format:
+    def __init__(self, side):
         self.side = side
 
     @staticmethod
     def join_parts(*parts):
         return "_".join([p for p in parts if p]).strip("_")
-    
-    def name(self, name, item = None, function = None, properties=None, level=None, local=None, index=None):
-        return self.join_parts(self.project, self.kinematics, self.side, name, item, function, properties, level, index)
-    
+
+    def name(self, name: str, types: List = None):
+        type_parts = types if types else []
+        return self.join_parts(role.PROJECT, self.side, name, *type_parts)
+
     @staticmethod
-    def name_static(project, kinematics, side, name, item=None, level=None, local=None, index=None):
-        return BaseFormat.join_parts(project, kinematics, side, name, item, level, index)
-    
+    def name_static(side: str, name: str, types: List = None):
+        type_parts = types if types else []
+        return Format.join_parts(role.PROJECT, side, name, *type_parts)

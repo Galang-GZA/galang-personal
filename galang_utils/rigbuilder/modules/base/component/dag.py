@@ -1,32 +1,17 @@
 from typing import List
-from rigbuilder.constant.project import role as role
-from rigbuilder.constant.project import setup as setup
-from rigbuilder.core.guide import GuideInfo, ModuleInfo
-from rigbuilder.modules.limb.constant.format import LimbFormat
+from rigbuilder.constants.project import role as role
+from rigbuilder.constants.project import setup as setup
+from rigbuilder.cores.guide import GuideInfo, ModuleInfo
+from rigbuilder.modules.base.constant.format import Format
 
 
 class Node(str):
-    """
-    Base class for programs
-    """
-
-    def __new__(
-        cls,
-        guide: GuideInfo,
-        module: ModuleInfo,
-        types: List = None,
-    ):
-        format = LimbFormat(module.side)
+    def __new__(cls, guide: GuideInfo, module: ModuleInfo, types: List):
+        format = Format(module.side)
         name = format.name(guide.name_raw, types)
         return super().__new__(cls, name)
 
-    def __init__(
-        self,
-        guide: GuideInfo,
-        module: ModuleInfo,
-        types: List = None,
-        position: List[float] = None,
-    ):
+    def __init__(self, guide: GuideInfo, module: ModuleInfo, types: List, position: List[float] = None):
         self.types = types
         self.guide = guide
         self.module = module

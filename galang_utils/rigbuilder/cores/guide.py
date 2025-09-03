@@ -1,7 +1,7 @@
 from maya import cmds
 from typing import List, Dict
-from galang_utils.rigbuilder.constant.constant_general import *
-from galang_utils.rigbuilder.constant.constant_project import *
+from galang_utils.rigbuilder.constants.constant_general import *
+from galang_utils.rigbuilder.constants.constant_project import *
 
 
 class GuideInfo:

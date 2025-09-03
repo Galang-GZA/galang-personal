@@ -1,6 +1,6 @@
 from typing import List
-from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.core.guide import ModuleInfo
+from galang_utils.rigbuilder.constants.project import role as role
+from galang_utils.rigbuilder.cores.guide import ModuleInfo
 from galang_utils.rigbuilder.modules.base.component.group import GroupNode
 
 

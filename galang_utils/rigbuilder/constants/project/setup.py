@@ -1,6 +1,6 @@
 from typing import Dict
-from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.constant.general import role as gen_role
+from galang_utils.rigbuilder.constants.project import role as role
+from galang_utils.rigbuilder.constants.general import role as gen_role
 
 # Side Mapping
 SIDE_MAP = {0: role.CENTER, 1: role.LEFT, 2: role.RIGHT}

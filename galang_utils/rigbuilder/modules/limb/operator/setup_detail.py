@@ -1,15 +1,15 @@
 from maya import cmds
 from typing import Dict, Union
 
-from galang_utils.rigbuilder.constant.general import role as gen_role
-from galang_utils.rigbuilder.constant.project import role as role
-from galang_utils.rigbuilder.constant.project import setup as setup
+from galang_utils.rigbuilder.constants.general import role as gen_role
+from galang_utils.rigbuilder.constants.project import role as role
+from galang_utils.rigbuilder.constants.project import setup as setup
 
 from galang_utils.rigbuilder.modules.limb.constant.format import LimbFormat
 from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent
 
 
-class LimbSubOperator:
+class LimbDetailOperator:
     def __init__(self, component: LimbComponent):
         self.component = component
         self.guides = component.module.guides

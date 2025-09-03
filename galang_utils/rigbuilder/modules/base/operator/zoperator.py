@@ -1,16 +1,16 @@
-from galang_utils.rigbuilder.modules.base.operator.bind import BaseBindOperator
-from galang_utils.rigbuilder.modules.base.operator.rig import BaseRigOperator
+from typing import List
+
+from rigbuilder.modules.base.operator.dg import Node
+from rigbuilder.modules.base.operator.setup_bind import BindOperator
+from rigbuilder.modules.base.operator.setup_fk import FKOperator
 
 
-class BaseOperator:
+class Operator:
     def __init__(self, guide):
-        self._bind = BaseBindOperator(guide)
-        self.rig = BaseRigOperator(guide)
-
-    def run_bind(self):
-        self._bind.run()
+        self.bind = BindOperator(guide)
+        self.fk = FKOperator(guide)
 
     def run(self):
-        for name, attr in vars(self).items():
-            if not name.startswith("_"):
-                attr.run()
+        operators: List[Node] = [self.bind, self.fk]
+        for operator in operators:
+            operator.run()
