@@ -1,8 +1,8 @@
 from maya import cmds
 from typing import Dict, List
-from rigbuilder.constant.project import role as role
+from rigbuilder.constants.project import role as role
 from rigbuilder.modules.limb.constant.format import LimbFormat
-from rigbuilder.core.guide import GuideInfo, ModuleInfo
+from rigbuilder.cores.guide import GuideInfo, ModuleInfo
 from rigbuilder.modules.base.component.dag import Node
 
 

@@ -1,5 +1,5 @@
 from typing import Dict, List
-from rigbuilder.core.guide import ModuleInfo
+from rigbuilder.cores.guide import ModuleInfo
 from rigbuilder.modules.base.component.joint_chain import JointChain
 
 

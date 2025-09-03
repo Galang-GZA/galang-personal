@@ -1,6 +1,6 @@
 from maya import cmds
 from typing import List, Dict, Tuple
-from galang_utils.rigbuilder.constant import *
+from galang_utils.rigbuilder.constants import *
 
 
 class GuideInfo:

@@ -1,5 +1,5 @@
-from galang_utils.rigbuilder.constant.constant_general import *
-from galang_utils.rigbuilder.constant.constant_project import *
+from galang_utils.rigbuilder.constants.constant_general import *
+from galang_utils.rigbuilder.constants.constant_project import *
 
 SHAPES_LIBRARY_FK = {
     FINGER: {

@@ -1,7 +1,7 @@
 import maya.cmds as cmds
 from typing import List, Dict
 from galang_utils.rigbuilder.guide import *
-from galang_utils.rigbuilder.constant import *
+from galang_utils.rigbuilder.constants import *
 
 
 class SideRenamer:

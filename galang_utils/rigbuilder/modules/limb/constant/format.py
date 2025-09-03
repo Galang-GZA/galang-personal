@@ -1,7 +1,7 @@
 """THIS CONSTANT IS TO BE CHANGED BASED ON THE MODULE NEEDS"""
 
 from typing import List
-from galang_utils.rigbuilder.constant.project import role as role
+from galang_utils.rigbuilder.constants.project import role as role
 
 
 class LimbFormat:

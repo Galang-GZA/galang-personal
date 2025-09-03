@@ -1,8 +1,8 @@
 """Create Hand Rig Based On the Guide Joints"""
 
 from maya import cmds
-from galang_utils.rigbuilder.constant.constant_general import *
-from galang_utils.rigbuilder.constant.constant_project import *
+from galang_utils.rigbuilder.constants.constant_general import *
+from galang_utils.rigbuilder.constants.constant_project import *
 from galang_utils.rigbuilder.modules.hand.constant import *
 from galang_utils.rigbuilder.modules.hand.guide import Hand_GuideInfo, Hand_GuideList
 

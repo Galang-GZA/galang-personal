@@ -1,5 +1,5 @@
 from maya import cmds
-from galang_utils.rigbuilder.constant import *
+from galang_utils.rigbuilder.constants import *
 from galang_utils.rigbuilder.guide import *
 from galang_utils.curve.shapes_library import *
 

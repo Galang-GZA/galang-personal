@@ -1,7 +1,7 @@
 """Create Hand Rig Based On the Guide Joints"""
 
 from maya import cmds
-from galang_utils.rigbuilder.constant import *
+from galang_utils.rigbuilder.constants import *
 from galang_utils.rigbuilder.guide import GuideInfo, GuideList
 from galang_utils.rigbuilder.controls import ControlCreator
 

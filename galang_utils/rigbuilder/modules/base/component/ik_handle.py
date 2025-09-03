@@ -1,8 +1,8 @@
 from maya import cmds
 from typing import List
-from rigbuilder.constant.project import role as role
-from rigbuilder.constant.general import role as gen_role
-from rigbuilder.core.guide import GuideInfo, ModuleInfo
+from rigbuilder.constants.project import role as role
+from rigbuilder.constants.general import role as gen_role
+from rigbuilder.cores.guide import GuideInfo, ModuleInfo
 from rigbuilder.modules.base.component.dag import Node
 
 
