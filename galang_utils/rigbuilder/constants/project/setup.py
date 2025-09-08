@@ -13,6 +13,7 @@ MIRROR_SCALE = True
 # Joint Mirror
 MIRROR_PLANE = "YZ"
 
+
 # Node Levels
 NODE_MAIN_LEVELS = [role.OFFSET, role.SDK, role.LINK, role.CONSTRAINT, role.MIRROR, role.GROUP]
 NODE_SUB_LEVELS = [role.OFFSET, role.SDK, role.LINK]
@@ -28,7 +29,7 @@ MAIN = {gen_role.LEVEL: MAIN_COLOR, gen_role.COLOR: MAIN_COLOR}
 SUB = {gen_role.LEVEL: SUB_COLOR, gen_role.COLOR: SUB_COLOR}
 
 # Ammounts
-LEN_DETAILS = 3
+SUB_DIVS = 3
 
 # Placeholder
-INDEX = "index"
+INDEX = "A PLACEHOLDER TO BE REPLACED BY DESIRED INTEGER"

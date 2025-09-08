@@ -32,7 +32,7 @@ class LocatorNode(Node):
         cmds.xform(loc_node, t=self.position, ro=self.orientation)
 
 
-class LimbLocatorSet(List[LocatorNode]):
+class LocatorSet(List[LocatorNode]):
     """
     A collection of LimbLocatorSet indexed by their locator index and type (e.g. "STRETCH", "BASE", "BLEND", etc.).
     """

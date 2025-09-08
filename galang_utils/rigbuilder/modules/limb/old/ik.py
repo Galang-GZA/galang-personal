@@ -4,11 +4,11 @@ from galang_utils.rigbuilder.constants.project import role as role
 from galang_utils.rigbuilder.constants.project import setup as setup
 
 from galang_utils.rigbuilder.modules.limb.program.node import NodeCreator
-from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent
+from rigbuilder.modules.limb.component.zcomponents import LimbComponents
 
 
 class LimbIKOperator:
-    def __init__(self, component: LimbComponent):
+    def __init__(self, component: LimbComponents):
         self.guides = component.ik.module.guides
         self.side = component.ik.module.side
         self.axis = component.ik.module.axis

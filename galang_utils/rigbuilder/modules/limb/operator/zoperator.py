@@ -3,7 +3,7 @@ from galang_utils.rigbuilder.modules.base.operator.zoperator import Operator
 
 from rigbuilder.modules.base.operator.dg import Node
 from rigbuilder.modules.base.operator.zoperator import Operator
-from rigbuilder.modules.limb.component.zcomponent import LimbComponent
+from rigbuilder.modules.limb.component.zcomponents import LimbComponents
 from rigbuilder.modules.limb.operator.setup_ik import LimbIKOperator
 from rigbuilder.modules.limb.operator.setup_result import LimbResultOperator
 from rigbuilder.modules.limb.operator.setup_detail import LimbDetailOperator
@@ -12,10 +12,9 @@ from rigbuilder.modules.limb.operator.setup_group import LimbGroupOperator
 
 
 class LimbOperator(Operator):
-    def __init__(self, component: LimbComponent):
+    def __init__(self, component: LimbComponents):
         super().__init__(Operator)
 
-        self.bind_detail = None
         self.ik = LimbIKOperator(component)
         self.result = LimbResultOperator(component)
         self.detail = LimbDetailOperator(component)
@@ -25,12 +24,11 @@ class LimbOperator(Operator):
     def run(self):
         operators: List[Node] = [
             self.bind,
-            self.bind_detail,
             self.fk,
             self.ik,
+            self.setting,
             self.result,
             self.detail,
-            self.setting,
             self.group,
         ]
         for operator in operators:

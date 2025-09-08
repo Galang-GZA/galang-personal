@@ -60,7 +60,7 @@ class JointChain(List[JointNode]):
         # Pre-compute joints
         for i, (guide, position) in enumerate(zip(guides, positions)):
             i = f"{i+1:02d}"
-            resolved_types = [(i if t is setup.INDEX else t) for t in types]
+            resolved_types = [(i if type is setup.INDEX else type) for type in types]
             jnt_node = JointNode(guide, module, resolved_types, position)
             self.append(jnt_node)
 

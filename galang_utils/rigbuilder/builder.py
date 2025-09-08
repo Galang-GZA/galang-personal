@@ -3,8 +3,8 @@
 from typing import Dict
 from galang_utils.rigbuilder.constants.general import role as gen_role
 from galang_utils.rigbuilder.cores.guide import ModuleInfo
-from rigbuilder.modules.base.component.zcomponent import BaseComponent
-from galang_utils.rigbuilder.modules.limb.component.zcomponent import LimbComponent
+from rigbuilder.modules.base.component.zcomponents import BaseComponent
+from rigbuilder.modules.limb.component.zcomponents import LimbComponents
 from galang_utils.rigbuilder.modules.limb.operator.zoperator import LimbOperator
 
 
@@ -20,7 +20,7 @@ class ModuleAssembly:
             module = ModuleInfo(guide)
 
             if module.type == gen_role.LIMB:
-                component = LimbComponent(module)
+                component = LimbComponents(module)
                 operator = LimbOperator(module)
                 self.module_map[str(guide)] = {gen_role.COMPONENT: component, gen_role.OPERATOR: operator}
             # elif module.type == HAND:

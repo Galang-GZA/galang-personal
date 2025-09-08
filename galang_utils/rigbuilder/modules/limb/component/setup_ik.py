@@ -11,33 +11,33 @@ from rigbuilder.modules.base.component.group import GroupNode
 from rigbuilder.modules.base.component.control import ControlSet
 from rigbuilder.modules.base.component.joint_chain import JointChain
 from rigbuilder.modules.base.component.ik_handle import IkHandleNode
-from rigbuilder.modules.base.component.locator import LocatorNode, LimbLocatorSet
+from rigbuilder.modules.base.component.locator import LocatorNode, LocatorSet
 
 
 class LimbIKComponent:
     def __init__(self, module: ModuleInfo):
-        self.guides = module.guides
-        self.control_guides = [self.guides[0], module.guides_pv, self.guides[-1]]
+        guides = module.guides
+        control_guides = [guides[0], module.guides_pv, guides[-1]]
 
-        self.group = GroupNode(self.guides[0], module, [role.IK, role.RIG, role.GROUP])
-        self.joints = JointChain(self.guides, module, [role.IK])
-        self.controls = ControlSet(self.control_guides, module, [role.IK])
-        self.locator = LocatorNode(self.guides[0], module, [role.IK])
+        self.group = GroupNode(guides[0], module, [role.IK, role.RIG, role.GROUP])
+        self.joints = JointChain(guides, module, [role.IK])
+        self.controls = ControlSet(control_guides, module, [role.IK])
+        self.locator = LocatorNode(guides[0], module, [role.IK])
         self.handle = IkHandleNode(
-            guide=self.guides[0],
+            guide=guides[0],
             module=module,
             source_joint=self.joints[0],
             end_effector=self.joints[-1],
             solver=gen_role.IK_RP_SOLVER,
             types=[role.DETAIL],
-            position=self.guides[2].position,
+            position=guides[2].position,
         )
 
-        self.static_locators = LimbLocatorSet(self.guides, module, [role.IK, role.STATIC])
-        self.active_locators = LimbLocatorSet(self.control_guides, module, [role.IK, role.ACTIVE])
-        self.base_locator = LocatorNode(self.control_guides[2], module, [role.IK, role.ACTIVE, role.BASE])
-        self.blend_locator = LocatorNode(self.control_guides[2], module, [role.IK, role.ACTIVE, role.BLEND])
-        self.stretch_locator = LocatorNode(self.control_guides[2], module, [role.IK, role.ACTIVE, role.STRETCH])
+        self.static_locators = LocatorSet(guides, module, [role.IK, role.STATIC])
+        self.active_locators = LocatorSet(control_guides, module, [role.IK, role.ACTIVE])
+        self.base_locator = LocatorNode(control_guides[2], module, [role.IK, role.ACTIVE, role.BASE])
+        self.blend_locator = LocatorNode(control_guides[2], module, [role.IK, role.ACTIVE, role.BLEND])
+        self.stretch_locator = LocatorNode(control_guides[2], module, [role.IK, role.ACTIVE, role.STRETCH])
 
     def create(self):
         # Step 0: Create IK components

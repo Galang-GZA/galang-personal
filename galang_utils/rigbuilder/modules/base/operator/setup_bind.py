@@ -1,13 +1,13 @@
 from maya import cmds
-from rigbuilder.modules.base.component.zcomponent import Component
+from rigbuilder.modules.base.component.setup_bind import BindComponent
+from rigbuilder.modules.base.component.zcomponents import Components
 
 
-class BindOperator:
-    def __init__(self, component: Component):
-        self.module = component.module
+class BindOperator(BindComponent):
+    def __init__(self, component: Components):
+        super().__init__(component.module)
 
         # Pre compute dag components
-        self.joints = component.bind.joints
         self.drivers = component.bind_driver
 
     def run(self):
