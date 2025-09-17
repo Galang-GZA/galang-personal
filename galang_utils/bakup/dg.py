@@ -18,7 +18,7 @@ class Node(str):
         self.module = module
         self.attributes = attrs
 
-    def create(self):
+    def run(self):
         # Create Node
         types_order = []
         node_type = next((item for item in types_order if item in self.types), None)
@@ -31,9 +31,6 @@ class Node(str):
 
         return node
 
-    def run(self):
-        pass
-
 
 class NodeSet(List[Node]):
     def __init__(self, guides: List[GuideInfo], module: ModuleInfo, types: List, attrs: List[Dict]):
@@ -43,6 +40,6 @@ class NodeSet(List[Node]):
             dg_node = Node(guides[i], module, [resolved_types])
             self.append(dg_node)
 
-    def create(self):
+    def run(self):
         for dg_node in self:
-            dg_node.create()
+            dg_node.run()

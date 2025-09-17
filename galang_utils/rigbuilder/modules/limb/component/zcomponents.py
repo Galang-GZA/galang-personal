@@ -19,13 +19,8 @@ class LimbComponents(Components):
         self.result = LimbResultComponent(module)
         self.setting = LimbSettingComponent(module)
         self.detail = LimbDetailComponent(module)
-        self.bind_driver = self.result.joints
-        self.detail_drivers = self.result.joints
 
-    def bind_twist(self):
-        pass
-
-    def create(self):
-        components: List[Node] = [self.bind, self.fk, self.ik, self.result, self.setting, self.detail, self.group]
+    def create_rig(self):
+        components: List[Node] = [self.fk, self.ik, self.result, self.setting, self.detail, self.group]
         for component in components:
             component.create()

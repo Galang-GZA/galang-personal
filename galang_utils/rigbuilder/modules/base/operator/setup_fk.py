@@ -7,10 +7,13 @@ from rigbuilder.modules.base.component.setup_fk import FKComponent
 from rigbuilder.modules.base.component.zcomponents import Components
 
 
-class FKOperator(FKComponent):
-    def __init__(self, component: Components):
-        super().__init__(component.module)
+class FKOperator:
+    def __init__(self, components: Components):
+        self.components = components
 
     def run(self):
-        for joint, control in zip(self.joints, self.controls):
+        joints = self.components.fk.joints
+        controls = self.components.fk.controls
+
+        for joint, control in zip(joints, controls):
             cmds.parentConstraint(control, joint)

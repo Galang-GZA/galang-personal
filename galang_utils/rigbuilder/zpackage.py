@@ -78,24 +78,24 @@ from galang_utils.rigbuilder.builder import ModuleAssembly
 from galang_utils.rigbuilder.cores.guide import GuideInfo, ModuleInfo
 from galang_utils.rigbuilder.modules.limb.rule.constant_module import *
 from rigbuilder.modules.limb.program.control import LimbControlCreator
-from galang_utils.rigbuilder.modules.limb.program.jointchain import LimbJointSet
+from rigbuilder.modules.limb.program.jointchain import LimbJointSet
 
-from rigbuilder.modules.base.component.setup_bind import BaseBindComponent
-from rigbuilder.modules.base.component.setup_fk import BaseRigComponent
-from rigbuilder.modules.base.component.zcomponents import BaseComponent
+from rigbuilder.modules.base.component.setup_bind import BindComponent
+from rigbuilder.modules.base.component.setup_fk import FKComponent
+from rigbuilder.modules.base.component.setup_group import GroupComponent
+from rigbuilder.modules.base.component.zcomponents import Components
 
-from rigbuilder.modules.base.operator.setup_bind import BaseBindOperator
-from galang_utils.rigbuilder.modules.base.operator.rig import BaseRigOperator
-from galang_utils.rigbuilder.modules.base.operator.zoperator import Operator
+from rigbuilder.modules.base.operator.setup_bind import BindOperator
+from rigbuilder.modules.base.operator.setup_fk import FKOperator
+from rigbuilder.modules.base.operator.zoperator import Operator
 
-from galang_utils.rigbuilder.modules.limb.component.fk import LimbFKComponent
-from galang_utils.rigbuilder.modules.limb.component.ik import LimbIKComponent
+from rigbuilder.modules.limb.component.setup_ik import LimbIKComponent
 from rigbuilder.modules.limb.component.setup_result import LimbResultComponent
 from rigbuilder.modules.limb.component.setup_settings import LimbSettingComponent
 from rigbuilder.modules.limb.component.zcomponents import LimbComponents
 
-from galang_utils.rigbuilder.modules.limb.operator.fk import LimbFKOperator
-from galang_utils.rigbuilder.modules.limb.operator.ik import LimbIKOperator
+from rigbuilder.modules.limb.operator.setup_bind import LimbBindOperator
+from rigbuilder.modules.limb.operator.setup_ik import LimbIKOperator
 from rigbuilder.modules.limb.operator.setup_result import LimbResultOperator
 from rigbuilder.modules.limb.operator.setup_settings import LimbSettingOperator
-from galang_utils.rigbuilder.modules.limb.operator.zoperator import LimbOperator
+from rigbuilder.modules.limb.operator.zoperator import LimbOperator

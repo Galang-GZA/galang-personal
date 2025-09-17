@@ -18,6 +18,20 @@ class LimbIKOperator(LimbIKComponent):
         self.side_id = module.side_id
         control_guides = [guides[0], module.guides_pv, guides[-1]]
 
+        # Step 2: Setup IK attributes
+        # Add attributes for soft, stretch, pin, slide
+        cmds.setAttr("ikRPsolver.tolerance", 1e-007)
+        attrs = {
+            role.SOFT: [0.0001, 100, 0.0001],
+            role.STRETCH: [0.0, 1.0, 0.0],
+            role.PIN: [0.0, 1.0, 0.0],
+            role.SLIDE: [-1.0, 1.0, 0.0],
+        }
+        for attr, (min_val, max_val, default_val) in attrs.items():
+            if not cmds.attributeQuery(attr, node=self.controls[2], exists=True):
+                cmds.addAttr(self.controls[2], ln=attr, at="double", dv=default_val, k=True, min=min_val, max=max_val)
+
+        self.ik_component = component.ik
         # Pre compute dg components
         self.static_distances = DistanceSet(guides, module, [role.IK, role.STATIC])
         self.active_distances = DistanceSet(control_guides, module, [role.IK, role.ACTIVE])
@@ -25,6 +39,7 @@ class LimbIKOperator(LimbIKComponent):
         self.blend_distance = DistanceNode(control_guides[2], module, [role.IK, role.ACTIVE, role.BLEND])
         self.stretch_distance = DistanceNode(control_guides[2], module, [role.IK, role.ACTIVE, role.STRETCH])
 
+        """ SOFT DKK PISAH PER FUNCTION BIAR GA BERANTAKAN"""
         # Pre compute math dg components
         # Argument for node types
         reverse = [role.IK, gen_role.REVERSE]
@@ -117,6 +132,8 @@ class LimbIKOperator(LimbIKComponent):
         cmds.connectAttr(f"{loc_end}.worldPosition[0]", f"{dist}.endPoint", force=True)
 
     def run(self):
+        statice_locators = self.ik_component.static_locators
+        actve_locators = self.ik_component.active_locators
         # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         # STEP 0 : CREATE PRE COMPUTED DG NODES
         # Create distance nodes

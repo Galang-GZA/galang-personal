@@ -9,11 +9,14 @@ from rigbuilder.constants.project import setup as setup
 from rigbuilder.cores.guide import ModuleInfo
 from rigbuilder.modules.base.component.dag import Node
 from rigbuilder.modules.base.component.group import GroupNode
-from rigbuilder.modules.base.component.joint_chain import JointNode
-from rigbuilder.modules.base.component.joint_chain import JointChain
+from core.component.joint import JointNode
+from core.component.joint import JointSet
 from rigbuilder.modules.base.component.control import ControlSet
 from rigbuilder.modules.base.component.locator import LocatorNode
-from rigbuilder.modules.base.component.ik_handle import IkHandleNode
+from core.component.ik_handle import IkHandleNode
+
+
+"""PERTIMBANGIN BUTA TARUH DI MASING MASIH MODUL YANG BUTUH, GABUNGIN DI AKHIR SAAT PERLU OPTIMASI"""
 
 
 class DetailComponent:
@@ -28,7 +31,7 @@ class DetailComponent:
 
         # Pre-compute upper details components
         self.group = GroupNode(self.guides[i], module, [role.DETAIL, role.GROUP])
-        self.joints = JointChain(self.div_guides, module, [role.DETAIL, setup.INDEX], self.positions)
+        self.result_joints = JointSet(self.div_guides, module, [role.DETAIL, setup.INDEX], self.positions)
         self.root_joint = JointNode(self.guides[i], module, [role.DETAIL, role.IK, 1], self.positions[0])
         self.end_joint = JointNode(self.guides[i], module, [role.DETAIL, role.IK, 2], self.positions[-1])
         self.controls = ControlSet(self.div_guides, module, [role.DETAIL, setup.INDEX], self.positions)
@@ -46,16 +49,16 @@ class DetailComponent:
 
     def create(self):
         # Create pre-computed upper components
-        components: List[Node] = [self.group, self.joints, self.controls, self.ik_locator, self.ik_handle]
+        components: List[Node] = [self.group, self.result_joints, self.controls, self.ik_locator, self.ik_handle]
         for component in components:
             component.create()
 
         # Parent upper components
-        children = [self.ik_handle, self.ik_locator, self.joints.group, self.controls.group]
+        children = [self.ik_handle, self.ik_locator, self.result_joints.group, self.controls.group]
         parents = [self.ik_locator, self.group, self.group, self.group]
         for child, parent in zip(children, parents):
             cmds.parent(child, parent)
 
-        # Parent detail joints to controls
-        for joint, control in zip(self.joints, self.controls):
+        # Parent detail result_joints to controls
+        for joint, control in zip(self.result_joints, self.controls):
             cmds.parent(joint, control)

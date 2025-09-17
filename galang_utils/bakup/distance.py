@@ -19,10 +19,10 @@ class DistanceNode(Node):
         types: List = None,
         position: List[float] = None,
     ):
-        distance_types = types.append(role.DISTANCE)
-        super().__init__(guide, module, types, distance_types, position)
+        types.append(role.DISTANCE)
+        super().__init__(guide, module, types, types, position)
 
-    def create(self):
+    def run(self):
         """Creates an empty Maya distance node."""
         cmds.rename(cmds.createNode("distanceBetween", n=self))
 
@@ -37,7 +37,7 @@ class DistanceSet(List[DistanceNode]):
             distance_node = DistanceNode(guide, module, types)
             self.append(distance_node)
 
-    def create(self):
+    def run(self):
         # Create guide positioned locators
         for dis in self:
-            dis.create()
+            dis.run()

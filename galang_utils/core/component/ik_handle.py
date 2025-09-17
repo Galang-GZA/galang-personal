@@ -14,20 +14,22 @@ class IkHandleNode(Node):
 
     def __init__(
         self,
-        guide: GuideInfo,
-        module: ModuleInfo,
+        guide_name: str,
+        side: str,
         source_joint: str,
         end_effector: str,
         solver: str,
-        types: List = None,
-        position: List[float] = None,
+        types: List,
+        position: List[float],
+        orientation: List[float],
     ):
         self.solver = solver
         self.source_joint = source_joint
         self.end_effector = end_effector
-        ik_handle_types = types.append(role.IK)
-        self.effector = Node(guide, module, [role.DETAIL, role.EFFECTOR], position)
-        super().__init__(guide, module, ik_handle_types, position)
+        ik_handle_types = types + [role.IK]
+        effector_types = types + [role.EFFECTOR]
+        self.effector = Node(guide_name, side, effector_types, position, orientation)
+        super().__init__(guide_name, side, ik_handle_types, position, orientation)
 
     def create(self):
         """

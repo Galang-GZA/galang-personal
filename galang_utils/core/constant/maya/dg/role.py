@@ -1,0 +1,11 @@
+# Maya DG Nodes
+DISTANCE_BETWEEN = "distanceBetween"
+PAIRBLEND = "pairBlend"
+SCALEBLEND = "scaleBlend"
+BLENDCOLORS = "blendColors"
+REVERSE = "reverse"
+PLUS_MIN = "plusplusMinusAverageMinus"
+MULT_DIV = "multiplyDivide"
+MULT_DOUBLE_LINEAR = "multDoubleLinear"
+CONDITION = "condition"
+BLEND = "blendTwoAttr"

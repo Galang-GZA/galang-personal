@@ -5,7 +5,7 @@ from galang_utils.rigbuilder.cores.guide import ModuleInfo
 from rigbuilder.modules.base.component.dag import Node
 
 from galang_utils.rigbuilder.modules.base.component.group import GroupNode
-from rigbuilder.modules.base.component.joint_chain import JointChain
+from core.component.joint import JointSet
 
 
 class LimbResultComponent:
@@ -14,7 +14,7 @@ class LimbResultComponent:
         self.guide = module.guide
         self.guides = module.guides
         self.group = GroupNode(self.guide, module, role.RESULT, [role.RIG, role.GROUP])
-        self.joints = JointChain(self.guides, module, role.RESULT)
+        self.joints = JointSet(self.guides, module, role.RESULT)
 
     def create(self):
         # Step 0: Create result components

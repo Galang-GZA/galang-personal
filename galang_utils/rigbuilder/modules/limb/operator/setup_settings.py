@@ -8,15 +8,17 @@ from rigbuilder.modules.limb.component.setup_settings import LimbSettingComponen
 from rigbuilder.modules.limb.component.zcomponents import LimbComponents
 
 
-class LimbSettingOperator(LimbSettingComponent):
+class LimbSettingOperator:
     def __init__(self, component: LimbComponents):
-        super().__init__(component.module)
+        self.guides = component.module.guides
+        self.guide = self.guides[-1]
 
         # Pre computed dag components
         self.ik_group = component.ik.group
         self.fk_group = component.ik.group
         self.ik_controls = component.ik.controls
         self.fk_controls = component.fk.controls
+        self.control = component.setting.control
 
         # Pre compute dg nodes
         self.reverse = Node(self.guide, component.module, [role.SETTINGS, role.REVERSE])

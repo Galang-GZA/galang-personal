@@ -8,7 +8,6 @@ from rigbuilder.constants.project import setup as setup
 from rigbuilder.cores.guide import GuideInfo, ModuleInfo
 
 from rigbuilder.modules.base.component.dag import Node
-from rigbuilder.modules.base.component.group import GroupNode
 
 
 class ControlNode(Node):
@@ -22,27 +21,30 @@ class ControlNode(Node):
         guide: GuideInfo,
         module: ModuleInfo,
         types: List,
+        position: List[float],
+        orientation: List[float],
         layout: Dict = setup.MAIN,
-        position: List[float] = None,
-        orientation: List[float] = None,
     ):
+        self.guide = guide
+        self.module = module
+        self.types = types
         # pre-compute control name
         control_types = types.append(role.CONTROL)
-        super().__init__(guide, module, control_types, position, orientation)
+        super().__init__(guide.name, module.side, control_types, position, orientation)
 
         # Pre compute node levels
-        self.group = GroupNode(guide, module, types.append(role.GROUP))
-        self.mirror = GroupNode(guide, module, types.append(role.MIRROR))
-        self.constraint = GroupNode(guide, module, types.append(role.CONSTRAINT))
-        self.link = GroupNode(guide, module, types.append(role.LINK))
-        self.SDK = GroupNode(guide, module, types.append(role.SDK))
-        self.offset = GroupNode(guide, module, types.append(role.OFFSET))
+        self.group = Node(guide.name, module.side, types.append(role.GROUP))
+        self.mirror = Node(guide.name, module.side, types.append(role.MIRROR))
+        self.constraint = Node(guide.name, module.side, types.append(role.CONSTRAINT))
+        self.link = Node(guide.name, module.side, types.append(role.LINK))
+        self.SDK = Node(guide.name, module.side, types.append(role.SDK))
+        self.offset = Node(guide.name, module.side, types.append(role.OFFSET))
 
         self.color_set: Dict = layout.get(gen_role.COLOR)
         self.node_levels: List = layout.get(gen_role.LEVEL)
         self.top = self.node_levels[-1]
 
-        self.level_dictionary: Dict[str:GroupNode] = {
+        self.level_dictionary: Dict[str:Node] = {
             role.GROUP: self.group,
             role.MIRROR: self.mirror,
             role.CONSTRAINT: self.constraint,
@@ -57,7 +59,7 @@ class ControlNode(Node):
         """
         # Creates a control curve with the appropriate level hierarchy and mirror transform if needed.
         if self.module.side_id == None or self.guide.position is None or self.guide.orientation is None:
-            cmds.warning(f"Cannot creat control for this guide:{self.guide.name_raw} lha~")
+            cmds.warning(f"Cannot creat control for this guide:{self.guide.name} lha~")
             return
 
         # Create control based on the shapes library or basic shapes
@@ -94,7 +96,7 @@ class ControlNode(Node):
         # Build hierarchy levels
         self.top_node = self
         for level in self.node_levels:
-            node: GroupNode = self.level_dictionary.get(level)
+            node: Node = self.level_dictionary.get(level)
             node.create()
 
             # Mirror node handling
@@ -133,7 +135,7 @@ class ControlSet(List[ControlNode]):
     ):
         self.types = types
         # Pre compute controls and group
-        self.group = GroupNode(guides[0], module, types.append(role.GROUP))
+        self.group = Node(guides[0], module, types.append(role.GROUP))
         for i, (guide, position) in enumerate(zip(guides, positions)):
             i = f"{i+1:02d}"
             resolved_types = [(i if t is setup.INDEX else t) for t in types]

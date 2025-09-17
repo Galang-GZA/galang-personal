@@ -1,13 +1,16 @@
 from typing import Dict, List
 from rigbuilder.cores.guide import ModuleInfo
-from rigbuilder.modules.base.component.joint_chain import JointChain
+from core.component.joint import JointSet
 
 
 class BindComponent:
     def __init__(self, module: ModuleInfo):
         self.guide = module.guide
-        self.joints = JointChain(self.guide.name, create_group=False)
+        self.joints = JointSet(self.guide.name, create_group=False)
 
     def create(self):
-        # Step 0 : Create bind joint chain
-        self.joints.create()
+        self.__create_bind_components()
+
+    def __create_bind_components(self):
+        # # STEP 0 : CREATE PRE COMPUTED COMPONENTS
+        self.joints.create

@@ -5,22 +5,21 @@ from rigbuilder.constants.general import role as gen_role
 from rigbuilder.constants.project import role as role
 from rigbuilder.constants.project import setup as setup
 
-from rigbuilder.modules.base.operator.detail import DetailOperator
+from rigbuilder.modules.limb.operator.detail import DetailOperator
 from rigbuilder.modules.limb.component.setup_detail import LimbDetailComponent
 from rigbuilder.modules.limb.component.zcomponents import LimbComponents
 
 
-class LimbDetailOperator(LimbDetailComponent):
+class LimbDetailOperator:
     def __init__(self, components: LimbComponents):
-        super().__init__(components.module)
-        self.drivers = components.detail_drivers
-
-        self.upper_detail_op = DetailOperator(self.module, self.drivers, setup.SUB_DIVS, 0)
-        self.lower_detail_op = DetailOperator(self.module, self.drivers, setup.SUB_DIVS, 1)
+        self.components = components
 
     def run(self):
-        self.upper_detail_op.run()
-        self.lower_detail_op.run()
+        drivers = self.components.result.joints
+        upper_detail = self.components.detail.upper
+        lower_detail = self.components.detail.lower
+        DetailOperator(upper_detail, drivers).run()
+        DetailOperator(lower_detail, drivers).run()
 
 
 # class LimbDetailOperator:

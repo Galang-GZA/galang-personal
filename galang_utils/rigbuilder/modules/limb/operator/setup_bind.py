@@ -1,29 +1,32 @@
 from maya import cmds
-from typing import Dict, Union
 
-from rigbuilder.constants.general import role as gen_role
 from rigbuilder.constants.project import role as role
 from rigbuilder.constants.project import setup as setup
-from rigbuilder.modules.limb.component.setup_bind import LimbBindComponent
 from rigbuilder.modules.limb.component.zcomponents import LimbComponents
 
 
-class LimbBindOperator(LimbBindComponent):
+class LimbBindOperator:
     def __init__(self, component: LimbComponents):
-        super().__init__(component)
+        # Pre computed dag components
+        self.joints = component.bind.joints
+        self.lower_sub_joints = component.bind.lower_sub_joints
+        self.upper_sub_joints = component.bind.upper_sub_joints
 
-        # Pre compute dag components
-        self.drivers = component.bind_driver
-        self.upper_sub_driver = component.detail.upper.joints
-        self.lower_sub_driver = component.detail.lower.joints
+        self.drivers = component.result.joints
+        self.upper_sub_driver = component.detail.upper.result_joints
+        self.lower_sub_driver = component.detail.lower.result_joints
 
     def run(self):
-        # STEP 0 : CONNECT PRE COMPUTED DAG COMPONENTS
+        self.__connect_bind_drivers_to_bind_joints()
+        self.__connect_sub_driver_to_sub_joints()
+
+    def __connect_bind_drivers_to_bind_joints(self):
         # Constraint bind drivers to bind joint
         for joint, driver in zip(self.joints, self.drivers):
             cmds.parentConstraint(driver, joint)
             cmds.scaleConstraint(driver, joint)
 
+    def __connect_sub_driver_to_sub_joints(self):
         # Constraint sub drivers to sub bind joints
         sub_drivers = [self.lower_sub_driver, self.upper_sub_driver]
         sub_joints = [self.lower_sub_joints, self.upper_sub_joints]

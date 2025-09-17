@@ -5,11 +5,13 @@ from rigbuilder.modules.base.operator.dg import NodeSet
 from rigbuilder.modules.limb.component.setup_result import LimbResultComponent
 from rigbuilder.modules.limb.component.zcomponents import LimbComponents
 
+"""GA USYAH SUPER SUPER KE COMPONENT, NGE INIT LAGI ITUH"""
 
-class LimbResultOperator(LimbResultComponent):
+
+class LimbResultOperator:
     def __init__(self, components: LimbComponents):
-        super().__init__(module)
-        module = components.module
+        self.module = components.module
+        self.guides = components.module.guides
 
         # Pre computed dag components
         self.ik_joints = components.ik.joints
@@ -17,17 +19,20 @@ class LimbResultOperator(LimbResultComponent):
         self.result_joints = components.result.joints
         self.setting_control = components.setting.control
 
-        # Pre compute dg nodes
-        self.pair_blends = NodeSet(self.guides, module, [role.RESULT, role.PAIRBLEND])
-        self.scale_blends = NodeSet(self.guides, module, [role.RESULT, role.BLENDCOLORS])
-
     def run(self):
-        # STEP 0 : CREATE PRE COMPUTED DG NODES
-        self.pair_blends.create()
-        self.scale_blends.create()
+        self.__create_dg_nodes()
+        self.__connect_kinematics_to_dg_to_result()
+        self.__connect_settings_to_dg
 
-        # STEP 1 : CONNECT DG NODES TO DAG COMPONENTS TO RESULT JOINTS
-        # Ik joint and fk joint - blend nodes - result joints
+    def __create_dg_nodes(self):
+        self.pair_blends = NodeSet(self.guides, self.module, [role.RESULT, role.PAIRBLEND])
+        self.scale_blends = NodeSet(self.guides, self.module, [role.RESULT, role.BLENDCOLORS])
+        dg_nodes = [self.pair_blends, self.scale_blends]
+        for node in dg_nodes:
+            node.run()
+
+    def __connect_kinematics_to_dg_to_result(self):
+        # Direct connect kinematics component to dg nodes to result
         for i in range(len(self.guides)):
             connections = [
                 (self.ik_joints[i], "translate", self.pair_blends[i], "inTranslate1"),
@@ -45,8 +50,8 @@ class LimbResultOperator(LimbResultComponent):
 
             cmds.setAttr(f"{self.pair_blends[i]}.weight", 0.5)
 
-        # STEP 2 : CONNECT IK FK JOINTS TO RESULT
-        # Connect with constraint
+    def __connect_settings_to_dg(self):
+        # Connect IK FK joints to result joints with constraint
         kinematics_switch_attr = f"{self.setting_control}.{role.IKFKSWITCH}"
         for i in range(len(self.guides)):
             cmds.connectAttr(kinematics_switch_attr, f"{self.pair_blends[i]}.weight", force=True)

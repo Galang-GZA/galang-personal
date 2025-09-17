@@ -1,7 +1,7 @@
 from maya import cmds
 
 from galang_utils.rigbuilder.constants.project import role as role
-from galang_utils.rigbuilder.programs.attributes_lock_hide import Attributes
+from rigbuilder.programs.attr.configuration import Attributes
 
 from galang_utils.rigbuilder.cores.guide import ModuleInfo
 from galang_utils.rigbuilder.modules.base.component.group import GroupNode

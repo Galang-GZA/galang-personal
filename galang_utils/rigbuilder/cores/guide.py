@@ -4,10 +4,12 @@ from galang_utils.rigbuilder.constants.constant_general import *
 from galang_utils.rigbuilder.constants.constant_project import *
 
 
-class GuideInfo:
+class GuideInfo(str):
+    def __new__(cls, joint_name: str):
+        return super().__new__(cls, joint_name)
+
     def __init__(self, joint_name: str):
-        self.name: str = joint_name
-        self.name_raw: str = None
+        self.name: str = None
         self.is_guide: bool = False
         self.is_guide_end: bool = False
         self.is_module: bool = False
@@ -31,42 +33,42 @@ class GuideInfo:
     # Innitialize guide joint to get infos
     def __init__joint(self):
         # Defining the guide properties
-        if not cmds.objectType(self.name, i="joint"):
-            cmds.warning(f"{self.name} not a joint this is")
+        if not cmds.objectType(self, i="joint"):
+            cmds.warning(f"{self} not a joint this is")
             return
         self.is_guide = True
 
-        if END_GUIDE in self.name:
+        if END_GUIDE in self:
             self.is_guide_end = True
 
-        if self.safe_get_attr(f"{self.name}.drawLabel") == 1:
+        if self.safe_get_attr(f"{self}.drawLabel") == 1:
             self.is_module = True
 
         # Defining guide's parent
-        parent = cmds.listRelatives(self.name, p=True, typ="joint")
+        parent = cmds.listRelatives(self, p=True, typ="joint")
         if parent:
             self.parent = parent[0]
 
         # Defining guide's side and raw name
-        self.side_id = self.safe_get_attr(f"{self.name}.side")
+        self.side_id = self.safe_get_attr(f"{self}.side")
         self.side = SIDE_MAP.get(self.side_id)
         if self.side:
-            self.name_raw = self.name.replace(f"{self.side}_", "")
+            self.name = self.replace(f"{self.side}_", "")
             self.parent_raw = self.parent.replace(f"{self.side}_", "")
         else:
-            self.name_raw = self.name
+            self.name = self
             self.parent_raw = self.parent
 
         # Querying guide's translation
-        self.position = cmds.xform(self.name, q=True, t=True, ws=True)
-        self.orientation = cmds.xform(self.name, q=True, ro=True, ws=True)
-        self.scale = cmds.xform(self.name, q=True, s=True, ws=True)
-        self.size = cmds.getAttr(f"{self.name}.radius")
+        self.position = cmds.xform(self, q=True, t=True, ws=True)
+        self.orientation = cmds.xform(self, q=True, ro=True, ws=True)
+        self.scale = cmds.xform(self, q=True, s=True, ws=True)
+        self.size = cmds.getAttr(f"{self}.radius")
 
     # Debugging procedures
     def __repr__(self):
         return (
-            f"<GuideInfo name = '{self.name}', side = '{self.side}', "
+            f"<GuideInfo name = '{self}', side = '{self.side}', "
             f"is module = {self.is_module}, parent = '{self.parent}', "
             f"position = {self.position}, orientation = {self.orientation}, size = {self.size}>"
         )
@@ -76,7 +78,7 @@ class GuideInfo:
         side = self.side or "?"
         pos = f"({', '.join(f'{p:.2f}' for p in self.position)})" if self.position else "unknown"
         orient = f"({', '.join(f'{o:.2f}' for o in self.orientation)})" if self.orientation else "unknown"
-        return f"[{side}] {self.name} at {pos}, orientation = {orient}, size is {self.size}, module = {self.is_module}"
+        return f"[{side}] {self} at {pos}, orientation = {orient}, size is {self.size}, module = {self.is_module}"
 
 
 class ModuleInfo:
