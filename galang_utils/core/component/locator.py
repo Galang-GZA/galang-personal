@@ -3,7 +3,6 @@ from typing import List
 from core.component.dag import Node
 from core.constant.maya.dag import role as dag_role
 from core.constant.maya.dag import attr as dag_attr
-
 from core.constant.orbital import ghost as orbital_ghost
 
 
