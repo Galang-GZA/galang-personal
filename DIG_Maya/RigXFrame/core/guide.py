@@ -1,0 +1,160 @@
+from maya import cmds
+from typing import List, Dict
+from RigXFrame.core.constant.role import *
+from RigXFrame.core.constant.setup import *
+from RigXFrame.mod_zeta_x.constant.role import *
+from RigXFrame.mod_zeta_x.constant.setup import *
+
+
+class GuideInfo(str):
+    def __new__(cls, joint_name: str):
+        return super().__new__(cls, joint_name)
+
+    def __init__(self, joint_name: str):
+        self.base_name: str = None
+        self.is_guide: bool = False
+        self.is_guide_end: bool = False
+        self.is_module: bool = False
+        self.side_id: int = None
+        self.side: str = None
+        self.parent: str = None
+        self.parent_raw: str = None
+        self.position: List[float] = None
+        self.orientation: List[float] = None
+        self.scale: List[float] = None
+        self.size: int = None
+        self.__init__joint()
+
+    @staticmethod
+    def safe_get_attr(attr, default=None):
+        try:
+            return cmds.getAttr(attr)
+        except Exception:
+            return default
+
+    # Innitialize guide joint to get infos
+    def __init__joint(self):
+        # Defining the guide properties
+        if not cmds.objectType(self, i="joint"):
+            cmds.warning(f"{self} not a joint this is")
+            return
+        self.is_guide = True
+
+        if END_GUIDE in self:
+            self.is_guide_end = True
+
+        if self.safe_get_attr(f"{self}.drawLabel") == 1:
+            self.is_module = True
+
+        # Defining guide's parent
+        parent = cmds.listRelatives(self, p=True, typ="joint")
+        if parent:
+            self.parent = parent[0]
+
+        # Defining guide's side and raw name
+        self.side_id = self.safe_get_attr(f"{self}.side")
+        self.side = SIDE_MAP.get(self.side_id)
+        if self.side:
+            self.name = self.replace(f"{self.side}_", "")
+            self.parent_raw = self.parent.replace(f"{self.side}_", "")
+        else:
+            self.name = self
+            self.parent_raw = self.parent
+
+        # Querying guide's translation
+        self.position = cmds.xform(self, q=True, t=True, ws=True)
+        self.orientation = cmds.xform(self, q=True, ro=True, ws=True)
+        self.scale = cmds.xform(self, q=True, s=True, ws=True)
+        self.size = cmds.getAttr(f"{self}.radius")
+
+    # Debugging procedures
+    def __repr__(self):
+        return (
+            f"<GuideInfo name = '{self}', side = '{self.side}', "
+            f"is module = {self.is_module}, parent = '{self.parent}', "
+            f"position = {self.position}, orientation = {self.orientation}, size = {self.size}>"
+        )
+
+    # I literally have no idea how to read this one, just copied from uncle GPT
+    def __str__(self):
+        side = self.side or "?"
+        pos = f"({', '.join(f'{p:.2f}' for p in self.position)})" if self.position else "unknown"
+        orient = f"({', '.join(f'{o:.2f}' for o in self.orientation)})" if self.orientation else "unknown"
+        return f"[{side}] {self} at {pos}, orientation = {orient}, size is {self.size}, module = {self.is_module}"
+
+
+class ModuleInfo:
+    def __init__(self, guide):
+        self.guide = GuideInfo(guide)
+        self.type: str = None
+        self.axis: str = None
+        self.side: str = None
+        self.side_id: int = None
+        self.guides: List[GuideInfo] = None
+        self.guides_end: List[GuideInfo] = None
+        self.guides_pv: GuideInfo = None
+        self.child: List = None
+        self.parent: str = None
+        self.__init__module(guide)
+
+    def __init__module(self, guide):
+        def recursive_get_parent_module(guide: GuideInfo):
+            if not guide.is_guide:
+                return
+            parent_list = cmds.listRelatives(guide.base_name, p=True, typ="joint")
+            if parent_list:
+                parent = GuideInfo(parent_list[0])
+                if parent.is_module:
+                    self.parent = parent.name
+                else:
+                    recursive_get_parent_module(parent)
+
+        def recursive_get_guide(guide: GuideInfo):
+            if not guide.is_guide:
+                return
+            # Determine module type
+            if guide.is_module:
+                module_id = cmds.getAttr(f"{guide.base_name}.type")
+                for module_name, data in MODULE_MAP.items():
+                    if module_id in data["ids"]:
+                        self.type = module_name
+                        break
+                # Determine module aim axis
+                self.axis = MODULE_AIM_AXIS.get(self.type)
+
+            if PV in guide.base_name:
+                self.guides_pv = guide
+            else:
+                self.guides.append(guide)
+
+            children = cmds.listRelatives(guide.base_name, c=True, typ="joint")
+            if not children:
+                return
+            else:
+                children_guide = [g for g in children if PV not in g]
+                for child in children:
+                    child_guide = GuideInfo(child)
+                    if child_guide.is_module:
+                        if len(children_guide) == 1:
+                            self.guides_end.append(child_guide)
+                        self.child.append(child)
+                    elif child_guide.is_guide_end:
+                        continue
+                    else:
+                        recursive_get_guide(child_guide)
+
+        if not self.guide.is_guide:
+            return
+
+        recursive_get_guide(self.guide)
+        recursive_get_parent_module(self.guide)
+
+    # Debugging procedures
+    def __repr__(self):
+        lines = [f"<Module Info for module = {self.guide.base_name}, type = {self.type}, axis = {self.axis}>"]
+        lines.append(f"    Guides        : {[g.name for g in self.guides]}")
+        lines.append(f"    Guides End    : {[g.name for g in self.guides_end]}")
+        lines.append(f"    Guides PV     : {[g.name for g in self.guides_pv]}")
+        lines.append(f"    Parent Module : {self.parent}")
+        lines.append(f"    Child Modules : {self.child}")
+        return "\n".join(lines)
