@@ -4,8 +4,9 @@ from maya import cmds
 from typing import List
 from core.component.dag import Node
 from core.constant.maya.dag import role as dag_role
-from core.constant.maya.dag import attr as dag_attr
 from core.constant.orbital import ghost as orbital_ghost
+
+from program.component import precompute_multiple_dag as precompute_joints
 
 
 class JointNode(Node):
@@ -14,12 +15,10 @@ class JointNode(Node):
     metadata (position, orientation, etc.) and has helper methods like create().
     """
 
-    def __init__(self, guide_name, side, types: List, position: List[float], orientation: List[float]):
-        # Pre-compute joint name
-        joint_types = types + [role.JOINT]
-        super().__init__(guide_name, side, joint_types, position, orientation)
+    def __init__(self, base_name, side, labels: List, position: List[float], orientation: List[float]):
+        super().__init__(base_name, side, labels, position, orientation)
 
-    def create(self):
+    def create_joint(self):
         """Creates the Maya joint"""
         cmds.select(clear=True)
         cmds.joint(name=self, position=self.position, orientation=self.orientation)
@@ -32,34 +31,15 @@ class JointSet(List[JointNode]):
     """
 
     def __init__(
-        self,
-        guide_names: List,
-        side: str,
-        types: List,
-        positions: List[float],
-        orientations: List[float],
-        group_enabled: bool = True,
+        self, base_names: List, side: str, labels: List, positions: List[List[float]], orientations: List[List[float]]
     ):
         super().__init__()
-        # Pre compute group
-        if group_enabled:
-            group_types = types + [role.JOINT, role.GROUP]
-            self.group = Node(guide_names[0], side, group_types, positions[0], orientations[0])
+        self = precompute_joints.run(JointNode, base_names, side, labels, positions, orientations)
 
-        # Pre-compute joints
-        for i, (guide_name, position, orientation) in enumerate(zip(guide_names, positions, orientations)):
-            i = f"{i+1:02d}"
-            resolved_types = [(i if type is setup.INDEX else type) for type in types]
-            jnt_node = JointNode(guide_name, side, resolved_types, position, orientation)
-            self.append(jnt_node)
-
-    def create(self):
+    def create_joints(self):
         """Creates the Maya joints"""
-        # Define and create top node
-        if self.group:
-            top_node = self.group.create()
-
         # Create each joint & parent accordingly
+        top_node = None
         for jnt_node in self:
             jnt_node.create()
             if top_node:

@@ -16,13 +16,13 @@ MASTER = "Master"
 
 MODULE_MAP = {
     ROOT: {"ids": [1], "contents": []},
+    TOES: {"ids": [5], "contents": []},
     SPINE: {"ids": [6], "contents": [SPINE]},
-    LIMB: {"ids": [10, 2], "contents": [LIMB, HINGES, HAND, FOOT]},
     HINGES: {"ids": [3, 11], "contents": []},
     FOOT: {"ids": [4], "contents": [FOOT, TOES]},
     HAND: {"ids": [12], "contents": [HAND, CARPAL]},
+    LIMB: {"ids": [10, 2], "contents": [LIMB, HINGES, HAND, FOOT]},
     FINGER: {"ids": [13, 14, 19, 20, 21, 22], "contents": [FINGER]},
-    TOES: {"ids": [5], "contents": []},
 }
 
 

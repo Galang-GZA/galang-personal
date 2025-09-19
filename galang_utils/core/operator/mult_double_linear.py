@@ -6,9 +6,10 @@ from core.operator.dg import Node, NodeSet
 
 class MultDoubleLinear(Node):
     """
-    MultDoubleLinear creates a multDoubleLinear node in maya.
-    This class acts as a string and can be printed, selected, and so on.
-    Node type will be handled by this class.
+    Represents a Maya multDoubleLinear node.
+
+    Subclass of Node that defines `node_type` and adds
+    convenient properties for inputs/outputs.
     """
 
     node_type = dg_role.MULT_DOUBLE_LINEAR
@@ -26,10 +27,11 @@ class MultDoubleLinear(Node):
 
 class MultDoubleLinearSet(NodeSet[MultDoubleLinear]):
     """
-    DistanceSet creates a set of multDoubleLinear nodes in maya.
-    This class acts as a list and can be printed, for loop selected, and so on.
-    This class subclasses DG NodeSet, instancing MultDoubleLinear class in super __init__.
+    Represents a list of multDoubleLinear nodes.
+
+    Subclass of NodeSet bound to MultDoubleLinear.
+    Automatically creates multiple nodes with indexed labels if required.
     """
 
     def __init__(self, base_names: List, side, labels: List, attrs_set: List[Dict] = None):
-        super().__init__(MultDoubleLinear, base_names, side, labels, attrs_set)
+        super().__init__(base_names, side, labels, attrs_set)

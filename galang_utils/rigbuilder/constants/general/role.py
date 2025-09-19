@@ -16,7 +16,6 @@ END = "End"
 SIDE = "side"
 
 # IK
-EFFECTOR1 = "effector1"
 IK_SC_SOLVER = "ikSCsolver"
 IK_RP_SOLVER = "ikRPsolver"
 

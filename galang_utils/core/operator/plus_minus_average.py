@@ -6,14 +6,16 @@ from core.operator.dg import Node, NodeSet
 
 class PlusMinusAverage(Node):
     """
-    PlusMinusAverage creates a plusMinusAverage node in maya.
-    This class acts as a string and can be printed, selected, and so on.
-    This class subclasses DG Node but doesnt strict the full_type to have a node type in it.
-    Node type will be handled by this class.
+    Represents a Maya plusMinusAverage node.
+
+    Subclass of Node that defines `node_type` and adds
+    convenient properties for inputs/outputs.
     """
 
+    node_type = dg_role.PLUS_MIN
+
     def __init__(self, base_name: str, side: str, labels: List, attrs: Dict = None):
-        super().__init__(base_name, side, labels, attrs, dg_role.PLUS_MIN, attrs)
+        super().__init__(base_name, side, labels, attrs, attrs)
 
         # Input Attributes
         self.input1D0 = f"{self}{dg_attr.INPUT_1D0}"
@@ -27,12 +29,13 @@ class PlusMinusAverage(Node):
         self.operation = f"{self}{dg_attr.OPERATION}"
 
 
-class MultDoubleLinearSet(NodeSet):
+class MultDoubleLinearSet(NodeSet[PlusMinusAverage]):
     """
-    MultDoubleLinearSet creates a set of plusMinusAverage nodes in maya.
-    This class acts as a list and can be printed, for loop selected, and so on.
-    This class subclasses DG NodeSet, instancing PlusMinusAverage class in super __init__.
+    Represents a list of plusMinusAverage nodes.
+
+    Subclass of NodeSet bound to PlusMinusAverage.
+    Automatically creates multiple nodes with indexed labels if required.
     """
 
     def __init__(self, base_names: List, side, labels: List, attrs_set: List[Dict] = None):
-        super().__init__(PlusMinusAverage, base_names, side, labels, dg_role.PLUS_MIN, attrs_set)
+        super().__init__(base_names, side, labels, attrs_set)

@@ -6,14 +6,16 @@ from core.operator.dg import Node, NodeSet
 
 class MultiplyDivide(Node):
     """
-    MultiplyDivide creates a multiplyDivide node in maya.
-    This class acts as a string and can be printed, selected, and so on.
-    This class subclasses DG Node but doesnt strict the full_type to have a node type in it.
-    Node type will be handled by this class.
+    Represents a Maya multiplyDivide node.
+
+    Subclass of Node that defines `node_type` and adds
+    convenient properties for inputs/outputs/operation.
     """
 
+    node_type = dg_role.MULT_DIV
+
     def __init__(self, base_name: str, side: str, labels: List, attrs: Dict = None):
-        super().__init__(base_name, side, labels, dg_role.MULT_DIV, attrs)
+        super().__init__(base_name, side, labels, attrs)
 
         # Input Attributes
         self.input1X = f"{self}{dg_attr.INPUT1_X}"
@@ -32,12 +34,13 @@ class MultiplyDivide(Node):
         self.operation = f"{self}{dg_attr.OPERATION}"
 
 
-class MultiplyDivideSet(NodeSet):
+class MultiplyDivideSet(NodeSet[MultiplyDivide]):
     """
-    DistanceSet creates a set of multiplyDivide nodes in maya.
-    This class acts as a list and can be printed, for loop selected, and so on.
-    This class subclasses DG NodeSet, instancing MultiplyDivide class in super __init__.
+    Represents a list of multiplyDivide nodes.
+
+    Subclass of NodeSet bound to MultiplyDivide.
+    Automatically creates multiple nodes with indexed labels if required.
     """
 
     def __init__(self, base_names: List, side, labels: List, attrs_set: List[Dict] = None):
-        super().__init__(MultiplyDivide, base_names, side, labels, dg_role.MULT_DIV, attrs_set)
+        super().__init__(base_names, side, labels, attrs_set)

@@ -10,11 +10,11 @@ class Node(str):
     This class acts as a string and can be printed, selected, and so on.
     """
 
-    def __new__(cls, guide_name: str, side: str, types: List):
-        name_format = DIG_Format(side, guide_name, types).name()
+    def __new__(cls, base_name: str, side: str, labels: List):
+        name_format = DIG_Format(side, base_name, labels).name()
         return super().__new__(cls, name_format)
 
-    def __init__(self, guide_name: str, side: str, types: List, position: List[float], orientation: List[float]):
+    def __init__(self, base_name: str, side: str, labels: List, position: List[float], orientation: List[float]):
         # Attributes
         self.translate_x = f"{self}{dag_attr.TRANSLATE_X}"
         self.translate_y = f"{self}{dag_attr.TRANSLATE_Y}"
@@ -29,12 +29,12 @@ class Node(str):
 
         # Data
         self.side = side
-        self.types = types
-        self.guide = guide_name
+        self.labels = labels
+        self.guide = base_name
         self.position = position
         self.orientation = orientation
 
-    def create(self):
+    def create_node(self):
         # Creates an empty Maya group at the given position & orientation.
         transform_node = cmds.group(em=True, name=self)
         cmds.xform(transform_node, t=self.position, ro=self.orientation)

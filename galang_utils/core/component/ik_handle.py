@@ -1,9 +1,8 @@
 from maya import cmds
 from typing import List
-from rigbuilder.constants.project import role as role
-from rigbuilder.constants.general import role as gen_role
-from rigbuilder.cores.guide import GuideInfo, ModuleInfo
-from rigbuilder.modules.base.component.dag import Node
+from core.constant.orbital.format import DIG_Format
+from core.constant.maya.dag import role as maya_role
+from core.component.dag import Node
 
 
 class IkHandleNode(Node):
@@ -14,27 +13,25 @@ class IkHandleNode(Node):
 
     def __init__(
         self,
-        guide_name: str,
+        base_name: str,
         side: str,
         source_joint: str,
         end_effector: str,
         solver: str,
-        types: List,
+        labels: List,
         position: List[float],
         orientation: List[float],
     ):
+        super().__init__(base_name, side, labels, position, orientation)
         self.solver = solver
         self.source_joint = source_joint
         self.end_effector = end_effector
-        ik_handle_types = types + [role.IK]
-        effector_types = types + [role.EFFECTOR]
-        self.effector = Node(guide_name, side, effector_types, position, orientation)
-        super().__init__(guide_name, side, ik_handle_types, position, orientation)
+        self.effector = DIG_Format(side, base_name, labels).name()
 
-    def create(self):
+    def create_ik(self):
         """
         Creates the ik handle.
         """
         ik_handle = cmds.ikHandle(n=self, sj=self.source_joint, ee=self.end_effector, sol=self.solver)[0]
-        cmds.rename(gen_role.EFFECTOR1, self.effector)
+        cmds.rename(maya_role.EFFECTOR1, self.effector)
         return ik_handle

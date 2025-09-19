@@ -2,7 +2,7 @@
 
 # Project
 PROJECT = None  # Project Code
-JNT = "jnt"  # Joint
+JOINT = "jnt"  # Joint
 NUM = "001"  # Numbers
 IK = "ik"  # Inverse Kinematics
 FK = "fk"  # Forward Kinematics
