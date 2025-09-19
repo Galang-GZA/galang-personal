@@ -6,7 +6,7 @@ from core.component.dag import Node
 from core.constant.maya.dag import role as dag_role
 from core.constant.orbital import ghost as orbital_ghost
 
-from program.component import precompute_multiple_dag as precompute_joints
+from programs.component import precompute_multiple_dag as precompute_joints
 
 
 class JointNode(Node):

@@ -4,7 +4,7 @@ from core.component.dag import Node
 from core.constant.maya.dag import role as dag_role
 from core.constant.maya.dag import attr as dag_attr
 
-from program.component import precompute_multiple_dag as precompute_locators
+from programs.component import precompute_multiple_dag as precompute_locators
 
 
 class LocatorNode(Node):
